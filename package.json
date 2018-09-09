@@ -6,6 +6,6 @@
     "*.js"
   ],
   "main": "index.js",
-  "name": "bayrell-runtime",
+  "name": "bayrell-runtime-nodejs",
   "version": "0.4.2"
 }

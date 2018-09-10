@@ -46,6 +46,7 @@ class rtl{
 		if (module_name == 'Runtime') 
 			module_name = 'BayrellRuntime';
 		
+		module_name = rtl.convertNodeJSModuleName(module_name);
 		var obj = require(module_name);
 		for (var i=1; i<class_name_arr.length - 1; i++){
 			if (!this.exists(obj[class_name_arr[i]])){
@@ -454,6 +455,38 @@ class rtl{
 	
 	static time(){
 		return Math.round((new Date()).getTime() / 1000);
+	}
+	/**
+	 * Convert module name to node js package
+	 */
+	
+	static convertNodeJSModuleName(name){
+		name = new String(name);
+		var arr = "qazwsxedcrfvtgbyhnujmikolp0123456789";
+		var res = "";
+		var sz = name.length;
+		var previsbig = false;
+		for (var i = 0; i < sz; i++){
+			var ch = name[i];
+			var ch2 = ch.toUpperCase();
+			var ch3 = ch.toLowerCase();
+			var isAlphaNum = arr.indexOf(ch3) != -1;
+			if (i > 0 && ch == ch2 && !previsbig && isAlphaNum){
+				res += "-";
+			}
+			res += ch3;
+			if (ch == ch2 && isAlphaNum){
+				previsbig = true;
+			}
+			else {
+				previsbig = false;
+			}
+			if (!isAlphaNum){
+				previsbig = true;
+			}
+		}
+		res += "-nodejs";
+		return res;
 	}
 }
 module.exports = rtl;

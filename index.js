@@ -38,6 +38,7 @@ module.exports = {
 	'Context': require("./Context.js"),
 	'ContextObject': require("./ContextObject.js"),
 	'CoreObject': require("./CoreObject.js"),
+	'DateTime': require("./DateTime.js"),
 	'Emitter': require("./Emitter.js"),
 	'Map': require("./Map.js"),
 	'ModuleDescription': require("./ModuleDescription.js"),

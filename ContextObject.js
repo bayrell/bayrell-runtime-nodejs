@@ -18,7 +18,7 @@
  */
 var rtl = require('./rtl.js');
 var CoreObject = require('./CoreObject.js');
-var Utils = require('./Utils.js');
+var RuntimeUtils = require('./RuntimeUtils.js');
 var ContextInterface = require('./Interfaces/ContextInterface.js');
 class ContextObject extends CoreObject{
 	getClassName(){return "Runtime.ContextObject";}
@@ -64,7 +64,7 @@ class ContextObject extends CoreObject{
 		super();
 		this._context = context;
 		if (!rtl.exists(this._context)){
-			this._context = Utils.globalContext();
+			this._context = RuntimeUtils.globalContext();
 		}
 	}
 }

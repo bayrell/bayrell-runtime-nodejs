@@ -48,7 +48,7 @@ class DateTime extends CoreObject{
 			this.ms = rtl._clone(obj.ms);
 			this.tz = rtl._clone(obj.tz);
 		}
-		super.assign(obj);
+		super.assignObject(obj);
 	}
 	assignValue(variable_name, value){
 		if (variable_name == "y") this.y = rtl.correct(value, "int", 0, "");

@@ -17,7 +17,7 @@
  *  limitations under the License.
  */
 var rtl = require('../rtl.js');
-var Utils = require('../Utils.js');
+var RuntimeUtils = require('../RuntimeUtils.js');
 var ContextInterface = require('../Interfaces/ContextInterface.js');
 
 class ClassException extends Error { _init(){} }
@@ -35,14 +35,14 @@ class RuntimeException extends ClassException{
 		this.line = -1;
 		this.pos = -1;
 	}
-	constructor(context, message, code, prev){
-		if (context == undefined) context=null;
+	constructor(message, code, context, prev){
 		if (message == undefined) message="";
 		if (code == undefined) code=0;
+		if (context == undefined) context=null;
 		if (prev == undefined) prev=null;
 		super(message, code, prev);
 		if (context == null){
-			context = Utils.globalContext();
+			context = RuntimeUtils.globalContext();
 		}
 		this.error_str = message;
 		this.context = context;

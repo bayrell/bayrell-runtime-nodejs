@@ -47,7 +47,7 @@ module.exports = {
 	'rtl': require("./rtl.js"),
 	'RuntimeAssets': require("./RuntimeAssets.js"),
 	'RuntimeConstant': require("./RuntimeConstant.js"),
-	'Utils': require("./Utils.js"),
+	'RuntimeUtils': require("./RuntimeUtils.js"),
 	'Vector': require("./Vector.js"),
 };
 

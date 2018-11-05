@@ -17,18 +17,18 @@
  *  limitations under the License.
  */
 var rtl = require('../rtl.js');
-var Utils = require('../Utils.js');
 var RuntimeConstant = require('../RuntimeConstant.js');
+var RuntimeUtils = require('../RuntimeUtils.js');
 var RuntimeException = require('./RuntimeException.js');
 var ContextInterface = require('../Interfaces/ContextInterface.js');
 class KeyNotFound extends RuntimeException{
 	getClassName(){return "Runtime.Exceptions.KeyNotFound";}
 	static getParentClassName(){return "RuntimeException";}
-	constructor(context, key, prev){
+	constructor(key, context, prev){
 		if (context == undefined) context=null;
 		if (prev == undefined) prev=null;
-		/* Utils::translate("ERROR_KEY_NOT_FOUND", null, "", context),  */
-		super(context, "Key '"+rtl.toString(key)+"' not found", RuntimeConstant.ERROR_KEY_NOT_FOUND, prev);
+		/* RuntimeUtils::translate("ERROR_KEY_NOT_FOUND", null, "", context),  */
+		super("Key '"+rtl.toString(key)+"' not found", RuntimeConstant.ERROR_KEY_NOT_FOUND, context, prev);
 	}
 }
 module.exports = KeyNotFound;

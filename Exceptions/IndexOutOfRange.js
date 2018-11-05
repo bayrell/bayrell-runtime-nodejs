@@ -17,8 +17,8 @@
  *  limitations under the License.
  */
 var rtl = require('../rtl.js');
-var Utils = require('../Utils.js');
 var RuntimeConstant = require('../RuntimeConstant.js');
+var RuntimeUtils = require('../RuntimeUtils.js');
 var RuntimeException = require('./RuntimeException.js');
 var ContextInterface = require('../Interfaces/ContextInterface.js');
 class IndexOutOfRange extends RuntimeException{
@@ -27,7 +27,7 @@ class IndexOutOfRange extends RuntimeException{
 	constructor(context, prev){
 		if (context == undefined) context=null;
 		if (prev == undefined) prev=null;
-		super(context, Utils.translate("ERROR_INDEX_OUT_OF_RANGE", null, "", context), RuntimeConstant.ERROR_INDEX_OUT_OF_RANGE, prev);
+		super(RuntimeUtils.translate("ERROR_INDEX_OUT_OF_RANGE", null, "", context), RuntimeConstant.ERROR_INDEX_OUT_OF_RANGE, context, prev);
 	}
 }
 module.exports = IndexOutOfRange;

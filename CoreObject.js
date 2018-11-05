@@ -55,6 +55,13 @@ class CoreObject{
 	 * @param CoreObject obj
 	 */
 	assignObject(obj){
+		this.assignObjectAfter(obj);
+	}
+	/**
+	 * Assign and clone data from other object
+	 * @param CoreObject obj
+	 */
+	assignObjectAfter(obj){
 	}
 	/**
 	 * Set new value instance by variable name

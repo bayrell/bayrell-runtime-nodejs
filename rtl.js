@@ -101,7 +101,14 @@ class rtl{
 	 */
 	
 	static class_implements(class_name, interface_name){
-		var obj = find_class(class_name);
+		var obj = this.find_class(class_name);
+		var obj2 = this.find_class(interface_name);
+		
+		if (obj.__static_implements__.indexOf( obj2 ) == -1 ){
+			return false;
+		}
+		
+		return true;
 	}
 	/**
 	 * Returns true if class exists
@@ -164,6 +171,23 @@ class rtl{
 		return f.apply(obj, args);
 	}
 	/**
+	 * Call async method
+	 * @return Object
+	 */
+	/**
+	 * Returns value if value instanceof type_value, else returns def_value
+	 * @param var value
+	 * @param string type_value
+	 * @param var def_value
+	 * @param var type_template
+	 * @return var
+	 */
+	static convert(value, type_value, def_value, type_template){
+		if (def_value == undefined) def_value=null;
+		if (type_template == undefined) type_template="";
+		return rtl.correct(value, type_value, def_value, type_template);
+	}
+	/**
 	 * Returns value if value instanceof type_value, else returns def_value
 	 * @param var value
 	 * @param string type_value
@@ -180,7 +204,7 @@ class rtl{
 		if (rtl.checkValue(value, type_value)){
 			if ((type_value == "Runtime.Vector" || type_value == "Runtime.Map") && type_template != ""){
 				
-				return value._correctItemsByType($type_template);
+				return value._correctItemsByType(type_template);
 			}
 			return value;
 		}
@@ -217,7 +241,7 @@ class rtl{
 			return rtl.isString(value);
 		}
 		if (tp == "bool" || tp == "boolean"){
-			return rtl.isBool(value);
+			return rtl.isBoolean(value);
 		}
 		if (rtl.is_instanceof(value, tp)){
 			return true;
@@ -254,17 +278,20 @@ class rtl{
 			return val.cloneNode(true);
 		}
 		else if (typeof val == 'object' && 
+			val.createNewInstance && typeof val.createNewInstance == "function" &&
+			val.assignObject && typeof val.assignObject == "function")
+		{
+			var res = val.createNewInstance();
+			if (res) res.assignObject(val);
+			return res;
+		}
+		else if (typeof val == 'object' && 
 			val.getClassName && typeof val.getClassName == "function" &&
 			val.assignObject && typeof val.assignObject == "function")
 		{
 			var res = null;
-			if (val.createNewInstance && typeof val.createNewInstance == "function"){
-				res = val.createNewInstance();
-			}
-			else{
-				if (isBrowser()) res = Runtime.rtl.newInstance( val.getClassName() );
-				else res = rtl.newInstance( val.getClassName() );
-			}
+			if (isBrowser()) res = Runtime.rtl.newInstance( val.getClassName() );
+			else res = rtl.newInstance( val.getClassName() );
 			if (res) res.assignObject(val);
 			return res;
 		}
@@ -462,7 +489,8 @@ class rtl{
 	
 	static convertNodeJSModuleName(name){
 		name = new String(name);
-		var arr = "qazwsxedcrfvtgbyhnujmikolp0123456789";
+		var arr1 = "qazwsxedcrfvtgbyhnujmikolp";
+		var arr2 = "01234567890";
 		var res = "";
 		var sz = name.length;
 		var previsbig = false;
@@ -470,18 +498,19 @@ class rtl{
 			var ch = name[i];
 			var ch2 = ch.toUpperCase();
 			var ch3 = ch.toLowerCase();
-			var isAlphaNum = arr.indexOf(ch3) != -1;
-			if (i > 0 && ch == ch2 && !previsbig && isAlphaNum){
+			var isAlpha = arr1.indexOf(ch3) != -1;
+			var isNum = arr2.indexOf(ch3) != -1;
+			if (i > 0 && ch == ch2 && !previsbig && isAlpha){
 				res += "-";
 			}
 			res += ch3;
-			if (ch == ch2 && isAlphaNum){
+			if (ch == ch2 && isAlpha){
 				previsbig = true;
 			}
 			else {
 				previsbig = false;
 			}
-			if (!isAlphaNum){
+			if (!isAlpha && !isNum){
 				previsbig = true;
 			}
 		}

@@ -28,8 +28,8 @@ class Context extends CoreObject{
 	static getParentClassName(){return "CoreObject";}
 	_init(){
 		super._init();
-		this._locale = "";
 		this._modules = null;
+		this._values = null;
 		this._managers = null;
 		this._providers_names = null;
 		if (this.__implements__ == undefined){this.__implements__ = [];}
@@ -43,6 +43,7 @@ class Context extends CoreObject{
 		this._modules = new Vector();
 		this._providers_names = new Map();
 		this._managers = new Map();
+		this._values = new Map();
 	}
 	/**
 	 * Destructor
@@ -104,6 +105,20 @@ class Context extends CoreObject{
 		return this;
 	}
 	/**
+	 * Read config
+	 */
+	readConfig(config){
+		var args = new Vector();
+		args.push(this);
+		args.push(config);
+		var sz = this._modules.count();
+		for (var i = 0; i < sz; i++){
+			var module_description_class_name = this._modules.item(i);
+			rtl.callStaticMethod(module_description_class_name, "onReadConfig", args);
+		}
+		return this;
+	}
+	/**
 	 * Init context
 	 */
 	init(){
@@ -114,6 +129,7 @@ class Context extends CoreObject{
 			var module_description_class_name = this._modules.item(i);
 			rtl.callStaticMethod(module_description_class_name, "initContext", args);
 		}
+		return this;
 	}
 	/**
 	 * Returns provider
@@ -149,14 +165,14 @@ class Context extends CoreObject{
 	 * @params string locale
 	 */
 	setLocale(locale){
-		this._locale = locale;
+		this._values.set("default.locale", locale);
 	}
 	/**
 	 * Get application locale
 	 * @params string locale
 	 */
 	getLocale(){
-		return this._locale;
+		return this._values.get("default.locale", "en", "string");
 	}
 	/**
 	 * Translate message
@@ -169,6 +185,51 @@ class Context extends CoreObject{
 		if (params == undefined) params=null;
 		if (locale == undefined) locale="";
 		return message;
+	}
+	/**
+	 * Fork current context
+	 * @return ContextInterface
+	 */
+	fork(){
+		var class_name = this.getClassName();
+		var obj = rtl.newInstance(class_name);
+		/* Add modules */
+		this._modules.each((item) => {
+			obj._modules.push(item);
+		});
+		/* Add managers */
+		this._managers.each((key, value) => {
+			obj._managers.set(key, value);
+		});
+		/* Add provider names */
+		this._providers_names.each((key, value) => {
+			obj._providers_names.set(key, value);
+		});
+		return obj;
+	}
+	/**
+	 * Realease context resources
+	 */
+	release(){
+	}
+	/**
+	 * Returns context value
+	 * @param string name
+	 * @return mixed
+	 */
+	getValue(name, default_value, type_value, type_template){
+		if (default_value == undefined) default_value=null;
+		if (type_value == undefined) type_value="mixed";
+		if (type_template == undefined) type_template="";
+		return this._values.get(name, default_value, type_value, type_template);
+	}
+	/**
+	 * Set context value
+	 * @param string name
+	 * @param mixed value
+	 */
+	setValue(name, value){
+		this._values.set(name, value);
 	}
 }
 Context.__static_implements__ = [];

@@ -21,18 +21,6 @@ var Vector = require('../Vector.js');
 var ContextInterface = require('./ContextInterface.js');
 class ModuleDescriptionInterface{
 	/**
-	 * Init context
-	 * @param ContextInterface context
-	 */
-	static initContext(context){
-	}
-	/**
-	 * Called then module registed in context
-	 * @param ContextInterface context
-	 */
-	static onRegister(context){
-	}
-	/**
 	 * Returns module name
 	 * @return string
 	 */
@@ -49,6 +37,25 @@ class ModuleDescriptionInterface{
 	 * @return Map<string, string>
 	 */
 	static getRequiredModules(context){
+	}
+	/**
+	 * Called then module registed in context
+	 * @param ContextInterface context
+	 */
+	static onRegister(context){
+	}
+	/**
+	 * Called then context read config
+	 * @param ContextInterface context
+	 * @param Map<mixed> config
+	 */
+	static onReadConfig(context, config){
+	}
+	/**
+	 * Init context
+	 * @param ContextInterface context
+	 */
+	static initContext(context){
 	}
 }
 module.exports = ModuleDescriptionInterface;

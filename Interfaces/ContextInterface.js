@@ -71,5 +71,32 @@ class ContextInterface{
 	 * @return string - translated string
 	 */
 	/*string translate(string message, Map params = null, string locale = "");*/
+	/**
+	 * For current context
+	 * @return ContextInterface
+	 */
+	fork(){
+	}
+	/**
+	 * Realease context resources
+	 */
+	release(){
+	}
+	/**
+	 * Returns context value
+	 * @param string name
+	 * @return mixed
+	 */
+	getValue(name, default_value, type_value, type_template){
+		if (default_value == undefined) default_value=null;
+		if (type_value == undefined) type_value="mixed";
+		if (type_template == undefined) type_template="";
+	}
+	/**
+	 * Set context value
+	 * @param string name
+	 */
+	setValue(name, value){
+	}
 }
 module.exports = ContextInterface;

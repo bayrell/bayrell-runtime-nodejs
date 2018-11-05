@@ -26,8 +26,8 @@ var FactoryInterface = require('./Interfaces/FactoryInterface.js');
 var SerializeInterface = require('./Interfaces/SerializeInterface.js');
 
 var isBrowser=function(){return typeof window !== "undefined" && this === window;}
-class Utils{
-	getClassName(){return "Runtime.Utils";}
+class RuntimeUtils{
+	getClassName(){return "Runtime.RuntimeUtils";}
 	static getParentClassName(){return "";}
 	/**
 	 * Returns global context
@@ -35,8 +35,8 @@ class Utils{
 	 */
 	static globalContext(){
 		
-		if (isBrowser()) return Runtime.Utils._global_context;
-		return Utils._global_context;
+		if (isBrowser()) return Runtime.RuntimeUtils._global_context;
+		return RuntimeUtils._global_context;
 	}
 	/**
 	 * Set global context
@@ -44,8 +44,8 @@ class Utils{
 	 */
 	static setGlobalContext(context){
 		
-		if (isBrowser()) Runtime.Utils._global_context = context;
-		else Utils._global_context = context;
+		if (isBrowser()) Runtime.RuntimeUtils._global_context = context;
+		else RuntimeUtils._global_context = context;
 		return context;
 	}
 	/**
@@ -53,7 +53,7 @@ class Utils{
 	 * @param Context context
 	 */
 	static getGlobalContext(){
-		return Utils.globalContext();
+		return RuntimeUtils.globalContext();
 	}
 	/**
 	 * Register global Context
@@ -73,9 +73,9 @@ class Utils{
 	 */
 	static registerGlobalContext(modules){
 		if (modules == undefined) modules=null;
-		var context = Utils.createContext(modules);
+		var context = RuntimeUtils.createContext(modules);
 		context.init();
-		Utils.setGlobalContext(context);
+		RuntimeUtils.setGlobalContext(context);
 		return context;
 	}
 	/**
@@ -191,7 +191,7 @@ class Utils{
 		if (locale == undefined) locale="";
 		if (context == undefined) context=null;
 		if (context == null){
-			context = Utils.globalContext();
+			context = RuntimeUtils.globalContext();
 		}
 		if (context != null){
 			var args = (new Vector()).push(message).push(params).push(locale);
@@ -234,12 +234,12 @@ class Utils{
 		}
 		if (obj instanceof Vector){
 			return obj.map((value) => {
-				return Utils.ObjectToPrimitive(value);
+				return RuntimeUtils.ObjectToPrimitive(value);
 			});
 		}
 		if (obj instanceof Map){
 			obj = obj.map((key, value) => {
-				return Utils.ObjectToPrimitive(value);
+				return RuntimeUtils.ObjectToPrimitive(value);
 			});
 			return obj;
 		}
@@ -249,7 +249,7 @@ class Utils{
 			obj.getVariablesNames(names);
 			names.each((variable_name) => {
 				var value = obj.takeValue(variable_name, null);
-				var value = Utils.ObjectToPrimitive(value);
+				var value = RuntimeUtils.ObjectToPrimitive(value);
 				values.set(variable_name, value);
 			});
 			values.set("__class_name__", obj.getClassName());
@@ -262,25 +262,21 @@ class Utils{
 	 * @param SerializeContainer container
 	 * @return mixed
 	 */
-	static PrimitiveToObject(obj, context){
-		if (context == undefined) context=null;
+	static PrimitiveToObject(obj){
 		if (obj === null){
 			return null;
 		}
 		if (rtl.isScalarValue(obj)){
 			return obj;
 		}
-		if (context == null){
-			context = Utils.globalContext();
-		}
 		if (obj instanceof Vector){
 			return obj.map((value) => {
-				return Utils.PrimitiveToObject(value, context);
+				return RuntimeUtils.PrimitiveToObject(value);
 			});
 		}
 		if (obj instanceof Map){
 			obj = obj.map((key, value) => {
-				return Utils.PrimitiveToObject(value, context);
+				return RuntimeUtils.PrimitiveToObject(value);
 			});
 			if (!obj.has("__class_name__")){
 				return obj;
@@ -319,7 +315,7 @@ class Utils{
 	
 	static json_encode(value, convert){
 		if (convert == undefined) convert = true;
-		var _Utils=null;if (isBrowser()) _Utils=Runtime.Utils; else _Utils=Utils;
+		var _Utils=null;if (isBrowser()) _Utils=Runtime.RuntimeUtils; else _Utils=RuntimeUtils;
 		var _Vector=null;if (isBrowser()) _Vector=Runtime.Vector; else _Vector=Vector;
 		var _Map=null;if (isBrowser()) _Map=Runtime.Map; else _Map=Map;
 		var _rtl=null;if (isBrowser()) _rtl=Runtime.rtl; else _rtl=rtl;
@@ -340,7 +336,7 @@ class Utils{
 	static json_decode(s, context){
 		if (context == undefined) context = null;
 		try{
-			var _Utils=null;if (isBrowser()) _Utils=Runtime.Utils; else _Utils=Utils;
+			var _Utils=null;if (isBrowser()) _Utils=Runtime.RuntimeUtils; else _Utils=RuntimeUtils;
 			var _Vector=null;if (isBrowser()) _Vector=Runtime.Vector; else _Vector=Vector;
 			var _Map=null;if (isBrowser()) _Map=Runtime.Map; else _Map=Map;			
 			var obj = JSON.parse(s, function (key, value){
@@ -363,7 +359,7 @@ class Utils{
 	static NativeToPrimitive(value){
 		
 		var _rtl = null; if (isBrowser()) _rtl=Runtime.rtl; else _rtl=rtl;
-		var _Utils = null; if (isBrowser()) _Utils=Runtime.Utils; else _Utils=Utils;
+		var _Utils = null; if (isBrowser()) _Utils=Runtime.RuntimeUtils; else _Utils=RuntimeUtils;
 		var _Vector=null; if (isBrowser()) _Vector=Runtime.Vector; else _Vector=Vector;
 		var _Map=null; if (isBrowser()) _Map=Runtime.Map; else _Map=Map;
 		
@@ -390,7 +386,7 @@ class Utils{
 	static PrimitiveToNative(value){
 		
 		var _rtl = null; if (isBrowser()) _rtl=Runtime.rtl; else _rtl=rtl;
-		var _Utils = null; if (isBrowser()) _Utils=Runtime.Utils; else _Utils=Utils;
+		var _Utils = null; if (isBrowser()) _Utils=Runtime.RuntimeUtils; else _Utils=Utils;
 		var _Vector=null; if (isBrowser()) _Vector=Runtime.Vector; else _Vector=Vector;
 		var _Map=null; if (isBrowser()) _Map=Runtime.Map; else _Map=Map;
 		
@@ -415,13 +411,13 @@ class Utils{
 		return value;
 	}
 	static ObjectToNative(value){
-		value = Utils.ObjectToPrimitive(value);
-		value = Utils.PrimitiveToNative(value);
+		value = RuntimeUtils.ObjectToPrimitive(value);
+		value = RuntimeUtils.PrimitiveToNative(value);
 		return value;
 	}
 	static NativeToObject(value){
-		value = Utils.NativeToPrimitive(value);
-		value = Utils.PrimitiveToObject(value);
+		value = RuntimeUtils.NativeToPrimitive(value);
+		value = RuntimeUtils.PrimitiveToObject(value);
 		return value;
 	}
 	/*
@@ -481,5 +477,5 @@ class Utils{
 		return Buffer.from(s, 'base64').toString('ascii');
 	}
 }
-Utils._global_context = null;
-module.exports = Utils;
+RuntimeUtils._global_context = null;
+module.exports = RuntimeUtils;

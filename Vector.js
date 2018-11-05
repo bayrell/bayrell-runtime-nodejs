@@ -27,6 +27,18 @@ Runtime.Vector = class extends Array{
 	
 	
 	/**
+	 * Correct items
+	 */
+	_correctItemsByType(type){
+		return this.map((item) =>{
+			if (isBrowser()) return Runtime.rtl.correct(item, type, null);
+			return rtl.correct(item, type, null);
+		});
+	}
+	
+	
+	
+	/**
 	 * Returns new Instance
 	 */
 	createNewInstance(){
@@ -37,22 +49,10 @@ Runtime.Vector = class extends Array{
 	
 	
 	/**
-	 * Correct items
-	 */
-	_correctItemsByType(type){
-		return this.map((value) =>{
-			if (isBrowser()) return Runtime.rtl.correct(item, type, null);
-			return rtl.correct(item, type, null);
-		});
-	}
-	
-	
-	
-	/**
 	 * Assign all data from other object
 	 * @param Vector obj
 	 */
-	assign(obj){
+	assignObject(obj){
 		this.clear();
 		obj.each((item)=>{
 			if (isBrowser()) this.push( Runtime.rtl._clone(item) );
@@ -285,6 +285,7 @@ Runtime.Vector = class extends Array{
 			return default_value;
 		return this[this.length - 1];
 	}
+	last(default_value){ return this.getLastItem(default_value); }
 	
 	
 	
@@ -398,10 +399,20 @@ Runtime.Vector = class extends Array{
 	
 	/**
 	 * Reverse array
-	 * @return Vector
 	 */
 	reverse(){
-		return super.reverse();
+		super.reverse();
+	}
+	
+	
+	
+	/**
+	 * Returns sorted vector
+	 * @param callback f - Sort user function
+	 */
+	sort(f){
+		if (f == undefined) super.sort();
+		super.sort(f);
 	}
 }
 module.exports = Runtime.Vector;

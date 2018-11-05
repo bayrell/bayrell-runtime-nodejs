@@ -16,18 +16,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-var rtl = require('../rtl.js');
-var RuntimeConstant = require('../RuntimeConstant.js');
-var RuntimeUtils = require('../RuntimeUtils.js');
-var RuntimeException = require('./RuntimeException.js');
-var ContextInterface = require('../Interfaces/ContextInterface.js');
-class UnknownError extends RuntimeException{
-	getClassName(){return "Runtime.Exceptions.UnknownError";}
-	static getParentClassName(){return "RuntimeException";}
-	constructor(context, prev){
-		if (context == undefined) context=null;
-		if (prev == undefined) prev=null;
-		super(RuntimeUtils.translate("ERROR_UNKNOWN", null, "", context), RuntimeConstant.ERROR_UNKNOWN, context, prev);
+var CoreObject = require('./CoreObject.js');
+class CoreEvent extends CoreObject{
+	getClassName(){return "Runtime.CoreEvent";}
+	static getParentClassName(){return "CoreObject";}
+	_init(){
+		super._init();
+		this.sender = null;
 	}
 }
-module.exports = UnknownError;
+module.exports = CoreEvent;

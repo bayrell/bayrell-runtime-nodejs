@@ -31,5 +31,6 @@ class CloneableInterface{
 	 */
 	assignObject(obj){
 	}
+	/* ======================= Class Init Functions ======================= */
 }
 module.exports = CloneableInterface;

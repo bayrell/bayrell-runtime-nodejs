@@ -16,9 +16,57 @@
  *  limitations under the License.
  */
 
+if (false){
+
+function ObjectAssign(res, obj){
+	for (var key in obj){
+		if (res[key] == undefined) res[key] = obj[key];
+		else if (res[key] instanceof Object) ObjectAssign(res[key], obj[key]);
+	}
+}
 
 module.exports = {
-	VERSION: '0.4.2',
+	VERSION: '0.6.0',
+};
+
+/* Exceptions */
+ObjectAssign(module.exports, require("./Exceptions/IndexOutOfRange.js"));
+ObjectAssign(module.exports, require("./Exceptions/KeyNotFound.js"));
+ObjectAssign(module.exports, require("./Exceptions/RuntimeException.js"));
+ObjectAssign(module.exports, require("./Exceptions/UnknownError.js"));
+
+/* Interfaces */
+ObjectAssign(module.exports, require("./Interfaces/AssetsInterface.js"));
+ObjectAssign(module.exports, require("./Interfaces/CloneableInterface.js"));
+ObjectAssign(module.exports, require("./Interfaces/ContextInterface.js"));
+ObjectAssign(module.exports, require("./Interfaces/FactoryInterface.js"));
+ObjectAssign(module.exports, require("./Interfaces/ModuleDescriptionInterface.js"));
+ObjectAssign(module.exports, require("./Interfaces/SerializeInterface.js"));
+ObjectAssign(module.exports, require("./Interfaces/StringInterface.js"));
+ObjectAssign(module.exports, require("./Interfaces/SubscribeInterface.js"));
+
+/* Root */
+ObjectAssign(module.exports, require("./Context.js"));
+ObjectAssign(module.exports, require("./ContextObject.js"));
+ObjectAssign(module.exports, require("./CoreObject.js"));
+ObjectAssign(module.exports, require("./CoreStruct.js"));
+ObjectAssign(module.exports, require("./DateTime.js"));
+ObjectAssign(module.exports, require("./Emitter.js"));
+ObjectAssign(module.exports, require("./IntrospectionInfo.js"));
+ObjectAssign(module.exports, require("./Map.js"));
+ObjectAssign(module.exports, require("./ModuleDescription.js"));
+ObjectAssign(module.exports, require("./re.js"));
+ObjectAssign(module.exports, require("./rs.js"));
+ObjectAssign(module.exports, require("./rtl.js"));
+ObjectAssign(module.exports, require("./RuntimeAssets.js"));
+ObjectAssign(module.exports, require("./RuntimeConstant.js"));
+ObjectAssign(module.exports, require("./RuntimeUtils.js"));
+ObjectAssign(module.exports, require("./Vector.js"));
+
+}
+else{
+module.exports = {
+	VERSION: '0.6.0',
 	'Exceptions': {
 		'IndexOutOfRange': require("./Exceptions/IndexOutOfRange.js"),
 		'KeyNotFound': require("./Exceptions/KeyNotFound.js"),
@@ -50,5 +98,4 @@ module.exports = {
 	'RuntimeUtils': require("./RuntimeUtils.js"),
 	'Vector': require("./Vector.js"),
 };
-
-
+}

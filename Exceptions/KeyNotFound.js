@@ -22,13 +22,14 @@ var RuntimeUtils = require('../RuntimeUtils.js');
 var RuntimeException = require('./RuntimeException.js');
 var ContextInterface = require('../Interfaces/ContextInterface.js');
 class KeyNotFound extends RuntimeException{
-	getClassName(){return "Runtime.Exceptions.KeyNotFound";}
-	static getParentClassName(){return "RuntimeException";}
 	constructor(key, context, prev){
 		if (context == undefined) context=null;
 		if (prev == undefined) prev=null;
 		/* RuntimeUtils::translate("ERROR_KEY_NOT_FOUND", null, "", context),  */
 		super("Key '"+rtl.toString(key)+"' not found", RuntimeConstant.ERROR_KEY_NOT_FOUND, context, prev);
 	}
+	/* ======================= Class Init Functions ======================= */
+	getClassName(){return "Runtime.Exceptions.KeyNotFound";}
+	static getParentClassName(){return "RuntimeException";}
 }
 module.exports = KeyNotFound;

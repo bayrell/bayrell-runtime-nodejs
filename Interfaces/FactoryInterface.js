@@ -25,5 +25,6 @@ class FactoryInterface{
 	newInstance(context){
 		if (context == undefined) context=null;
 	}
+	/* ======================= Class Init Functions ======================= */
 }
 module.exports = FactoryInterface;

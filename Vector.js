@@ -414,5 +414,62 @@ Runtime.Vector = class extends Array{
 		if (f == undefined) super.sort();
 		super.sort(f);
 	}
+	
+	
+	
+	/**
+	 * Swap item1 to item2
+	 * @params int index1 - item1 position
+	 * @params int index2 - item2 position. If index2 = -1, insert as last item
+	 */
+	swap(index1, index2){
+		if (index2 < 0){
+			index2 += this.length;
+		}
+		var item1 = this.item(index1);
+		if (index2 == -1){
+			this.remove(index1, 1);
+			this.push(item1);
+		}
+		else if (index1 > index2){
+			var item2 = this.item(index2);
+			this.insert(index1, item2);
+			this.remove(index1 + 1, 1);	
+			this.insert(index2, item1);
+			this.remove(index2 + 1, 1);
+		}
+		else if (index1 < index2){
+			var item2 = this.item(index2);
+			this.insert(index2, item1);
+			this.remove(index2 + 1, 1);
+			this.insert(index1, item2);
+			this.remove(index1 + 1, 1);			
+		}
+	}
+	
+	
+	/**
+	 * Remove dublicate values
+	 */
+	removeDublicates(){
+		var arr = this.copy();
+		this.clear();		
+		for (var i=0; i<arr.length; i++){
+			if (this.indexOf(arr[i]) == -1){
+				this.push(arr[i]);
+			}
+		}
+	}
 }
+if (false){
+
+module.exports = {
+	"Vector": Runtime.Vector
+}
+
+}
+else{
+
 module.exports = Runtime.Vector;
+
+}

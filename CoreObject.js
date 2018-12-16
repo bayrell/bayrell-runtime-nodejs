@@ -19,9 +19,8 @@
 var rtl = require('./rtl.js');
 var Map = require('./Map.js');
 var Vector = require('./Vector.js');
+var RuntimeUtils = require('./RuntimeUtils.js');
 class CoreObject{
-	getClassName(){return "Runtime.CoreObject";}
-	static getParentClassName(){return "";}
 	/** 
 	 * Constructor
 	 */
@@ -37,18 +36,24 @@ class CoreObject{
 	_del(){
 	}
 	/**
-	 * Returns name of variables to serialization
-	 * @return Vector<string>
-	 */
-	getVariablesNames(names){
-	}
-	/**
 	 * Returns instance of the value by variable name
 	 * @param string variable_name
+	 * @param string default_value
 	 * @return var
 	 */
 	takeValue(variable_name, default_value){
 		if (default_value == undefined) default_value=null;
+		return this.takeVirtualValue(variable_name, default_value);
+	}
+	/**
+	 * Returns virtual values
+	 * @param string variable_name
+	 * @param string default_value
+	 * @return var
+	 */
+	takeVirtualValue(variable_name, default_value){
+		if (default_value == undefined) default_value=null;
+		return default_value;
 	}
 	/**
 	 * Assign and clone data from other object
@@ -69,13 +74,28 @@ class CoreObject{
 	 * @param var value
 	 */
 	assignValue(variable_name, value){
+		this.assignValueAfter(variable_name, value);
 	}
 	/**
-	 * Set new value instance by variable name
+	 * Calls after assign new value
 	 * @param string variable_name
 	 * @param var value
 	 */
-	assignValues(values){
+	assignValueAfter(variable_name, value){
+	}
+	/**
+	 * Calls after assign new value
+	 * @param string variable_name
+	 */
+	callAssignAfter(variable_name){
+		this.assignValueAfter(variable_name, this.takeValue(variable_name));
+	}
+	/**
+	 * Set new values instance by Map
+	 * @param Map<mixed> map
+	 * @return CoreObject
+	 */
+	assignMap(values){
 		if (values == undefined) values=null;
 		if (values == null){
 			return ;
@@ -86,13 +106,13 @@ class CoreObject{
 			var value = values.get(name, null);
 			this.assignValue(name, value);
 		});
+		return this;
 	}
 	/**
-	 * Set new value instance by variable name
-	 * @param string variable_name
-	 * @param var value
+	 * Dump serializable object to Map
+	 * @return Map<mixed>
 	 */
-	takeValues(){
+	takeMap(){
 		var values = new Map();
 		var names = new Vector();
 		this.getVariablesNames(names);
@@ -101,12 +121,6 @@ class CoreObject{
 			values.set(name, value);
 		});
 		return values;
-	}
-	/**
-	 * Assign all data from other object
-	 * @param CoreObject obj
-	 */
-	assign(obj){
 	}
 	/**
 	 * Call static method of the current class
@@ -119,5 +133,133 @@ class CoreObject{
 		var class_name = this.getClassName();
 		return rtl.callStaticMethod(class_name, method_name, args);
 	}
+	/**
+	 * Returns field info by field_name
+	 * @param string field_name
+	 * @return IntrospectionInfo
+	 */
+	static getFieldInfoByName(field_name){
+	}
+	/**
+	 * Returns virtual field info by field_name
+	 * @param string field_name
+	 * @return IntrospectionInfo
+	 */
+	static getVirtualFieldInfo(field_name){
+		return null;
+	}
+	/**
+	 * Returns public fields list
+	 * @param Vector<string> names
+	 */
+	static getFieldsList(names){
+	}
+	/**
+	 * Returns public virtual fields names
+	 * @param Vector<string> names
+	 */
+	static getVirtualFieldsList(names){
+	}
+	/**
+	 * Returns info of the public method by name
+	 * @param string method_name
+	 * @return IntrospectionInfo
+	 */
+	static getMethodInfoByName(method_name){
+		return null;
+	}
+	/**
+	 * Returns list of the public methods
+	 * @param Vector<string> methods
+	 */
+	static getMethodsList(methods){
+	}
+	/**
+	 * Returns names of variables to serialization
+	 * @param Vector<string>
+	 */
+	getVariablesNames(names){
+		var classes = RuntimeUtils.getParents(this.getClassName());
+		classes.prepend(this.getClassName());
+		classes.removeDublicates();
+		for (var i = 0; i < classes.count(); i++){
+			var class_name = classes.item(i);
+			rtl.callStaticMethod(class_name, "getFieldsList", (new Vector()).push(names));
+			/*try{ rtl::callStaticMethod(class_name, "getFieldsList", [names]); } catch (var e) {}*/
+			try{
+				rtl.callStaticMethod(class_name, "getVirtualFieldsList", (new Vector()).push(names));
+			}catch(_the_exception){
+				if (_the_exception instanceof Error){
+					var e = _the_exception;
+				}
+				else { throw _the_exception; }
+			}
+		}
+		names.removeDublicates();
+	}
+	/**
+	 * Returns names of variables to serialization
+	 * @param Vector<string>
+	 */
+	getFieldsNames(names){
+		this.getVariablesNames(names);
+	}
+	/**
+	 * Returns info of the public variable by name
+	 * @param string variable_name
+	 * @return IntrospectionInfo
+	 */
+	getFieldInfo(variable_name){
+		var classes = RuntimeUtils.getParents(this.getClassName());
+		for (var i = 0; i < classes.count(); i++){
+			var class_name = classes.item(i);
+			var info = rtl.callStaticMethod(class_name, "getFieldInfoByName", (new Vector()).push(variable_name));
+			if (info != null && item.kind == IntrospectionInfo.ITEM_FIELD){
+				return info;
+			}
+			try{
+				var info = rtl.callStaticMethod(class_name, "getVirtualFieldInfo", (new Vector()).push(variable_name));
+				if (info != null && item.kind == IntrospectionInfo.ITEM_FIELD){
+					return info;
+				}
+			}catch(_the_exception){
+				if (_the_exception instanceof Error){
+					var e = _the_exception;
+				}
+				else { throw _the_exception; }
+			}
+		}
+		return null;
+	}
+	/**
+	 * Returns names of methods
+	 * @param Vector<string>
+	 */
+	getMethodsNames(names){
+		var classes = RuntimeUtils.getParents(this.getClassName());
+		for (var i = 0; i < classes.count(); i++){
+			var class_name = classes.item(i);
+			rtl.callStaticMethod(class_name, "getMethodsList", (new Vector()).push(names));
+		}
+	}
+	/**
+	 * Returns info of the public method by name
+	 * @param string method_name
+	 * @return IntrospectionInfo
+	 */
+	getMethodInfo(method_name){
+		var classes = RuntimeUtils.getParents(this.getClassName());
+		for (var i = 0; i < classes.count(); i++){
+			var class_name = classes.item(i);
+			var info = rtl.callStaticMethod(class_name, "getMethodInfoByName", (new Vector()).push(method_name));
+			if (info != null && item.kind == IntrospectionInfo.ITEM_METHOD){
+				return info;
+			}
+		}
+		return null;
+	}
+	/* ======================= Class Init Functions ======================= */
+	getClassName(){return "Runtime.CoreObject";}
+	static getParentClassName(){return "";}
 }
 module.exports = CoreObject;

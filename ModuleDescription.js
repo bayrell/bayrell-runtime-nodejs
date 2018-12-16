@@ -23,12 +23,6 @@ var Vector = require('./Vector.js');
 var ContextInterface = require('./Interfaces/ContextInterface.js');
 var ModuleDescriptionInterface = require('./Interfaces/ModuleDescriptionInterface.js');
 class ModuleDescription{
-	getClassName(){return "Runtime.ModuleDescription";}
-	static getParentClassName(){return "";}
-	_init(){
-		if (this.__implements__ == undefined){this.__implements__ = [];}
-		this.__implements__.push(ModuleDescriptionInterface);
-	}
 	/**
 	 * Returns module name
 	 * @return string
@@ -41,7 +35,7 @@ class ModuleDescription{
 	 * @return string
 	 */
 	static getModuleVersion(){
-		return "0.5.1";
+		return "0.6.0";
 	}
 	/**
 	 * Returns required modules
@@ -69,6 +63,13 @@ class ModuleDescription{
 	 * @param ContextInterface context
 	 */
 	static initContext(context){
+	}
+	/* ======================= Class Init Functions ======================= */
+	getClassName(){return "Runtime.ModuleDescription";}
+	static getParentClassName(){return "";}
+	_init(){
+		if (this.__implements__ == undefined){this.__implements__ = [];}
+		this.__implements__.push(ModuleDescriptionInterface);
 	}
 }
 ModuleDescription.__static_implements__ = [];

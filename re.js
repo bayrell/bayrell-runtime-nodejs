@@ -18,8 +18,6 @@
  */
 var Vector = require('./Vector.js');
 class re{
-	getClassName(){return "Runtime.re";}
-	static getParentClassName(){return "";}
 	/**
 	 * Search regular expression
 	 * @param string r regular expression
@@ -50,5 +48,8 @@ class re{
 		
 		return s.replace(new RegExp(r, "g"), replace);
 	}
+	/* ======================= Class Init Functions ======================= */
+	getClassName(){return "Runtime.re";}
+	static getParentClassName(){return "";}
 }
 module.exports = re;

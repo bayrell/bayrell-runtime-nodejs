@@ -35,5 +35,6 @@ class AssetsInterface{
 	 */
 	static assetsAsyncLoad(context){
 	}
+	/* ======================= Class Init Functions ======================= */
 }
 module.exports = AssetsInterface;

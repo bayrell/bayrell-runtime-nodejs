@@ -22,5 +22,6 @@ class StringInterface{
 	 */
 	toString(){
 	}
+	/* ======================= Class Init Functions ======================= */
 }
 module.exports = StringInterface;

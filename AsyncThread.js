@@ -21,17 +21,6 @@ var AsyncTask = require('./AsyncTask.js');
 var CoreObject = require('./CoreObject.js');
 var Vector = require('./Vector.js');
 class AsyncThread extends CoreObject{
-	getClassName(){return "Runtime.AsyncThread";}
-	static getParentClassName(){return "CoreObject";}
-	_init(){
-		super._init();
-		this.f = null;
-		this.pos = "0";
-		this.res = null;
-		this.err = null;
-		this.run_stack = null;
-		this.catch_stack = null;
-	}
 	/**
 	 * Constructor
 	 */
@@ -212,6 +201,18 @@ class AsyncThread extends CoreObject{
 	end(){
 		this.pos = "-1";
 		return "end";
+	}
+	/* ======================= Class Init Functions ======================= */
+	getClassName(){return "Runtime.AsyncThread";}
+	static getParentClassName(){return "CoreObject";}
+	_init(){
+		super._init();
+		this.f = null;
+		this.pos = "0";
+		this.res = null;
+		this.err = null;
+		this.run_stack = null;
+		this.catch_stack = null;
 	}
 }
 module.exports = AsyncThread;

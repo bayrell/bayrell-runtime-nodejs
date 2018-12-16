@@ -22,19 +22,6 @@ var ContextInterface = require('../Interfaces/ContextInterface.js');
 
 class ClassException extends Error { _init(){} }
 class RuntimeException extends ClassException{
-	getClassName(){return "Runtime.Exceptions.RuntimeException";}
-	static getParentClassName(){return "ClassException";}
-	_init(){
-		super._init();
-		this.context = null;
-		this.prev = null;
-		this.error_str = "";
-		this.message = "";
-		this.code = 0;
-		this.file = "";
-		this.line = -1;
-		this.pos = -1;
-	}
 	constructor(message, code, context, prev){
 		if (message == undefined) message="";
 		if (code == undefined) code=0;
@@ -91,6 +78,20 @@ class RuntimeException extends ClassException{
 		if (this.file != ""){
 			this.message += " in file:'"+rtl.toString(this.file)+"'";
 		}
+	}
+	/* ======================= Class Init Functions ======================= */
+	getClassName(){return "Runtime.Exceptions.RuntimeException";}
+	static getParentClassName(){return "ClassException";}
+	_init(){
+		super._init();
+		this.context = null;
+		this.prev = null;
+		this.error_str = "";
+		this.message = "";
+		this.code = 0;
+		this.file = "";
+		this.line = -1;
+		this.pos = -1;
 	}
 }
 module.exports = RuntimeException;

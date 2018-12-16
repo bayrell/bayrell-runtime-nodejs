@@ -21,8 +21,6 @@ var Vector = require('./Vector.js');
 
 var isBrowser=function(){return typeof window !== "undefined" && this === window;}
 class rs{
-	getClassName(){return "Runtime.rs";}
-	static getParentClassName(){return "";}
 	/**
 	 * Returns string lenght
 	 * @param string s The string
@@ -204,5 +202,8 @@ class rs{
 		};
 		return (new String(s)).replace(/[<>&"'`=]/g, function(v){ return obj[v]; });
 	}
+	/* ======================= Class Init Functions ======================= */
+	getClassName(){return "Runtime.rs";}
+	static getParentClassName(){return "";}
 }
 module.exports = rs;

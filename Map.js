@@ -106,12 +106,12 @@ Runtime.Map = class extends Map{
 	 * @param T default_value
 	 * @return T
 	 */
-	get(key, default_value){
+	get(key, default_value, type_value = "mixed", type_template = ""){
 		key = this.toString(key);
 		var val = super.get(key);
-		if (val == undefined)
-			return default_value;
-		return val;
+		if (val == undefined) return default_value;
+		if (isBrowser()) return Runtime.rtl.correct(val, type_value, default_value, type_template);
+		return rtl.correct(val, type_value, default_value, type_template);
 	}
 	
 	
@@ -322,4 +322,15 @@ Runtime.Map = class extends Map{
 		return instance;
 	}
 }
+if (false){
+
+module.exports = {
+	"Map": Runtime.Map
+}
+
+}
+else{
+
 module.exports = Runtime.Map;
+
+}

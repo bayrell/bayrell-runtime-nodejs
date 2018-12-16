@@ -17,12 +17,26 @@
  *  limitations under the License.
  */
 var CoreObject = require('./CoreObject.js');
+var CloneableInterface = require('./Interfaces/CloneableInterface.js');
+var SerializeInterface = require('./Interfaces/SerializeInterface.js');
 class CoreEvent extends CoreObject{
+	constructor(sender){
+		if (sender == undefined) sender=null;
+		super();
+		this.sender = sender;
+	}
+	/* ======================= Class Init Functions ======================= */
 	getClassName(){return "Runtime.CoreEvent";}
 	static getParentClassName(){return "CoreObject";}
 	_init(){
 		super._init();
 		this.sender = null;
+		if (this.__implements__ == undefined){this.__implements__ = [];}
+		this.__implements__.push(CloneableInterface);
+		this.__implements__.push(SerializeInterface);
 	}
 }
+CoreEvent.__static_implements__ = [];
+CoreEvent.__static_implements__.push(CloneableInterface)
+CoreEvent.__static_implements__.push(SerializeInterface)
 module.exports = CoreEvent;

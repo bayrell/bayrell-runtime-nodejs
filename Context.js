@@ -24,17 +24,6 @@ var ContextInterface = require('./Interfaces/ContextInterface.js');
 var FactoryInterface = require('./Interfaces/FactoryInterface.js');
 var ModuleDescriptionInterface = require('./Interfaces/ModuleDescriptionInterface.js');
 class Context extends CoreObject{
-	getClassName(){return "Runtime.Context";}
-	static getParentClassName(){return "CoreObject";}
-	_init(){
-		super._init();
-		this._modules = null;
-		this._values = null;
-		this._managers = null;
-		this._providers_names = null;
-		if (this.__implements__ == undefined){this.__implements__ = [];}
-		this.__implements__.push(ContextInterface);
-	}
 	/**
 	 * Constructor
 	 */
@@ -230,6 +219,18 @@ class Context extends CoreObject{
 	 */
 	setValue(name, value){
 		this._values.set(name, value);
+	}
+	/* ======================= Class Init Functions ======================= */
+	getClassName(){return "Runtime.Context";}
+	static getParentClassName(){return "CoreObject";}
+	_init(){
+		super._init();
+		this._modules = null;
+		this._values = null;
+		this._managers = null;
+		this._providers_names = null;
+		if (this.__implements__ == undefined){this.__implements__ = [];}
+		this.__implements__.push(ContextInterface);
 	}
 }
 Context.__static_implements__ = [];

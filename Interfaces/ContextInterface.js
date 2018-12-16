@@ -98,5 +98,6 @@ class ContextInterface{
 	 */
 	setValue(name, value){
 	}
+	/* ======================= Class Init Functions ======================= */
 }
 module.exports = ContextInterface;

@@ -19,6 +19,7 @@
 var CoreObject = require('./CoreObject.js');
 var Vector = require('./Vector.js');
 class AsyncTask extends CoreObject{
+	/* ======================= Class Init Functions ======================= */
 	getClassName(){return "Runtime.AsyncTask";}
 	static getParentClassName(){return "CoreObject";}
 	_init(){

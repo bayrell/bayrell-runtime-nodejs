@@ -20,8 +20,6 @@ var StringInterface = require('./Interfaces/StringInterface.js');
 
 var isBrowser=function(){return typeof window !== "undefined" && this === window;}
 class rtl{
-	getClassName(){return "Runtime.rtl";}
-	static getParentClassName(){return "";}
 	static isBrowser(){
 		
 		return typeof window !== "undefined";
@@ -104,11 +102,16 @@ class rtl{
 		var obj = this.find_class(class_name);
 		var obj2 = this.find_class(interface_name);
 		
-		if (obj.__static_implements__.indexOf( obj2 ) == -1 ){
-			return false;
+		while (obj != null){
+			if (obj.__static_implements__){
+				if (obj.__static_implements__.indexOf( obj2 ) > -1 ){
+					return true;
+				}
+			}
+			obj = obj.__proto__;
 		}
 		
-		return true;
+		return false;
 	}
 	/**
 	 * Returns true if class exists
@@ -146,6 +149,7 @@ class rtl{
 	 */
 	
 	static call(f, args){
+		if (args == undefined) return f.apply(null);
 		return f.apply(null, args);
 	}
 	/**
@@ -182,10 +186,10 @@ class rtl{
 	 * @param var type_template
 	 * @return var
 	 */
-	static convert(value, type_value, def_value, type_template){
+	static correct(value, type_value, def_value, type_template){
 		if (def_value == undefined) def_value=null;
 		if (type_template == undefined) type_template="";
-		return rtl.correct(value, type_value, def_value, type_template);
+		return rtl.convert(value, type_value, def_value, type_template);
 	}
 	/**
 	 * Returns value if value instanceof type_value, else returns def_value
@@ -195,18 +199,45 @@ class rtl{
 	 * @param var type_template
 	 * @return var
 	 */
-	static correct(value, type_value, def_value, type_template){
+	static convert(value, type_value, def_value, type_template){
 		if (def_value == undefined) def_value=null;
 		if (type_template == undefined) type_template="";
 		if (type_value == "mixed" || type_value == "var"){
 			return value;
 		}
-		if (rtl.checkValue(value, type_value)){
+		if (value != null && rtl.checkValue(value, type_value)){
 			if ((type_value == "Runtime.Vector" || type_value == "Runtime.Map") && type_template != ""){
 				
 				return value._correctItemsByType(type_template);
 			}
 			return value;
+		}
+		else {
+			var is_string = rtl.isString(value);
+			var is_number = rtl.isNumber(value);
+			var is_bool = rtl.isBoolean(value);
+			if (is_string || is_bool || is_number){
+				var s_value = rtl.toString(value);
+				try{
+					if (type_value == "int"){
+						var val = rtl.toInt(value);
+						return val;
+					}
+					else if (type_value == "float" || type_value == "double"){
+						var val = rtl.toFloat(value);
+						return val;
+					}
+					else if (type_value == "bool"){
+						var val = rtl.toBool(value);
+						return val;
+					}
+				}catch(_the_exception){
+					if (_the_exception instanceof Error){
+						var e = _the_exception;
+					}
+					else { throw _the_exception; }
+				}
+			}
 		}
 		if (!rtl.checkValue(def_value, type_value)){
 			if (type_value == "int" || type_value == "float" || type_value == "double"){
@@ -405,11 +436,45 @@ class rtl{
 	/**
 	 * Convert value to int
 	 * @param var value
-	 * @return string
+	 * @return int
 	 */
 	
 	static toInt(val){
-		return parseInt(val);
+		var res = parseInt(val);
+		var s_res = new String(res);
+		var s_val = new String(val);
+		if (s_res.localeCompare(s_val) == 0)
+			return res;
+		throw new Error("Error convert to int");
+	}
+	/**
+	 * Convert value to boolean
+	 * @param var value
+	 * @return bool
+	 */
+	
+	static toBool(val){
+		var res = false;
+		if (val == 'true') res = true;
+		var s_res = new String(res);
+		var s_val = new String(val);
+		if (s_res.localeCompare(s_val) == 0)
+			return res;
+		throw new Error("Error convert to boolean");
+	}
+	/**
+	 * Convert value to float
+	 * @param var value
+	 * @return float
+	 */
+	
+	static toFloat(val){
+		var res = parseFloat(val);
+		var s_res = new String(res);
+		var s_val = new String(val);
+		if (s_res.localeCompare(s_val) == 0)
+			return res;
+		throw new Error("Error convert to float");
 	}
 	/**
 	 * Returns unique value
@@ -457,7 +522,7 @@ class rtl{
 	 */
 	
 	static dump(value){
-		return console.log(value);
+		console.log(value);
 	}
 	/**
 	 * Returns random value x, where a <= x <= b
@@ -517,5 +582,31 @@ class rtl{
 		res += "-nodejs";
 		return res;
 	}
+	/**
+	 * Returns global context
+	 * @return ContextInterface
+	 */
+	static globalContext(){
+		return rtl.callStaticMethod("Runtime.RuntimeUtils", "globalContext", null);
+	}
+	/**
+	 * Translate message
+	 * @params string message - message need to be translated
+	 * @params MapInterface params - Messages params. Default null.
+	 * @params string locale - Different locale. Default "".
+	 * @return string - translated string
+	 */
+	static translate(message, params, locale, context){
+		if (params == undefined) params=null;
+		if (locale == undefined) locale="";
+		if (context == undefined) context=null;
+		
+		var obj = this.find_class("Runtime.RuntimeUtils");
+		var translate = obj["translate"];
+		return translate(message, params, locale, context);
+	}
+	/* ======================= Class Init Functions ======================= */
+	getClassName(){return "Runtime.rtl";}
+	static getParentClassName(){return "";}
 }
 module.exports = rtl;

@@ -57,5 +57,6 @@ class ModuleDescriptionInterface{
 	 */
 	static initContext(context){
 	}
+	/* ======================= Class Init Functions ======================= */
 }
 module.exports = ModuleDescriptionInterface;

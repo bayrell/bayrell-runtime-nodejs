@@ -27,8 +27,6 @@ var SerializeInterface = require('./Interfaces/SerializeInterface.js');
 
 var isBrowser=function(){return typeof window !== "undefined" && this === window;}
 class RuntimeUtils{
-	getClassName(){return "Runtime.RuntimeUtils";}
-	static getParentClassName(){return "";}
 	/**
 	 * Returns global context
 	 * @return ContextInterface
@@ -225,7 +223,8 @@ class RuntimeUtils{
 	 * @param mixed obj
 	 * @return mixed
 	 */
-	static ObjectToPrimitive(obj){
+	static ObjectToPrimitive(obj, force_class_name){
+		if (force_class_name == undefined) force_class_name=false;
 		if (obj === null){
 			return null;
 		}
@@ -233,25 +232,38 @@ class RuntimeUtils{
 			return obj;
 		}
 		if (obj instanceof Vector){
-			return obj.map((value) => {
-				return RuntimeUtils.ObjectToPrimitive(value);
-			});
+			var res = new Vector();
+			for (var i = 0; i < obj.count(); i++){
+				var value = obj.item(i);
+				value = RuntimeUtils.ObjectToPrimitive(value, force_class_name);
+				res.push(value);
+			}
+			return res;
 		}
 		if (obj instanceof Map){
-			obj = obj.map((key, value) => {
-				return RuntimeUtils.ObjectToPrimitive(value);
-			});
-			return obj;
+			var res = new Map();
+			var keys = obj.keys();
+			for (var i = 0; i < keys.count(); i++){
+				var key = keys.item(i);
+				var value = obj.item(key);
+				value = RuntimeUtils.ObjectToPrimitive(value, force_class_name);
+				res.set(key, value);
+			}
+			if (force_class_name){
+				res.set("__class_name__", "Runtime.Map");
+			}
+			return res;
 		}
 		if (rtl.implements(obj, SerializeInterface)){
 			var names = new Vector();
 			var values = new Map();
 			obj.getVariablesNames(names);
-			names.each((variable_name) => {
+			for (var i = 0; i < names.count(); i++){
+				var variable_name = names.item(i);
 				var value = obj.takeValue(variable_name, null);
-				var value = RuntimeUtils.ObjectToPrimitive(value);
+				var value = RuntimeUtils.ObjectToPrimitive(value, force_class_name);
 				values.set(variable_name, value);
-			});
+			}
 			values.set("__class_name__", obj.getClassName());
 			return values;
 		}
@@ -270,22 +282,31 @@ class RuntimeUtils{
 			return obj;
 		}
 		if (obj instanceof Vector){
-			return obj.map((value) => {
-				return RuntimeUtils.PrimitiveToObject(value);
-			});
+			var res = new Vector();
+			for (var i = 0; i < obj.count(); i++){
+				var value = obj.item(i);
+				value = RuntimeUtils.PrimitiveToObject(value);
+				res.push(value);
+			}
+			return res;
 		}
 		if (obj instanceof Map){
-			obj = obj.map((key, value) => {
-				return RuntimeUtils.PrimitiveToObject(value);
-			});
-			if (!obj.has("__class_name__")){
-				return obj;
+			var res = new Map();
+			var keys = obj.keys();
+			for (var i = 0; i < keys.count(); i++){
+				var key = keys.item(i);
+				var value = obj.item(key);
+				value = RuntimeUtils.PrimitiveToObject(value);
+				res.set(key, value);
 			}
-			if (obj.item("__class_name__") == "Runtime.Map"){
-				obj.remove("__class_name__");
-				return obj;
+			if (!res.has("__class_name__")){
+				return res;
 			}
-			var class_name = obj.item("__class_name__");
+			if (res.item("__class_name__") == "Runtime.Map"){
+				res.remove("__class_name__");
+				return res;
+			}
+			var class_name = res.item("__class_name__");
 			if (!rtl.class_exists(class_name)){
 				return null;
 			}
@@ -295,13 +316,13 @@ class RuntimeUtils{
 			var instance = rtl.newInstance(class_name, null);
 			var names = new Vector();
 			instance.getVariablesNames(names);
-			names.each((variable_name) => {
-				if (variable_name == "__class_name__"){
-					return ;
+			for (var i = 0; i < names.count(); i++){
+				var variable_name = names.item(i);
+				if (variable_name != "__class_name__"){
+					var value = res.get(variable_name, null);
+					instance.assignValue(variable_name, value);
 				}
-				var value = obj.get(variable_name, null);
-				instance.assignValue(variable_name, value);
-			});
+			}
 			return instance;
 		}
 		return null;
@@ -410,8 +431,9 @@ class RuntimeUtils{
 		
 		return value;
 	}
-	static ObjectToNative(value){
-		value = RuntimeUtils.ObjectToPrimitive(value);
+	static ObjectToNative(value, force_class_name){
+		if (force_class_name == undefined) force_class_name=false;
+		value = RuntimeUtils.ObjectToPrimitive(value, force_class_name);
 		value = RuntimeUtils.PrimitiveToNative(value);
 		return value;
 	}
@@ -476,6 +498,9 @@ class RuntimeUtils{
 	static base64_decode(s){
 		return Buffer.from(s, 'base64').toString('ascii');
 	}
+	/* ======================= Class Init Functions ======================= */
+	getClassName(){return "Runtime.RuntimeUtils";}
+	static getParentClassName(){return "";}
 }
 RuntimeUtils._global_context = null;
 module.exports = RuntimeUtils;

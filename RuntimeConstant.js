@@ -17,8 +17,6 @@
  *  limitations under the License.
  */
 class RuntimeConstant{
-	getClassName(){return "Runtime.RuntimeConstant";}
-	static getParentClassName(){return "";}
 	/* Log level */
 	/**
 	 * Fatal error. Application stoped
@@ -43,6 +41,9 @@ class RuntimeConstant{
 	 */
 	/* Status codes */
 	/* Errors */
+	/* ======================= Class Init Functions ======================= */
+	getClassName(){return "Runtime.RuntimeConstant";}
+	static getParentClassName(){return "";}
 }
 RuntimeConstant.LOG_FATAL = 0;
 RuntimeConstant.LOG_CRITICAL = 2;

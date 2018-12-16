@@ -17,16 +17,35 @@
  *  limitations under the License.
  */
 var CoreObject = require('./CoreObject.js');
-class SerializeContainer extends CoreObject{
+var Map = require('./Map.js');
+var SerializeInterface = require('./Interfaces/SerializeInterface.js');
+class CoreStruct extends CoreObject{
+	/** 
+	 * Constructor
+	 */
+	constructor(obj){
+		if (obj == undefined) obj=null;
+		super();
+		this.assignMap(obj);
+	}
+	/**
+	 * Clone this object
+	 * @return CoreStruct
+	 */
+	clone(){
+		var instance = rtl.newInstance(this.getClassName());
+		instance.assignObject(this);
+		return instance;
+	}
 	/* ======================= Class Init Functions ======================= */
-	getClassName(){return "Runtime.SerializeContainer";}
+	getClassName(){return "Runtime.CoreStruct";}
 	static getParentClassName(){return "CoreObject";}
 	_init(){
 		super._init();
-		this.display_class_name = true;
-		this.indent = "  ";
-		this.space = " ";
-		this.crlf = "\n";
+		if (this.__implements__ == undefined){this.__implements__ = [];}
+		this.__implements__.push(SerializeInterface);
 	}
 }
-module.exports = SerializeContainer;
+CoreStruct.__static_implements__ = [];
+CoreStruct.__static_implements__.push(SerializeInterface)
+module.exports = CoreStruct;

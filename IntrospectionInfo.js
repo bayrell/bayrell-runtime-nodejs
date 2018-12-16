@@ -16,13 +16,19 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-class SubscribeInterface{
-	/**
-	 * Handler event
-	 * var e
-	 */
-	handlerEvent(e){
-	}
+var CoreStruct = require('./CoreStruct.js');
+var Vector = require('./Vector.js');
+class IntrospectionInfo extends CoreStruct{
 	/* ======================= Class Init Functions ======================= */
+	getClassName(){return "Runtime.IntrospectionInfo";}
+	static getParentClassName(){return "CoreStruct";}
+	_init(){
+		super._init();
+		this.kind = "";
+		this.name = "";
+		this.annotations = null;
+	}
 }
-module.exports = SubscribeInterface;
+IntrospectionInfo.ITEM_FIELD = "field";
+IntrospectionInfo.ITEM_METHOD = "method";
+module.exports = IntrospectionInfo;

@@ -18,6 +18,7 @@
  */
 var CoreObject = require('./CoreObject.js');
 var Map = require('./Map.js');
+var rtl = require('./rtl.js');
 var SerializeInterface = require('./Interfaces/SerializeInterface.js');
 class CoreStruct extends CoreObject{
 	/** 
@@ -27,14 +28,26 @@ class CoreStruct extends CoreObject{
 		if (obj == undefined) obj=null;
 		super();
 		this.assignMap(obj);
+		this.onCreated();
 	}
 	/**
-	 * Clone this object
+	 * Struct created 
+	 */
+	onCreated(){
+	}
+	/**
+	 * Clone this object with new values
+	 * @param Map obj = null
 	 * @return CoreStruct
 	 */
-	clone(){
+	clone(obj){
+		if (obj == undefined) obj=null;
 		var instance = rtl.newInstance(this.getClassName());
 		instance.assignObject(this);
+		if (obj != null){
+			instance.setMap(obj);
+		}
+		instance.onCreated();
 		return instance;
 	}
 	/* ======================= Class Init Functions ======================= */

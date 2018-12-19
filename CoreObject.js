@@ -109,6 +109,21 @@ class CoreObject{
 		return this;
 	}
 	/**
+	 * Set new values instance by Map
+	 * @param Map<mixed> map
+	 * @return CoreObject
+	 */
+	setMap(values){
+		if (values == undefined) values=null;
+		if (values == null){
+			return ;
+		}
+		values.each((key, value) => {
+			this.assignValue(key, value);
+		});
+		return this;
+	}
+	/**
 	 * Dump serializable object to Map
 	 * @return Map<mixed>
 	 */

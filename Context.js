@@ -16,6 +16,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+var rs = require('./rs.js');
 var rtl = require('./rtl.js');
 var CoreObject = require('./CoreObject.js');
 var Map = require('./Map.js');
@@ -31,7 +32,7 @@ class Context extends CoreObject{
 		super();
 		this._modules = new Vector();
 		this._providers_names = new Map();
-		this._managers = new Map();
+		this._drivers = new Map();
 		this._values = new Map();
 	}
 	/**
@@ -83,13 +84,13 @@ class Context extends CoreObject{
 		return this;
 	}
 	/**
-	 * Register manager
-	 * @param string manager_name
+	 * Register driver
+	 * @param string driver_name
 	 * @param FactoryInterface factory
 	 */
-	registerManager(manager_name, obj){
-		if (!this._managers.has(manager_name)){
-			this._managers.set(manager_name, obj);
+	registerDriver(driver_name, obj){
+		if (!this._drivers.has(driver_name)){
+			this._drivers.set(driver_name, obj);
 		}
 		return this;
 	}
@@ -121,12 +122,31 @@ class Context extends CoreObject{
 		return this;
 	}
 	/**
+	 * Returns provider or driver
+	 *
+	 * @params string name
+	 * @return CoreObject
+	 */
+	get(name, params){
+		if (params == undefined) params=null;
+		var is_provider = rs.strpos(name, "provider.") === 0;
+		var is_driver = rs.strpos(name, "driver.") === 0;
+		if (is_provider){
+			return this.createProvider(name, params);
+		}
+		if (is_driver){
+			return this.getDriver(name);
+		}
+		return null;
+	}
+	/**
 	 * Returns provider
 	 *
 	 * @params string provider_name
 	 * @return CoreObject
 	 */
-	createProvider(provider_name){
+	createProvider(provider_name, params){
+		if (params == undefined) params=null;
 		if (!this._providers_names.has(provider_name)){
 			return null;
 		}
@@ -134,18 +154,18 @@ class Context extends CoreObject{
 		if (factory_obj == null){
 			return null;
 		}
-		var obj = factory_obj.newInstance(this);
+		var obj = factory_obj.newInstance(this, params);
 		return obj;
 	}
 	/**
-	 * Returns manager
+	 * Returns driver
 	 *
-	 * @params string manager_name
+	 * @params string driver_name
 	 * @return CoreObject
 	 */
-	getManager(manager_name){
-		if (this._managers.has(manager_name)){
-			return this._managers.item(manager_name);
+	getDriver(driver_name){
+		if (this._drivers.has(driver_name)){
+			return this._drivers.item(driver_name);
 		}
 		return null;
 	}
@@ -186,9 +206,9 @@ class Context extends CoreObject{
 		this._modules.each((item) => {
 			obj._modules.push(item);
 		});
-		/* Add managers */
-		this._managers.each((key, value) => {
-			obj._managers.set(key, value);
+		/* Add services */
+		this._drivers.each((key, value) => {
+			obj._drivers.set(key, value);
 		});
 		/* Add provider names */
 		this._providers_names.each((key, value) => {
@@ -227,7 +247,7 @@ class Context extends CoreObject{
 		super._init();
 		this._modules = null;
 		this._values = null;
-		this._managers = null;
+		this._drivers = null;
 		this._providers_names = null;
 		if (this.__implements__ == undefined){this.__implements__ = [];}
 		this.__implements__.push(ContextInterface);

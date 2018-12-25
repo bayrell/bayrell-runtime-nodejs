@@ -58,7 +58,7 @@ class ContextObject extends CoreObject{
 		super();
 		this._context = context;
 		if (!rtl.exists(this._context)){
-			this._context = RuntimeUtils.globalContext();
+			this._context = RuntimeUtils.getContext();
 		}
 	}
 	/* ======================= Class Init Functions ======================= */

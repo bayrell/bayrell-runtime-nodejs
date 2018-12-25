@@ -16,7 +16,6 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-var CoreObject = require('./CoreObject.js');
 var CoreStruct = require('./CoreStruct.js');
 var rtl = require('./rtl.js');
 var Vector = require('./Vector.js');
@@ -74,7 +73,7 @@ class IntrospectionInfo extends CoreStruct{
 		if (variable_name == "class_name") this.class_name = rtl.correct(value, "string", "", "");
 		else if (variable_name == "kind") this.kind = rtl.correct(value, "string", "", "");
 		else if (variable_name == "name") this.name = rtl.correct(value, "string", "", "");
-		else if (variable_name == "annotations") this.annotations = rtl.correct(value, "Runtime.Vector", null, "Runtime.CoreObject");
+		else if (variable_name == "annotations") this.annotations = rtl.correct(value, "Runtime.Vector", null, "Runtime.CoreStruct");
 		else super.assignValue(variable_name, value);
 	}
 	takeValue(variable_name, default_value){

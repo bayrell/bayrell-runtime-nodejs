@@ -31,11 +31,11 @@ class ContextInterface{
 	registerProviderFactory(provider_name, factory){
 	}
 	/**
-	 * Register manager
-	 * @param string manager_name
+	 * Register driver
+	 * @param string driver_name
 	 * @param CoreObject obj
 	 */
-	registerManager(manager_name, obj){
+	registerDriver(driver_name, obj){
 	}
 	/**
 	 * Returns provider
@@ -45,11 +45,11 @@ class ContextInterface{
 	createProvider(provider_name){
 	}
 	/**
-	 * Returns manager
-	 * @params string manager_name
+	 * Returns driver
+	 * @params string driver_name
 	 * @return CoreObject
 	 */
-	getManager(manager_name){
+	getDriver(driver_name){
 	}
 	/**
 	 * Set application locale

@@ -26,7 +26,7 @@ function ObjectAssign(res, obj){
 }
 
 module.exports = {
-	VERSION: '0.6.0',
+	VERSION: '0.6.2',
 };
 
 /* Exceptions */
@@ -61,12 +61,13 @@ ObjectAssign(module.exports, require("./rtl.js"));
 ObjectAssign(module.exports, require("./RuntimeAssets.js"));
 ObjectAssign(module.exports, require("./RuntimeConstant.js"));
 ObjectAssign(module.exports, require("./RuntimeUtils.js"));
+ObjectAssign(module.exports, require("./UIStruct.js"));
 ObjectAssign(module.exports, require("./Vector.js"));
 
 }
 else{
 module.exports = {
-	VERSION: '0.6.0',
+	VERSION: '0.6.2',
 	'Exceptions': {
 		'IndexOutOfRange': require("./Exceptions/IndexOutOfRange.js"),
 		'KeyNotFound': require("./Exceptions/KeyNotFound.js"),
@@ -96,6 +97,7 @@ module.exports = {
 	'RuntimeAssets': require("./RuntimeAssets.js"),
 	'RuntimeConstant': require("./RuntimeConstant.js"),
 	'RuntimeUtils': require("./RuntimeUtils.js"),
+	'UIStruct': require("./UIStruct.js"),
 	'Vector': require("./Vector.js"),
 };
 }

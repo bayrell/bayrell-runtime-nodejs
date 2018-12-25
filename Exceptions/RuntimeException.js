@@ -36,9 +36,6 @@ class RuntimeException extends ClassException{
 		this.message = message;
 		this.code = code;
 		this.prev = prev;
-		this.file = "";
-		this.line = -1;
-		this.pos = -1;
 	}
 	getPreviousException(){
 		return this.prev;

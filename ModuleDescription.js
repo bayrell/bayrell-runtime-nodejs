@@ -35,7 +35,7 @@ class ModuleDescription{
 	 * @return string
 	 */
 	static getModuleVersion(){
-		return "0.6.1";
+		return "0.6.2";
 	}
 	/**
 	 * Returns required modules
@@ -49,7 +49,7 @@ class ModuleDescription{
 	 * @param ContextInterface context
 	 */
 	static onRegister(context){
-		context.registerManager("Runtime.Config", new Map());
+		context.registerDriver("driver.runtime.config", new Map());
 	}
 	/**
 	 * Called then context read config

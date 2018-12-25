@@ -262,6 +262,7 @@ Runtime.Vector = class extends Array{
 	appendVector(arr){
 		function f(item){ this.push(item); };
 		arr.forEach(f.bind(this));
+		return this;
 	}
 	
 	
@@ -273,6 +274,7 @@ Runtime.Vector = class extends Array{
 	prependVector(arr){
 		function f(item){ this.prepend(item); };
 		arr.forEach(f.bind(this));
+		return this;
 	}
 	
 	
@@ -296,6 +298,7 @@ Runtime.Vector = class extends Array{
 		var index = this.indexOf(value);
 		if (index != -1)
 			this.remove(index, 1);
+		return this;
 	}
 	
 	
@@ -307,6 +310,21 @@ Runtime.Vector = class extends Array{
 		var index = this.indexOf(value);
 		if (index != -1)
 			this.remove(index, 1);
+		return this;
+	}
+	
+	
+	
+	/**
+	 * Remove values
+	 */
+	removeItems(values)
+	{
+		for (var i=0; i<values.count(); i++)
+		{
+			this.removeItem( values.item(i) );
+		}
+		return this;
 	}
 	
 	
@@ -351,6 +369,7 @@ Runtime.Vector = class extends Array{
 	 */
 	each(f){
 		super.forEach(f);
+		return this;
 	}
 	
 	
@@ -402,6 +421,7 @@ Runtime.Vector = class extends Array{
 	 */
 	reverse(){
 		super.reverse();
+		return this;
 	}
 	
 	
@@ -413,6 +433,7 @@ Runtime.Vector = class extends Array{
 	sort(f){
 		if (f == undefined) super.sort();
 		super.sort(f);
+		return this;
 	}
 	
 	
@@ -445,6 +466,7 @@ Runtime.Vector = class extends Array{
 			this.insert(index1, item2);
 			this.remove(index1 + 1, 1);			
 		}
+		return this;
 	}
 	
 	
@@ -459,6 +481,7 @@ Runtime.Vector = class extends Array{
 				this.push(arr[i]);
 			}
 		}
+		return this;
 	}
 }
 if (false){

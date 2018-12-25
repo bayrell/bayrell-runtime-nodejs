@@ -22,8 +22,9 @@ class FactoryInterface{
 	/**
 	 * Returns new Instance
 	 */
-	newInstance(context){
+	newInstance(context, params){
 		if (context == undefined) context=null;
+		if (params == undefined) params=null;
 	}
 	/* ======================= Class Init Functions ======================= */
 }

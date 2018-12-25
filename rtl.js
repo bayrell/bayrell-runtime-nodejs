@@ -582,29 +582,6 @@ class rtl{
 		res += "-nodejs";
 		return res;
 	}
-	/**
-	 * Returns global context
-	 * @return ContextInterface
-	 */
-	static globalContext(){
-		return rtl.callStaticMethod("Runtime.RuntimeUtils", "globalContext", null);
-	}
-	/**
-	 * Translate message
-	 * @params string message - message need to be translated
-	 * @params MapInterface params - Messages params. Default null.
-	 * @params string locale - Different locale. Default "".
-	 * @return string - translated string
-	 */
-	static translate(message, params, locale, context){
-		if (params == undefined) params=null;
-		if (locale == undefined) locale="";
-		if (context == undefined) context=null;
-		
-		var obj = this.find_class("Runtime.RuntimeUtils");
-		var translate = obj["translate"];
-		return translate(message, params, locale, context);
-	}
 	/* ======================= Class Init Functions ======================= */
 	getClassName(){return "Runtime.rtl";}
 	static getParentClassName(){return "";}

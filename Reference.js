@@ -2,7 +2,7 @@
 /*!
  *  Bayrell Runtime Library
  *
- *  (c) Copyright 2016-2018 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2018 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,17 +17,35 @@
  *  limitations under the License.
  */
 var CoreObject = require('./CoreObject.js');
-var Vector = require('./Vector.js');
-class AsyncTask extends CoreObject{
+var rtl = require('./rtl.js');
+class Reference extends CoreObject{
+	/**
+	 * Constructor
+	 */
+	constructor(ref){
+		if (ref == undefined) ref=null;
+		super();
+		this.ref = ref;
+	}
+	/**
+	 * Assign and clone data from other object
+	 * @param CoreObject obj
+	 */
+	assignObject(obj){
+		if (obj instanceof Reference){
+			this.uq = obj.uq;
+			this.ref = this.ref;
+		}
+		super.assignObject(obj);
+	}
 	/* ======================= Class Init Functions ======================= */
-	getClassName(){return "Runtime.AsyncTask";}
-	static getCurrentClassName(){return "Runtime.AsyncTask";}
+	getClassName(){return "Runtime.Reference";}
+	static getCurrentClassName(){return "Runtime.Reference";}
 	static getParentClassName(){return "Runtime.CoreObject";}
 	_init(){
 		super._init();
-		this.pos = null;
-		this.f = null;
-		this.catch_stack = null;
+		this.uq = rtl.unique();
+		this.ref = null;
 	}
 }
-module.exports = AsyncTask;
+module.exports = Reference;

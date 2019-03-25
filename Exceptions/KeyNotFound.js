@@ -18,7 +18,6 @@
  */
 var rtl = require('../rtl.js');
 var RuntimeConstant = require('../RuntimeConstant.js');
-var RuntimeUtils = require('../RuntimeUtils.js');
 var RuntimeException = require('./RuntimeException.js');
 var ContextInterface = require('../Interfaces/ContextInterface.js');
 class KeyNotFound extends RuntimeException{
@@ -30,6 +29,7 @@ class KeyNotFound extends RuntimeException{
 	}
 	/* ======================= Class Init Functions ======================= */
 	getClassName(){return "Runtime.Exceptions.KeyNotFound";}
-	static getParentClassName(){return "RuntimeException";}
+	static getCurrentClassName(){return "Runtime.Exceptions.KeyNotFound";}
+	static getParentClassName(){return "Runtime.Exceptions.RuntimeException";}
 }
 module.exports = KeyNotFound;

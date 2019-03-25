@@ -17,33 +17,24 @@
  *  limitations under the License.
  */
 var rtl = require('./rtl.js');
+var Collection = require('./Collection.js');
 var IndexOutOfRange = require('./Exceptions/IndexOutOfRange.js');
 
 var isBrowser=function(){return typeof window !== "undefined" && this === window;}
 
 if (typeof Runtime == "undefined") Runtime = {};
-
-Runtime.Vector = class extends Array{
-	
-	
-	/**
-	 * Correct items
-	 */
-	_correctItemsByType(type){
-		return this.map((item) =>{
-			if (isBrowser()) return Runtime.rtl.correct(item, type, null);
-			return rtl.correct(item, type, null);
-		});
-	}
-	
-	
+var _Collection = require('./Collection.js');
+Runtime.Vector = class extends _Collection
+{
 	
 	/**
 	 * Returns new Instance
+	 * @return Object
 	 */
-	createNewInstance(){
-		if (isBrowser()) return new Runtime.Vector();
-		return new Vector();
+	static createNewInstance(arr){
+		var res = new Runtime.Vector();
+		if (arr != undefined && arr != null) res = res.concat(arr);
+		return res;
 	}
 	
 	
@@ -52,12 +43,15 @@ Runtime.Vector = class extends Array{
 	 * Assign all data from other object
 	 * @param Vector obj
 	 */
-	assignObject(obj){
+	assignObject(obj)
+	{
 		this.clear();
-		obj.each((item)=>{
-			if (isBrowser()) this.push( Runtime.rtl._clone(item) );
-			else this.push( rtl._clone(item) );
-		});
+		obj.each(
+			(item)=>{
+				if (isBrowser()) this.push( Runtime.rtl._clone(item) );
+				else this.push( rtl._clone(item) );
+			}
+		);
 	}
 	
 	
@@ -66,8 +60,8 @@ Runtime.Vector = class extends Array{
 	 * Append value to the end of array
 	 * @param T value
 	 */
-	push(value){
-		/*Array.prototype.push.call(this, value);*/
+	push(value)
+	{
 		super.push(value);
 		return this;
 	}
@@ -78,7 +72,8 @@ Runtime.Vector = class extends Array{
 	 * Insert first value size_to array
 	 * @return T value
 	 */
-	unshift(value){
+	unshift(value)
+	{
 		super.unshift(value);
 		return this;
 	}
@@ -89,7 +84,8 @@ Runtime.Vector = class extends Array{
 	 * Extract last value from array
 	 * @return T value
 	 */
-	pop(){
+	pop()
+	{
 		return super.pop();
 	}
 	
@@ -99,39 +95,9 @@ Runtime.Vector = class extends Array{
 	 * Extract first value from array
 	 * @return T value
 	 */
-	shift(){
+	shift()
+	{
 		return super.shift();
-	}
-	
-	
-	
-	/**
-	 * Find value in array
-	 * @param T value
-	 * @return  int
-	 */
-	indexOf(value){
-		for (var i=0; i<this.count(); i++){
-			if (this[i] == value)
-				return i;
-		}
-		return -1;
-	}
-	
-	
-	
-	/**
-	 * Find value in array in range pos_begin <= pos <= pos_end, and returns position. 
-	 * @param T value
-	 * @param int pos_begin - begin position
-	 * @param int pos_end - end position
-	 * @return int - position
-	 */
-	indexOfRange(value, pos_begin, pos_end){
-		var pos = super.indexOf(value, pos_begin);
-		if (pos == -1 || pos > pos_end)
-			return -1;
-		return pos;
 	}
 	
 	
@@ -141,7 +107,8 @@ Runtime.Vector = class extends Array{
 	 * @param T value
 	 * @param int pos - position
 	 */
-	insert(pos, value){
+	insert(pos, value)
+	{
 		super.splice(pos, 0, value);
 		return this;
 	}
@@ -152,7 +119,8 @@ Runtime.Vector = class extends Array{
 	 * Remove value from position
 	 * @param int pos - position
 	 */
-	remove(pos, count){
+	remove(pos, count)
+	{
 		if (count == undefined) count = 1;
 		super.splice(pos, count);
 		return this;
@@ -165,35 +133,10 @@ Runtime.Vector = class extends Array{
 	 * @param int pos_begin - start position
 	 * @param int pos_end - end position
 	 */
-	removeRange(pos_begin, pos_end){
+	removeRange(pos_begin, pos_end)
+	{
 		super.splice(pos_begin, pos_end - pos_begin + 1);
 		return this;
-	}
-	
-	
-	
-	/**
-	 * Returns value from position
-	 * @param int pos - position
-	 */
-	get(pos, default_value){
-		if (pos < 0 || pos >= this.length)
-			return default_value;
-		return this[pos];
-	}
-	
-	
-	
-	/**
-	 * Returns value from position. Throw exception, if position does not exists
-	 * @param int pos - position
-	 */
-	item(pos){
-		if (pos < 0 || pos >= this.length){
-			if (isBrowser()) throw new Runtime.Exceptions.IndexOutOfRange();
-			throw new IndexOutOfRange();
-		}
-		return this[pos];
 	}
 	
 	
@@ -203,8 +146,10 @@ Runtime.Vector = class extends Array{
 	 * @param int pos - position
 	 * @param T value 
 	 */
-	set(pos, value){
-		if (pos < 0 || pos >= this.length){
+	set(pos, value)
+	{
+		if (pos < 0 || pos >= this.length)
+		{
 			if (isBrowser()) throw new Runtime.Exceptions.IndexOutOfRange();
 			throw new IndexOutOfRange();
 		}
@@ -225,19 +170,11 @@ Runtime.Vector = class extends Array{
 	
 	
 	/**
-	 * Returns count items in vector
-	 */
-	count(){
-		return this.length;
-	}
-	
-	
-	
-	/**
 	 * Append value to the end of the vector
 	 * @param T value
 	 */
-	append(value){
+	append(value)
+	{
 		this.push(value);
 		return this;
 	}
@@ -248,7 +185,8 @@ Runtime.Vector = class extends Array{
 	 * Insert first value to the begin of the vector
 	 * @return T value
 	 */
-	prepend(value){
+	prepend(value)
+	{
 		this.unshift(value);
 		return this;
 	}
@@ -259,9 +197,10 @@ Runtime.Vector = class extends Array{
 	 * Append vector to the end of the vector
 	 * @param Vector<T> arr
 	 */
-	appendVector(arr){
-		function f(item){ this.push(item); };
-		arr.forEach(f.bind(this));
+	appendVector(arr)
+	{
+		if (!arr) return this;
+		for (var i=0; i<arr.length; i++) super.push(arr[i]);
 		return this;
 	}
 	
@@ -271,30 +210,19 @@ Runtime.Vector = class extends Array{
 	 * Prepend vector to the begin of the vector
 	 * @param Vector<T> arr
 	 */
-	prependVector(arr){
-		function f(item){ this.prepend(item); };
-		arr.forEach(f.bind(this));
+	prependVector(arr)
+	{
+		for (var i=0; i<arr.length; i++) super.unshift(arr[i]);
 		return this;
 	}
 	
 	
 	
 	/**
-	 * Get last item
-	 */
-	getLastItem(default_value){
-		if (this.length == 0)
-			return default_value;
-		return this[this.length - 1];
-	}
-	last(default_value){ return this.getLastItem(default_value); }
-	
-	
-	
-	/**
 	 * Remove value
 	 */
-	removeValue(value){
+	removeValue(value)
+	{
 		var index = this.indexOf(value);
 		if (index != -1)
 			this.remove(index, 1);
@@ -306,11 +234,9 @@ Runtime.Vector = class extends Array{
 	/**
 	 * Remove value
 	 */
-	removeItem(value){
-		var index = this.indexOf(value);
-		if (index != -1)
-			this.remove(index, 1);
-		return this;
+	removeItem(value)
+	{
+		return this.removeValue(value);
 	}
 	
 	
@@ -327,162 +253,6 @@ Runtime.Vector = class extends Array{
 		return this;
 	}
 	
-	
-	
-	/**
-	 * Map
-	 * @param func f
-	 * @return Vector
-	 */
-	map(f){
-		return super.map(f);
-	}
-	
-	
-	
-	/**
-	 * Filter items
-	 * @param func f
-	 * @return Vector
-	 */
-	filter(f){
-		return super.filter(f);
-	}
-	
-	
-	
-	/**
-	 * Reduce
-	 * @param func f
-	 * @param mixed init_value
-	 * @return init_value
-	 */
-	reduce(f, init_value){
-		return super.reduce(f, init_value);
-	}
-	
-	
-	
-	/**
-	 * Call function for each item
-	 * @param func f
-	 */
-	each(f){
-		super.forEach(f);
-		return this;
-	}
-	
-	
-	
-	/**
-	 * Returns Vector
-	 * @param Vector<T> arr
-	 * @return Vector<T>
-	 */
-	concat(arr){
-		if (arr == null && arr == undefined){
-			return super.slice();
-		}
-		return super.concat(arr);
-	}
-	
-	
-	
-	/**
-	 * Returns Vector
-	 * @param int offset begin
-	 * @param int length end
-	 * @return Vector<T>
-	 */
-	slice(offset, length){
-		if (length == undefined){
-			return super.slice(offset);
-		}
-		if (length >= 0){
-			length = this.count() - offset + length - 1;
-		}
-		return super.slice(offset, length);
-	}
-	
-	
-	
-	/**
-	 * Copy Vector
-	 * @return Vector<T>
-	 */
-	copy(){
-		return super.slice();
-	}
-	
-	
-	
-	/**
-	 * Reverse array
-	 */
-	reverse(){
-		super.reverse();
-		return this;
-	}
-	
-	
-	
-	/**
-	 * Returns sorted vector
-	 * @param callback f - Sort user function
-	 */
-	sort(f){
-		if (f == undefined) super.sort();
-		super.sort(f);
-		return this;
-	}
-	
-	
-	
-	/**
-	 * Swap item1 to item2
-	 * @params int index1 - item1 position
-	 * @params int index2 - item2 position. If index2 = -1, insert as last item
-	 */
-	swap(index1, index2){
-		if (index2 < 0){
-			index2 += this.length;
-		}
-		var item1 = this.item(index1);
-		if (index2 == -1){
-			this.remove(index1, 1);
-			this.push(item1);
-		}
-		else if (index1 > index2){
-			var item2 = this.item(index2);
-			this.insert(index1, item2);
-			this.remove(index1 + 1, 1);	
-			this.insert(index2, item1);
-			this.remove(index2 + 1, 1);
-		}
-		else if (index1 < index2){
-			var item2 = this.item(index2);
-			this.insert(index2, item1);
-			this.remove(index2 + 1, 1);
-			this.insert(index1, item2);
-			this.remove(index1 + 1, 1);			
-		}
-		return this;
-	}
-	
-	
-	/**
-	 * Remove dublicate values
-	 */
-	removeDublicates(){
-		var arr = this.copy();
-		this.clear();		
-		for (var i=0; i<arr.length; i++){
-			if (this.indexOf(arr[i]) == -1){
-				this.push(arr[i]);
-			}
-		}
-		return this;
-	}
 }
 if (false){
 

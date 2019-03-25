@@ -17,8 +17,9 @@
  *  limitations under the License.
  */
 var CoreObject = require('./CoreObject.js');
-var Map = require('./Map.js');
+var Dict = require('./Dict.js');
 var rtl = require('./rtl.js');
+var Vector = require('./Vector.js');
 var SerializeInterface = require('./Interfaces/SerializeInterface.js');
 class CoreStruct extends CoreObject{
 	/** 
@@ -27,32 +28,48 @@ class CoreStruct extends CoreObject{
 	constructor(obj){
 		if (obj == undefined) obj=null;
 		super();
-		this.assignMap(obj);
-		this.onCreated();
+		if (obj != null){
+			this.assignMap(obj);
+			this.initData();
+		}
+		
+		if (this.__uq__ == undefined || this.__uq__ == null) this.__uq__ = Symbol();
 	}
 	/**
-	 * Struct created 
+	 * Init struct data
 	 */
-	onCreated(){
+	initData(){
 	}
 	/**
-	 * Clone this object with new values
+	 * Copy this struct with new values
 	 * @param Map obj = null
 	 * @return CoreStruct
 	 */
-	clone(obj){
+	copy(obj){
 		if (obj == undefined) obj=null;
-		var instance = rtl.newInstance(this.getClassName());
-		instance.assignObject(this);
-		if (obj != null){
-			instance.setMap(obj);
+		if (obj == null){
+			return this;
 		}
-		instance.onCreated();
-		return instance;
+		var res = rtl.newInstance(this.getClassName(), (new Vector()));
+		res.assignObject(this);
+		res.setMap(obj);
+		res.initData();
+		/* Return object */
+		return res;
+	}
+	/**
+	 * Create new struct with new value
+	 * @param string field_name
+	 * @param fun f
+	 * @return CoreStruct
+	 */
+	map(field_name, f){
+		return this.copy((new Map()).set(field_name, f(this.takeValue(field_name))));
 	}
 	/* ======================= Class Init Functions ======================= */
 	getClassName(){return "Runtime.CoreStruct";}
-	static getParentClassName(){return "CoreObject";}
+	static getCurrentClassName(){return "Runtime.CoreStruct";}
+	static getParentClassName(){return "Runtime.CoreObject";}
 	_init(){
 		super._init();
 		if (this.__implements__ == undefined){this.__implements__ = [];}

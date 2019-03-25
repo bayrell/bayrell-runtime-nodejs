@@ -147,49 +147,36 @@ class rtl{
 	 * Call method
 	 * @return Object
 	 */
-	
-	static call(f, args){
-		if (args == undefined) return f.apply(null);
-		return f.apply(null, args);
+	static f(f){
+		return f;
 	}
 	/**
-	 * Call method
-	 * @return Object
+	 * Returns callback
+	 * @return fun
 	 */
 	
-	static callMethod(obj, method_name, args){
-		var f = obj[method_name];
-		return f.apply(obj, args);
-	}
-	/**
-	 * Call method
-	 * @return Object
-	 */
-	
-	static callStaticMethod(class_name, method_name, args){
-		var obj = this.find_class(class_name);
-		var f = obj[method_name];
-		if (f == null || f == undefined){
-			throw new Error(class_name + "." + method_name + " not found");
+	static method(obj, method_name){
+		if (!(obj instanceof Object))
+		{
+			obj = this.find_class(obj);
 		}
-		return f.apply(obj, args);
+		return obj[method_name].bind(obj);
 	}
 	/**
-	 * Call async method
-	 * @return Object
+	 * Returns callback
+	 * @return fun
 	 */
-	/**
-	 * Returns value if value instanceof type_value, else returns def_value
-	 * @param var value
-	 * @param string type_value
-	 * @param var def_value
-	 * @param var type_template
-	 * @return var
-	 */
-	static correct(value, type_value, def_value, type_template){
-		if (def_value == undefined) def_value=null;
-		if (type_template == undefined) type_template="";
-		return rtl.convert(value, type_value, def_value, type_template);
+	
+	static methodAwait(obj, method_name){
+		if (!(obj instanceof Object))
+		{
+			obj = this.find_class(obj);
+		}
+		return function ()
+		{
+			var thread = new Runtime.AsyncThread();
+			thread.run( obj[method_name].apply(obj, arguments) );
+		}
 	}
 	/**
 	 * Returns value if value instanceof type_value, else returns def_value
@@ -202,22 +189,14 @@ class rtl{
 	static convert(value, type_value, def_value, type_template){
 		if (def_value == undefined) def_value=null;
 		if (type_template == undefined) type_template="";
-		if (type_value == "mixed" || type_value == "var"){
+		if (type_value == "mixed" || type_value == "primitive" || type_value == "var" || type_value == "fun"){
 			return value;
 		}
-		if (value != null && rtl.checkValue(value, type_value)){
-			if ((type_value == "Runtime.Vector" || type_value == "Runtime.Map") && type_template != ""){
-				
-				return value._correctItemsByType(type_template);
-			}
-			return value;
+		if (type_value == ""){
+			return def_value;
 		}
-		else {
-			var is_string = rtl.isString(value);
-			var is_number = rtl.isNumber(value);
-			var is_bool = rtl.isBoolean(value);
-			if (is_string || is_bool || is_number){
-				var s_value = rtl.toString(value);
+		if (value != null){
+			if (type_value == "int" || type_value == "float" || type_value == "double" || type_value == "bool" || type_value == "string"){
 				try{
 					if (type_value == "int"){
 						var val = rtl.toInt(value);
@@ -231,6 +210,10 @@ class rtl{
 						var val = rtl.toBool(value);
 						return val;
 					}
+					else if (type_value == "string"){
+						var val = rtl.toString(value);
+						return val;
+					}
 				}catch(_the_exception){
 					if (_the_exception instanceof Error){
 						var e = _the_exception;
@@ -238,19 +221,16 @@ class rtl{
 					else { throw _the_exception; }
 				}
 			}
-		}
-		if (!rtl.checkValue(def_value, type_value)){
-			if (type_value == "int" || type_value == "float" || type_value == "double"){
-				def_value = 0;
+			else if ((type_value == "Runtime.Vector" || type_value == "Runtime.Map" || type_value == "Runtime.Collection" || type_value == "Runtime.Dict") && type_template != ""){
+				
+				if (this.is_instanceof(value, "Runtime.Collection") || this.is_instanceof(value, "Runtime.Dict"))
+				{
+					return value._correctItemsByType(type_template);
+				}
+				return null;
 			}
-			else if (type_value == "string"){
-				def_value = "";
-			}
-			else if (type_value == "bool" || type_value == "boolean"){
-				def_value = false;
-			}
-			else {
-				def_value = null;
+			else if (rtl.is_instanceof(value, type_value)){
+				return value;
 			}
 		}
 		return def_value;
@@ -429,9 +409,9 @@ class rtl{
 		if (isBrowser()) _StringInterface = Runtime.Interfaces.StringInterface; 
 		else _StringInterface = StringInterface;
 		if (typeof value == 'string') return value;
-		if (value instanceof String) return value;
+		if (value instanceof String) return ""+value;
 		if (this.implements(value, _StringInterface)) return value.toString();
-		return new String(value);
+		return ""+value;
 	}
 	/**
 	 * Convert value to int
@@ -455,7 +435,7 @@ class rtl{
 	
 	static toBool(val){
 		var res = false;
-		if (val == 'true') res = true;
+		if (val == true || val == 'true') return true;
 		var s_res = new String(res);
 		var s_val = new String(val);
 		if (s_res.localeCompare(s_val) == 0)
@@ -475,18 +455,6 @@ class rtl{
 		if (s_res.localeCompare(s_val) == 0)
 			return res;
 		throw new Error("Error convert to float");
-	}
-	/**
-	 * Returns unique value
-	 * @param bool flag If true returns as text. Default true
-	 * @return string
-	 */
-	
-	static unique(flag){
-		if (flag == undefined) flag = true;
-		if (flag)
-			return "" + (new Date).getTime() + Math.floor((Math.random() * 899999 + 100000));
-		return Symbol();
 	}
 	/**
 	 * Round up
@@ -514,39 +482,6 @@ class rtl{
 	
 	static round(value){
 		return Math.round(value);
-	}
-	/**
-	 * Round down
-	 * @param double value
-	 * @return int
-	 */
-	
-	static dump(value){
-		console.log(value);
-	}
-	/**
-	 * Returns random value x, where a <= x <= b
-	 * @param int a
-	 * @param int b
-	 * @return int
-	 */
-	
-	static random(a, b){
-		if (window != undefined && window.crypto != undefined && window.crypto.getRandomValues != undefined)
-		{
-			var s = new Uint32Array(1);
-			window.crypto.getRandomValues(s);
-			return Math.floor(s[0] / 4294967296 * (b - a + 1) + a);
-		}
-		return Math.floor(Math.random() * (b - a + 1) + a);
-	}
-	/**
-	 * Returns current unix time in seconds
-	 * @return int
-	 */
-	
-	static time(){
-		return Math.round((new Date()).getTime() / 1000);
 	}
 	/**
 	 * Convert module name to node js package
@@ -582,8 +517,214 @@ class rtl{
 		res += "-nodejs";
 		return res;
 	}
+	/* ================ Memorize functions ================ */
+	/**
+	 * Clear memorize cache
+	 */
+	static _memorizeClear(){
+		this._memorize_cache = null;
+	}
+	/**
+	 * Returns cached value
+	 */
+	
+	static _memorizeValue(name, args, f)
+	{
+		if (this._memorize_cache == null) return this._memorize_not_found;
+		if (this._memorize_cache[name] == undefined) return this._memorize_not_found;
+		var arr = this._memorize_cache[name];
+		var sz = args.length;
+		for (var i=0; i<sz; i++)
+		{
+			var key = args[i];
+			var hkey = null;
+			if (typeof key == 'object')
+			{
+				if (key.__uq__ != undefined) hkey = key.__uq__;
+				else return this._memorize_not_found;
+			}
+			else hkey = key;
+			if (i == sz - 1)
+			{
+				if (arr[hkey] == undefined) return this._memorize_not_found;
+				return arr[hkey];
+			}
+			else
+			{
+				if (arr[hkey] == undefined) arr[hkey] = {};
+				arr = arr[hkey];
+			}
+		}
+	}
+	/**
+	 * Returns cached value
+	 */
+	
+	static _memorizeSave(name, args, value)
+	{
+		if (this._memorize_cache == null) this._memorize_cache = {};
+		if (this._memorize_cache[name] == undefined) this._memorize_cache[name] = {};
+		var arr = this._memorize_cache[name];
+		var sz = args.length;
+		for (var i=0; i<sz; i++)
+		{
+			var key = args[i];
+			var hkey = null;
+			if (typeof key == 'object')
+			{
+				if (key.__uq__ != undefined) hkey = key.__uq__;
+				else hkey = null;
+			}
+			else hkey = key;
+			if (i == sz - 1)
+			{
+				arr[hkey] = value;
+			}
+			else
+			{
+				if (arr[hkey] == undefined) arr[hkey] = {};
+				arr = arr[hkey];
+			}
+		}
+	}
+	/* ================ Dirty functions ================ */
+	/**
+	 * Returns unique value
+	 * @param bool flag If true returns as text. Default true
+	 * @return string
+	 */
+	
+	static unique(flag){
+		if (flag == undefined) flag = true;
+		if (flag)
+			return "" + (new Date).getTime() + Math.floor((Math.random() * 899999 + 100000));
+		return Symbol();
+	}
+	/**
+	 * Round down
+	 * @param double value
+	 * @return int
+	 */
+	
+	static dump(value){
+		console.log(value);
+	}
+	/**
+	 * Returns random value x, where a <= x <= b
+	 * @param int a
+	 * @param int b
+	 * @return int
+	 */
+	
+	static random(a, b){
+		if (window != undefined && window.crypto != undefined && window.crypto.getRandomValues != undefined)
+		{
+			var s = new Uint32Array(1);
+			window.crypto.getRandomValues(s);
+			return Math.floor(s[0] / 4294967296 * (b - a + 1) + a);
+		}
+		return Math.floor(Math.random() * (b - a + 1) + a);
+	}
+	/**
+	 * Returns current unix time in seconds
+	 * @return int
+	 */
+	
+	static time(){
+		return Math.round((new Date()).getTime() / 1000);
+	}
+	/**
+	 * Translate message
+	 * @params string message - message need to be translated
+	 * @params MapInterface params - Messages params. Default null.
+	 * @params string locale - Different locale. Default "".
+	 * @return string - translated string
+	 */
+	static translate(message, params, locale, context){
+		if (params == undefined) params=null;
+		if (locale == undefined) locale="";
+		if (context == undefined) context=null;
+		
+		return this.callStaticMethod("Runtime.RuntimeUtils", "translate", [message, params, locale, context]);
+	}
+	/**
+	 * Json encode data
+	 * @param mixed data
+	 * @return string
+	 */
+	static json_encode(data){
+		
+		return this.callStaticMethod("Runtime.RuntimeUtils", "json_encode", [data]);
+	}
+	/**
+	 * Normalize UIStruct
+	 * @param mixed data
+	 * @return UIStruct
+	 */
+	static normalizeUI(data){
+		
+		return this.callStaticMethod("Runtime.RuntimeUtils", "normalizeUI", [data]);
+	}
+	/**
+	 * Normalize UIStruct
+	 * @param mixed data
+	 * @return UIStruct
+	 */
+	static normalizeUIVector(data){
+		
+		return this.callStaticMethod("Runtime.RuntimeUtils", "normalizeUIVector", [data]);
+	}
+	/* =================== Deprecated =================== */
+	/**
+	 * Call method
+	 * @return Object
+	 */
+	
+	static call(f, args){
+		if (args == undefined) return f.apply(null);
+		return f.apply(null, args);
+	}
+	/**
+	 * Call method
+	 * @return Object
+	 */
+	
+	static callMethod(obj, method_name, args){
+		var f = obj[method_name];
+		return f.apply(obj, args);
+	}
+	/**
+	 * Call method
+	 * @return Object
+	 */
+	
+	static callStaticMethod(class_name, method_name, args){
+		var obj = this.find_class(class_name);
+		var f = obj[method_name];
+		if (f == null || f == undefined){
+			throw new Error(class_name + "." + method_name + " not found");
+		}
+		return f.apply(obj, args);
+	}
+	/**
+	 * Returns value if value instanceof type_value, else returns def_value
+	 * @param var value
+	 * @param string type_value
+	 * @param var def_value
+	 * @param var type_template
+	 * @return var
+	 */
+	static correct(value, type_value, def_value, type_template){
+		if (def_value == undefined) def_value=null;
+		if (type_template == undefined) type_template="";
+		return this.convert(value, type_value, def_value, type_template);
+	}
 	/* ======================= Class Init Functions ======================= */
 	getClassName(){return "Runtime.rtl";}
+	static getCurrentClassName(){return "Runtime.rtl";}
 	static getParentClassName(){return "";}
 }
+rtl._memorize_cache = null;
 module.exports = rtl;
+
+rtl._memorize_not_found = {'s':'memorize_key_not_found'};

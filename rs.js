@@ -191,6 +191,8 @@ class rs{
 	 */
 	
 	static htmlEscape(s){
+		if (s instanceof Runtime.Collection) return s;
+		if (s instanceof Runtime.UIStruct) return s;
 		var obj = {
 			"<":"&lt;",
 			">": "&gt;", 
@@ -204,6 +206,7 @@ class rs{
 	}
 	/* ======================= Class Init Functions ======================= */
 	getClassName(){return "Runtime.rs";}
+	static getCurrentClassName(){return "Runtime.rs";}
 	static getParentClassName(){return "";}
 }
 module.exports = rs;

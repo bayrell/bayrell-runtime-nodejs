@@ -43,6 +43,7 @@ class RuntimeConstant{
 	/* Errors */
 	/* ======================= Class Init Functions ======================= */
 	getClassName(){return "Runtime.RuntimeConstant";}
+	static getCurrentClassName(){return "Runtime.RuntimeConstant";}
 	static getParentClassName(){return "";}
 }
 RuntimeConstant.LOG_FATAL = 0;
@@ -73,5 +74,6 @@ RuntimeConstant.ERROR_CSRF_TOKEN = -10;
 RuntimeConstant.ERROR_RUNTIME = -11;
 RuntimeConstant.ERROR_VALIDATION = -12;
 RuntimeConstant.ERROR_PARSE_SERIALIZATION_ERROR = -14;
-RuntimeConstant.ERROR_FATAL = -15;
+RuntimeConstant.ERROR_ASSIGN_DATA_STRUCT_VALUE = -15;
+RuntimeConstant.ERROR_FATAL = -99;
 module.exports = RuntimeConstant;

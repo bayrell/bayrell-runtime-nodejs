@@ -18,17 +18,17 @@
  */
 var rtl = require('../rtl.js');
 var RuntimeConstant = require('../RuntimeConstant.js');
-var RuntimeUtils = require('../RuntimeUtils.js');
 var RuntimeException = require('./RuntimeException.js');
 var ContextInterface = require('../Interfaces/ContextInterface.js');
 class UnknownError extends RuntimeException{
 	constructor(context, prev){
 		if (context == undefined) context=null;
 		if (prev == undefined) prev=null;
-		super(RuntimeUtils.translate("ERROR_UNKNOWN", null, "", context), RuntimeConstant.ERROR_UNKNOWN, context, prev);
+		super(rtl.translate("Unknown error", null, "", context), RuntimeConstant.ERROR_UNKNOWN, context, prev);
 	}
 	/* ======================= Class Init Functions ======================= */
 	getClassName(){return "Runtime.Exceptions.UnknownError";}
-	static getParentClassName(){return "RuntimeException";}
+	static getCurrentClassName(){return "Runtime.Exceptions.UnknownError";}
+	static getParentClassName(){return "Runtime.Exceptions.RuntimeException";}
 }
 module.exports = UnknownError;

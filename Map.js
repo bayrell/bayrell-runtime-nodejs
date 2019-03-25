@@ -23,43 +23,18 @@ var KeyNotFound = require('./Exceptions/KeyNotFound.js');
 var isBrowser=function(){return typeof window !== "undefined" && this === window;}
 
 if (typeof Runtime == "undefined") Runtime = {};
+var _Dict = require('./Dict.js');
+Runtime.Map = class extends _Dict
+{
 
-Runtime.Map = class extends Map{
-	
-	
-	/**
-	 * Correct items
-	 */
-	_correctItemsByType(type){
-		return this.map((key, value) =>{
-			if (isBrowser()) return Runtime.rtl.correct(value, type, null);
-			return rtl.correct(value, type, null);
-		});
-	}
-	
-	
-	
-	/**
-	 * Convert to string
-	 * @param var value
-	 * @return value
-	 */
-	toString(value){
-		if (isBrowser()) return Runtime.rtl.toString(value);
-		return rtl.toString(value);
-	}
-	
-	
-	
 	/**
 	 * Returns new Instance
-	 * @param ContextInterface context
-	 * @param Map<string, mixed> values
-	 * @return CoreObject
+	 * @return Object
 	 */
-	createNewInstance(){
-		if (isBrowser()) return new Runtime.Map();
-		return new Runtime.Map();
+	static createNewInstance(obj)
+	{
+		if (obj == undefined) obj = null;
+		return new Runtime.Map(obj);
 	}
 	
 	
@@ -67,69 +42,17 @@ Runtime.Map = class extends Map{
 	/**
 	 * Assign objects
 	 */
-	assignObject(obj){
-		if (obj instanceof Runtime.Map){
-			obj.each((key, value) => {
-				if (isBrowser()) this.set(key, Runtime.rtl._clone(value));
-				else this.set(key, rtl._clone(value));
-			});
-		}
-	}
-	
-	
-	
-	/**
-	 * Map constructor
-	 */
-	constructor(map){
-		super();
-		var _Map = null; if (isBrowser()) _Map = Runtime.Map; else _Map = Map;
-		if (map != undefined && typeof map == 'object'){		
-			if (map instanceof Map){
-				var keys = map.keys();
-				keys.each((key)=>{
-					super.set(key, map.item(key));
-				});		
-			}
-			else{
-				for (var i in map){
-					super.set(i, map[i]);
+	assignObject(obj)
+	{
+		if (obj instanceof Runtime.Map)
+		{
+			obj.each(
+				(key, value) => {
+					if (isBrowser()) this.set(key, Runtime.rtl._clone(value));
+					else this.set(key, rtl._clone(value));
 				}
-			}
+			);
 		}
-	}
-	
-	
-	/**
-	 * Returns value from position
-	 * @param T key
-	 * @param T default_value
-	 * @return T
-	 */
-	get(key, default_value, type_value = "mixed", type_template = ""){
-		key = this.toString(key);
-		var val = super.get(key);
-		if (val == undefined) return default_value;
-		if (isBrowser()) return Runtime.rtl.correct(val, type_value, default_value, type_template);
-		return rtl.correct(val, type_value, default_value, type_template);
-	}
-	
-	
-	
-	/**
-	 * Returns value from position. Throw exception, if position does not exists
-	 * @param T key - position
-	 * @return T
-	 */
-	item(key){
-		key = this.toString(key);
-		if (!super.has(key)){
-			if (isBrowser()) throw new Runtime.Exceptions.KeyNotFound(null, key);
-			throw new KeyNotFound(null, key);
-		}
-		var val = super.get(key);
-		if (val === null || val == undefined) return null;
-		return val;
 	}
 	
 	
@@ -139,7 +62,8 @@ Runtime.Map = class extends Map{
 	 * @param T pos - position
 	 * @param T value 
 	 */
-	set(key, value){
+	set(key, value)
+	{
 		key = this.toString(key);
 		super.set(key, value);
 		return this;
@@ -151,7 +75,8 @@ Runtime.Map = class extends Map{
 	 * Remove value from position
 	 * @param T key
 	 */
-	remove(key){
+	remove(key)
+	{
 		key = this.toString(key);
 		if (super.has(key)){
 			super.delete(key);
@@ -162,165 +87,14 @@ Runtime.Map = class extends Map{
 	
 	
 	/**
-	 * Return true if key exists
-	 * @param T key
-	 * @return bool var
-	 */
-	contains(key){
-		key = this.toString(key);
-		return super.has(key);
-	}
-	
-	
-	
-	/**
-	 * Return true if key exists
-	 * @param T key
-	 * @return bool var
-	 */
-	has(key){
-		key = this.toString(key);
-		return super.has(key);
-	}
-	
-	
-	
-	/**
 	 * Clear all values from vector
 	 */
-	clear(){
+	clear()
+	{
 		super.clear();
 		return this;
 	}
-
 	
-	
-	/**
-	 * Returns count items in vector
-	 */
-	count(){
-		return this.size;
-	}
-	
-	
-	
-	/**
-	 * Returns vector of the keys
-	 * @return Vector<T>
-	 */
-	keys(){
-		var it = super.keys();
-		var res = new Runtime.Vector();
-		var next = it.next();
-		while (!next.done){
-			res.push( next.value );
-			next = it.next();
-		}
-		return res;
-	}
-	
-	
-	
-	/**
-	 * Returns vector of the values
-	 * @return Vector<T>
-	 */
-	values(){
-		var it = super.values();
-		var res = new Runtime.Vector();
-		var next = it.next();
-		while (!next.done){
-			res.push( next.value );
-			next = it.next();
-		}
-		return res;
-	}
-	
-	
-	
-	/**
-	 * Call function for each item
-	 * @param func f
-	 */
-	each(f){
-		var keys = this.keys();
-		keys.each((key)=>{
-			var value = this.item(key);
-			f(key, value);
-		});
-		return this;
-	}
-	
-	
-	
-	/**
-	 * Call function map
-	 * @param func f
-	 * @return Map
-	 */
-	map(f){
-		var _Map = null; if (isBrowser()) _Map = Runtime.Map; else _Map = Map;
-		var res = new _Map();
-		this.each((key, value)=>{
-			res.set(key, f(key, value));
-		});
-		return res;
-	}
-	
-	
-	
-	/**
-	 * Reduce
-	 * @param func f
-	 * @param mixed init_value
-	 * @return init_value
-	 */
-	reduce(f, init_value){
-		var res = init_value;
-		this.each((key, value) => {
-			res = f(res, key, value);
-		});
-		return res;
-	}
-	
-	
-	
-	/**
-	 * Add values from other map
-	 * @param Map<T, T> map
-	 * @return self
-	 */
-	addMap(map){
-		if (map != null)
-			map.each((key)=>{
-				this.set(key, map.item(key));
-			});
-		return this;
-	}
-	
-	
-	
-	/**
-	 * Convert Map to Object
-	 */
-	toObject(){
-		var obj = {};
-		this.each((key)=>{obj[key]=this.get(key, null);});
-		return obj;
-	}
-	
-	
-	
-	/**
-	 * Returns copy of the current Map
-	 */
-	copy(){
-		var instance = this.createNewInstance();
-		this.each((key, value) => {
-			instance.set(key, value);
-		});
-		return instance;
-	}
 }
 if (false){
 

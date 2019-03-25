@@ -20,15 +20,15 @@ var rtl = require('../rtl.js');
 var RuntimeConstant = require('../RuntimeConstant.js');
 var RuntimeException = require('./RuntimeException.js');
 var ContextInterface = require('../Interfaces/ContextInterface.js');
-class IndexOutOfRange extends RuntimeException{
-	constructor(context, prev){
+class AssignStructValueError extends RuntimeException{
+	constructor(name, context, prev){
 		if (context == undefined) context=null;
 		if (prev == undefined) prev=null;
-		super(rtl.translate("Index out of range", null, "", context), RuntimeConstant.ERROR_INDEX_OUT_OF_RANGE, context, prev);
+		super(rtl.translate("Can not set key '"+rtl.toString(name)+"' in immutable struct", null, "", context), RuntimeConstant.ERROR_INDEX_OUT_OF_RANGE, context, prev);
 	}
 	/* ======================= Class Init Functions ======================= */
-	getClassName(){return "Runtime.Exceptions.IndexOutOfRange";}
-	static getCurrentClassName(){return "Runtime.Exceptions.IndexOutOfRange";}
+	getClassName(){return "Runtime.Exceptions.AssignStructValueError";}
+	static getCurrentClassName(){return "Runtime.Exceptions.AssignStructValueError";}
 	static getParentClassName(){return "Runtime.Exceptions.RuntimeException";}
 }
-module.exports = IndexOutOfRange;
+module.exports = AssignStructValueError;

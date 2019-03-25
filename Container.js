@@ -16,41 +16,52 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-var Vector = require('./Vector.js');
-class re{
-	/**
-	 * Search regular expression
-	 * @param string r regular expression
-	 * @param string s string
-	 * @return bool
+class Container{
+	/** 
+	 * Constructor
 	 */
-	static match(r, s){
-		
-		return s.match( new RegExp(r, "g") ) != null;
+	constructor(x){
+		this._value = x;
+	}
+	/** 
+	 * Returns new instance of this
+	 */
+	static of(x){
+		return new Container(x);
 	}
 	/**
-	 * Search regular expression
-	 * @param string r regular expression
-	 * @param string s string
-	 * @return Vector result
+	 * Apply function and return new container
+	 * @param fun f
+	 * @return Container
 	 */
-	static matchAll(r, s){
-		return null;
+	map(f){
+		return this.of(f(this._value));
 	}
 	/**
-	 * Replace with regular expression
-	 * @param string r - regular expression
-	 * @param string replace - new value
-	 * @param string s - replaceable string
-	 * @return string
+	 * Return values of the container
+	 * @return mixed
 	 */
-	static replace(r, replace, s){
-		
-		return s.replace(new RegExp(r, "g"), replace);
+	value(){
+		return this._value;
+	}
+	/**
+	 * Returns true if value is empty
+	 */
+	isEmpty(){
+		return this._value == null;
+	}
+	/**
+	 * Returns true if is error
+	 */
+	isError(){
+		return false;
 	}
 	/* ======================= Class Init Functions ======================= */
-	getClassName(){return "Runtime.re";}
-	static getCurrentClassName(){return "Runtime.re";}
+	getClassName(){return "Runtime.Container";}
+	static getCurrentClassName(){return "Runtime.Container";}
 	static getParentClassName(){return "";}
+	_init(){
+		this._value = null;
+	}
 }
-module.exports = re;
+module.exports = Container;

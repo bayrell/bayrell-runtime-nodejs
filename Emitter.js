@@ -30,7 +30,7 @@ class Emitter extends CoreObject{
 		if (val == undefined) val=null;
 		super();
 		this.methods = new Map();
-		this.subscribers = new Map();
+		this.emitters = new Vector();
 		if (val != null){
 			this.addMethod(val);
 		}
@@ -42,7 +42,7 @@ class Emitter extends CoreObject{
 	assignObject(obj){
 		if (obj instanceof Emitter){
 			this.methods = obj.methods;
-			this.subscribers = obj.subscribers;
+			this.emitters = obj.emitters;
 		}
 		super.assignObject(obj);
 	}
@@ -96,52 +96,19 @@ class Emitter extends CoreObject{
 		});
 	}
 	/**
-	 * Add object by name
-	 * @param callback f
-	 * @param string name
-	 */
-	addObjectByName(f, name){
-		if (!this.subscribers.has(name)){
-			this.subscribers.set(name, new Vector());
-		}
-		var v = this.subscribers.item(name);
-		if (v.indexOf(f) == -1){
-			v.push(f);
-		}
-	}
-	/**
 	 * Add object
-	 * @param SubscribeInterface f
-	 * @param Vector<string> events
+	 * @param Emitter emitter
 	 */
-	addObject(f, events){
-		if (events == undefined) events=null;
-		if (events == null){
-			this.addObjectByName(f, "");
-		}
-		else {
-			events.each((item) => {
-				this.addObjectByName(f, item);
-			});
-		}
-		return f;
+	addEmitter(emitter){
+		this.emitters.push(emitter);
+		return emitter;
 	}
 	/**
 	 * Remove object
-	 * @param SubscribeInterface f
+	 * @param Emitter emitter
 	 */
-	removeObject(f, events){
-		if (events == undefined) events=null;
-		if (events == null){
-			events = this.subscribers.keys();
-		}
-		events.each((name) => {
-			var v = this.subscribers.get(name, null);
-			if (v == null){
-				return ;
-			}
-			v.removeItem(f);
-		});
+	removeEmitter(emitter){
+		this.emitters.removeItem(emitter);
 	}
 	/**
 	 * Dispatch event
@@ -153,9 +120,6 @@ class Emitter extends CoreObject{
 		var methods = this.methods.map((key, items) => {
 			return items.slice();
 		});
-		var subscribers = this.subscribers.map((key, items) => {
-			return items.slice();
-		});
 		/* Call self handler */
 		this.handlerEvent(e);
 		/* Call methods */
@@ -163,7 +127,7 @@ class Emitter extends CoreObject{
 		for (var i = 0; i < keys.count(); i++){
 			var key = keys.item(i);
 			var items = methods.item(key);
-			if (key != "" && e.getClassName() != key){
+			if (key != "" && e.getClassName() != key && !rtl.is_instanceof(e, key)){
 				continue;
 			}
 			for (var j = 0; j < items.count(); j++){
@@ -171,18 +135,11 @@ class Emitter extends CoreObject{
 				rtl.call(f, (new Vector()).push(e));
 			}
 		}
-		/* Call subscribers */
-		keys = subscribers.keys();
-		for (var i = 0; i < keys.count(); i++){
-			var key = keys.item(i);
-			var items = subscribers.item(key);
-			if (key != "" && e.getClassName() != key){
-				continue;
-			}
-			for (var j = 0; j < items.count(); j++){
-				var obj = items.item(j);
-				obj.handlerEvent(e);
-			}
+		/* Call emitters */
+		var emitters = this.emitters.copy();
+		for (var i = 0; i < emitters.count(); i++){
+			var emitter = this.emitters.item(i);
+			emitter.dispatch(e);
 		}
 	}
 	/**
@@ -192,11 +149,12 @@ class Emitter extends CoreObject{
 	}
 	/* ======================= Class Init Functions ======================= */
 	getClassName(){return "Runtime.Emitter";}
-	static getParentClassName(){return "CoreObject";}
+	static getCurrentClassName(){return "Runtime.Emitter";}
+	static getParentClassName(){return "Runtime.CoreObject";}
 	_init(){
 		super._init();
 		this.methods = null;
-		this.subscribers = null;
+		this.emitters = null;
 	}
 }
 module.exports = Emitter;

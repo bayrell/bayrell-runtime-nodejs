@@ -17,26 +17,41 @@
  *  limitations under the License.
  */
 var CoreObject = require('./CoreObject.js');
-var CloneableInterface = require('./Interfaces/CloneableInterface.js');
-var SerializeInterface = require('./Interfaces/SerializeInterface.js');
-class CoreEvent extends CoreObject{
-	constructor(sender){
-		if (sender == undefined) sender=null;
-		super();
-		this.sender = sender;
-	}
+var CoreStruct = require('./CoreStruct.js');
+var rtl = require('./rtl.js');
+class CoreEvent extends CoreStruct{
 	/* ======================= Class Init Functions ======================= */
 	getClassName(){return "Runtime.CoreEvent";}
-	static getParentClassName(){return "CoreObject";}
+	static getCurrentClassName(){return "Runtime.CoreEvent";}
+	static getParentClassName(){return "Runtime.CoreStruct";}
 	_init(){
 		super._init();
-		this.sender = null;
-		if (this.__implements__ == undefined){this.__implements__ = [];}
-		this.__implements__.push(CloneableInterface);
-		this.__implements__.push(SerializeInterface);
+		this.__sender = null;
+		Object.defineProperty(this, "sender", { get: function() { return this.__sender; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("sender") }});
+	}
+	assignObject(obj){
+		if (obj instanceof CoreEvent){
+			this.__sender = obj.__sender;
+		}
+		super.assignObject(obj);
+	}
+	assignValue(variable_name, value, sender){if(sender==undefined)sender=null;
+		if (variable_name == "sender")this.__sender = rtl.convert(value,"Runtime.CoreObject",null,"");
+		else super.assignValue(variable_name, value, sender);
+	}
+	takeValue(variable_name, default_value){
+		if (default_value == undefined) default_value = null;
+		if (variable_name == "sender") return this.__sender;
+		return super.takeValue(variable_name, default_value);
+	}
+	static getFieldsList(names, flag){
+		if (flag==undefined)flag=0;
+		if ((flag | 3)==3){
+			names.push("sender");
+		}
+	}
+	static getFieldInfoByName(field_name){
+		return null;
 	}
 }
-CoreEvent.__static_implements__ = [];
-CoreEvent.__static_implements__.push(CloneableInterface)
-CoreEvent.__static_implements__.push(SerializeInterface)
 module.exports = CoreEvent;

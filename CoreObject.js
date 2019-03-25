@@ -19,7 +19,6 @@
 var rtl = require('./rtl.js');
 var Map = require('./Map.js');
 var Vector = require('./Vector.js');
-var RuntimeUtils = require('./RuntimeUtils.js');
 class CoreObject{
 	/** 
 	 * Constructor
@@ -60,13 +59,6 @@ class CoreObject{
 	 * @param CoreObject obj
 	 */
 	assignObject(obj){
-		this.assignObjectAfter(obj);
-	}
-	/**
-	 * Assign and clone data from other object
-	 * @param CoreObject obj
-	 */
-	assignObjectAfter(obj){
 	}
 	/**
 	 * Set new value instance by variable name
@@ -74,21 +66,6 @@ class CoreObject{
 	 * @param var value
 	 */
 	assignValue(variable_name, value){
-		this.assignValueAfter(variable_name, value);
-	}
-	/**
-	 * Calls after assign new value
-	 * @param string variable_name
-	 * @param var value
-	 */
-	assignValueAfter(variable_name, value){
-	}
-	/**
-	 * Calls after assign new value
-	 * @param string variable_name
-	 */
-	callAssignAfter(variable_name){
-		this.assignValueAfter(variable_name, this.takeValue(variable_name));
 	}
 	/**
 	 * Set new values instance by Map
@@ -101,7 +78,7 @@ class CoreObject{
 			return ;
 		}
 		var names = new Vector();
-		this.getVariablesNames(names);
+		this.getVariablesNames(names, 2);
 		names.each((name) => {
 			this.assignValue(name, values.get(name, null));
 		});
@@ -126,10 +103,11 @@ class CoreObject{
 	 * Dump serializable object to Map
 	 * @return Map<mixed>
 	 */
-	takeMap(){
+	takeMap(flag){
+		if (flag == undefined) flag=2;
 		var values = new Map();
 		var names = new Vector();
-		this.getVariablesNames(names);
+		this.getVariablesNames(names, flag);
 		names.each((name) => {
 			values.set(name, this.takeValue(name, null));
 		});
@@ -164,13 +142,15 @@ class CoreObject{
 	 * Returns public fields list
 	 * @param Vector<string> names
 	 */
-	static getFieldsList(names){
+	static getFieldsList(names, flag){
+		if (flag == undefined) flag=0;
 	}
 	/**
 	 * Returns public virtual fields names
 	 * @param Vector<string> names
 	 */
-	static getVirtualFieldsList(names){
+	static getVirtualFieldsList(names, flag){
+		if (flag == undefined) flag=0;
 	}
 	/**
 	 * Returns info of the public method by name
@@ -190,8 +170,9 @@ class CoreObject{
 	 * Returns names of variables to serialization
 	 * @param Vector<string>
 	 */
-	getVariablesNames(names){
-		RuntimeUtils.getVariablesNames(this.getClassName(), names);
+	getVariablesNames(names, flag){
+		if (flag == undefined) flag=0;
+		rtl.callStaticMethod("Runtime.RuntimeUtils", "getVariablesNames", (new Vector()).push(this.getClassName()).push(names).push(flag));
 	}
 	/**
 	 * Returns info of the public variable by name
@@ -199,7 +180,7 @@ class CoreObject{
 	 * @return IntrospectionInfo
 	 */
 	getFieldInfo(variable_name){
-		var classes = RuntimeUtils.getParents(this.getClassName());
+		var classes = rtl.callStaticMethod("Runtime.RuntimeUtils", "getParents", (new Vector()).push(this.getClassName()));
 		for (var i = 0; i < classes.count(); i++){
 			var class_name = classes.item(i);
 			var info = rtl.callStaticMethod(class_name, "getFieldInfoByName", (new Vector()).push(variable_name));
@@ -225,7 +206,7 @@ class CoreObject{
 	 * @param Vector<string>
 	 */
 	getMethodsNames(names){
-		var classes = RuntimeUtils.getParents(this.getClassName());
+		var classes = rtl.callStaticMethod("Runtime.RuntimeUtils", "getParents", (new Vector()).push(this.getClassName()));
 		for (var i = 0; i < classes.count(); i++){
 			var class_name = classes.item(i);
 			rtl.callStaticMethod(class_name, "getMethodsList", (new Vector()).push(names));
@@ -237,7 +218,7 @@ class CoreObject{
 	 * @return IntrospectionInfo
 	 */
 	getMethodInfo(method_name){
-		var classes = RuntimeUtils.getParents(this.getClassName());
+		var classes = rtl.callStaticMethod("Runtime.RuntimeUtils", "getParents", (new Vector()).push(this.getClassName()));
 		for (var i = 0; i < classes.count(); i++){
 			var class_name = classes.item(i);
 			var info = rtl.callStaticMethod(class_name, "getMethodInfoByName", (new Vector()).push(method_name));
@@ -249,6 +230,7 @@ class CoreObject{
 	}
 	/* ======================= Class Init Functions ======================= */
 	getClassName(){return "Runtime.CoreObject";}
+	static getCurrentClassName(){return "Runtime.CoreObject";}
 	static getParentClassName(){return "";}
 }
 module.exports = CoreObject;

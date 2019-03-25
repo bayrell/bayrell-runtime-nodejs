@@ -16,25 +16,25 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-var Map = require('../Map.js');
-var Vector = require('../Vector.js');
-class AssetsInterface{
-	/**
-	 * Returns required assets
-	 * @return Vector<string>
+var Container = require('./Container.js');
+class Maybe extends Container{
+	/** 
+	 * Returns new instance of this
 	 */
-	static getRequiredAssets(context){
+	static of(x){
+		return new Maybe(x);
 	}
 	/**
-	 * Returns sync loaded files
+	 * Apply function and return new container
+	 * @param fun f
+	 * @return Container
 	 */
-	static assetsSyncLoad(context){
-	}
-	/**
-	 * Returns async loaded files
-	 */
-	static assetsAsyncLoad(context){
+	map(f){
+		return (this._value == null) ? (this) : (this.of(f(this._value)));
 	}
 	/* ======================= Class Init Functions ======================= */
+	getClassName(){return "Runtime.Maybe";}
+	static getCurrentClassName(){return "Runtime.Maybe";}
+	static getParentClassName(){return "Runtime.Container";}
 }
-module.exports = AssetsInterface;
+module.exports = Maybe;

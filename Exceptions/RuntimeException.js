@@ -17,7 +17,6 @@
  *  limitations under the License.
  */
 var rtl = require('../rtl.js');
-var RuntimeUtils = require('../RuntimeUtils.js');
 var ContextInterface = require('../Interfaces/ContextInterface.js');
 
 class ClassException extends Error { _init(){} }
@@ -28,9 +27,6 @@ class RuntimeException extends ClassException{
 		if (context == undefined) context=null;
 		if (prev == undefined) prev=null;
 		super(message, code, prev);
-		if (context == null){
-			context = RuntimeUtils.globalContext();
-		}
 		this.error_str = message;
 		this.context = context;
 		this.message = message;
@@ -76,9 +72,37 @@ class RuntimeException extends ClassException{
 			this.message += " in file:'"+rtl.toString(this.file)+"'";
 		}
 	}
+	/**
+	 * Apply function and return new container
+	 * @param fun f
+	 * @return RuntimeException
+	 */
+	map(f){
+		return this;
+	}
+	/**
+	 * Return values of the container
+	 * @return mixed
+	 */
+	value(){
+		return null;
+	}
+	/**
+	 * Returns true if value is empty
+	 */
+	isEmpty(){
+		return true;
+	}
+	/**
+	 * Returns true if is error
+	 */
+	isError(){
+		return true;
+	}
 	/* ======================= Class Init Functions ======================= */
 	getClassName(){return "Runtime.Exceptions.RuntimeException";}
-	static getParentClassName(){return "ClassException";}
+	static getCurrentClassName(){return "Runtime.Exceptions.RuntimeException";}
+	static getParentClassName(){return "Runtime.Exceptions.ClassException";}
 	_init(){
 		super._init();
 		this.context = null;

@@ -14,5 +14,5 @@
   ],
   "main": "index.js",
   "name": "bayrell-runtime-nodejs",
-  "version": "0.7.1"
+  "version": "0.7.2"
 }

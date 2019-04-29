@@ -2,13 +2,13 @@
 /*!
  *  Bayrell Runtime Library
  *
- *  (c) Copyright 2016-2018 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2016-2019 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *      https://www.bayrell.org/licenses/APACHE-LICENSE-2.0.html
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -195,10 +195,10 @@ class rtl{
 		if (type_value == ""){
 			return def_value;
 		}
-		if (value != null){
-			if (type_value == "int" || type_value == "float" || type_value == "double" || type_value == "bool" || type_value == "string"){
+		if (value !== null){
+			if (type_value == "int" || type_value == "float" || type_value == "byte" || type_value == "double" || type_value == "bool" || type_value == "string"){
 				try{
-					if (type_value == "int"){
+					if (type_value == "int" || type_value == "byte"){
 						var val = rtl.toInt(value);
 						return val;
 					}
@@ -435,6 +435,7 @@ class rtl{
 	
 	static toBool(val){
 		var res = false;
+		if (val == false || val == 'false') return false;
 		if (val == true || val == 'true') return true;
 		var s_res = new String(res);
 		var s_val = new String(val);
@@ -723,6 +724,17 @@ class rtl{
 	getClassName(){return "Runtime.rtl";}
 	static getCurrentClassName(){return "Runtime.rtl";}
 	static getParentClassName(){return "";}
+	static getFieldsList(names, flag){
+		if (flag==undefined)flag=0;
+	}
+	static getFieldInfoByName(field_name){
+		return null;
+	}
+	static getMethodsList(names){
+	}
+	static getMethodInfoByName(method_name){
+		return null;
+	}
 }
 rtl._memorize_cache = null;
 module.exports = rtl;

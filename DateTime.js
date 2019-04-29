@@ -2,13 +2,13 @@
 /*!
  *  Bayrell Runtime Library
  *
- *  (c) Copyright 2016-2018 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2016-2019 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *      https://www.bayrell.org/licenses/APACHE-LICENSE-2.0.html
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -255,22 +255,23 @@ class DateTime extends CoreStruct{
 	static getParentClassName(){return "Runtime.CoreStruct";}
 	_init(){
 		super._init();
+		var names = Object.getOwnPropertyNames(this);
 		this.__y = 0;
-		Object.defineProperty(this, "y", { get: function() { return this.__y; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("y") }});
+		if (names.indexOf("y") == -1)Object.defineProperty(this, "y", { get: function() { return this.__y; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("y") }});
 		this.__m = 0;
-		Object.defineProperty(this, "m", { get: function() { return this.__m; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("m") }});
+		if (names.indexOf("m") == -1)Object.defineProperty(this, "m", { get: function() { return this.__m; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("m") }});
 		this.__d = 0;
-		Object.defineProperty(this, "d", { get: function() { return this.__d; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("d") }});
+		if (names.indexOf("d") == -1)Object.defineProperty(this, "d", { get: function() { return this.__d; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("d") }});
 		this.__h = 0;
-		Object.defineProperty(this, "h", { get: function() { return this.__h; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("h") }});
+		if (names.indexOf("h") == -1)Object.defineProperty(this, "h", { get: function() { return this.__h; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("h") }});
 		this.__u = 0;
-		Object.defineProperty(this, "u", { get: function() { return this.__u; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("u") }});
+		if (names.indexOf("u") == -1)Object.defineProperty(this, "u", { get: function() { return this.__u; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("u") }});
 		this.__s = 0;
-		Object.defineProperty(this, "s", { get: function() { return this.__s; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("s") }});
+		if (names.indexOf("s") == -1)Object.defineProperty(this, "s", { get: function() { return this.__s; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("s") }});
 		this.__ms = 0;
-		Object.defineProperty(this, "ms", { get: function() { return this.__ms; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("ms") }});
+		if (names.indexOf("ms") == -1)Object.defineProperty(this, "ms", { get: function() { return this.__ms; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("ms") }});
 		this.__tz = "UTC";
-		Object.defineProperty(this, "tz", { get: function() { return this.__tz; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("tz") }});
+		if (names.indexOf("tz") == -1)Object.defineProperty(this, "tz", { get: function() { return this.__tz; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("tz") }});
 	}
 	assignObject(obj){
 		if (obj instanceof DateTime){
@@ -322,6 +323,11 @@ class DateTime extends CoreStruct{
 		}
 	}
 	static getFieldInfoByName(field_name){
+		return null;
+	}
+	static getMethodsList(names){
+	}
+	static getMethodInfoByName(method_name){
 		return null;
 	}
 }

@@ -26,7 +26,7 @@ function ObjectAssign(res, obj){
 }
 
 module.exports = {
-	VERSION: '0.7.1',
+	VERSION: '0.7.2',
 };
 
 /* Exceptions */
@@ -74,7 +74,7 @@ ObjectAssign(module.exports, require("./Vector.js"));
 }
 else{
 module.exports = {
-	VERSION: '0.7.1',
+	VERSION: '0.7.2',
 	'Exceptions': {
 		'AssignStructValueError': require("./Exceptions/AssignStructValueError.js"),
 		'IndexOutOfRange': require("./Exceptions/IndexOutOfRange.js"),

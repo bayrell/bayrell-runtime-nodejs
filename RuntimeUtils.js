@@ -2,13 +2,13 @@
 /*!
  *  Bayrell Runtime Library
  *
- *  (c) Copyright 2016-2018 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2016-2019 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *      https://www.bayrell.org/licenses/APACHE-LICENSE-2.0.html
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -81,7 +81,8 @@ class RuntimeUtils{
 	static getParents(class_name){
 		var res = new Vector();
 		while (class_name != ""){
-			class_name = rtl.callStaticMethod(class_name, "getParentClassName");
+			var f = rtl.method(class_name, "getParentClassName");
+			class_name = f();
 			if (class_name != ""){
 				res.push(class_name);
 			}
@@ -118,7 +119,7 @@ class RuntimeUtils{
 		classes.prepend(class_name);
 		classes.each((class_name) => {
 			try{
-				rtl.callStaticMethod(class_name, "getFieldsList", (new Vector()).push(names).push(flag));
+				rtl.method(class_name, "getFieldsList")(names, flag);
 			}catch(_the_exception){
 				if (_the_exception instanceof Error){
 					var e = _the_exception;
@@ -126,7 +127,7 @@ class RuntimeUtils{
 				else { throw _the_exception; }
 			}
 			try{
-				rtl.callStaticMethod(class_name, "getVirtualFieldsList", (new Vector()).push(names).push(flag));
+				rtl.method(class_name, "getVirtualFieldsList")(names, flag);
 			}catch(_the_exception){
 				if (_the_exception instanceof Error){
 					var e = _the_exception;
@@ -157,7 +158,7 @@ class RuntimeUtils{
 			var names = new Vector();
 			/* Get fields introspection */
 			try{
-				rtl.callStaticMethod(item_class_name, "getFieldsList", (new Vector()).push(names));
+				rtl.method(item_class_name, "getFieldsList")(names);
 			}catch(_the_exception){
 				if (_the_exception instanceof Error){
 					var e = _the_exception;
@@ -167,7 +168,7 @@ class RuntimeUtils{
 			names.each((field_name) => {
 				var info = null;
 				try{
-					info = rtl.callStaticMethod(item_class_name, "getFieldInfoByName", (new Vector()).push(field_name));
+					info = rtl.method(item_class_name, "getFieldInfoByName")(field_name);
 				}catch(_the_exception){
 					if (_the_exception instanceof Error){
 						var e = _the_exception;
@@ -183,7 +184,7 @@ class RuntimeUtils{
 			/* Get virtual fields introspection */
 			names.clear();
 			try{
-				rtl.callStaticMethod(item_class_name, "getVirtualFieldsList", (new Vector()).push(names));
+				rtl.method(item_class_name, "getVirtualFieldsList")(names);
 			}catch(_the_exception){
 				if (_the_exception instanceof Error){
 					var e = _the_exception;
@@ -193,7 +194,7 @@ class RuntimeUtils{
 			names.each((field_name) => {
 				var info = null;
 				try{
-					info = rtl.callStaticMethod(item_class_name, "getVirtualFieldInfo", (new Vector()).push(field_name));
+					info = rtl.method(item_class_name, "getVirtualFieldInfo")(field_name);
 				}catch(_the_exception){
 					if (_the_exception instanceof Error){
 						var e = _the_exception;
@@ -209,7 +210,7 @@ class RuntimeUtils{
 			/* Get methods introspection */
 			names.clear();
 			try{
-				rtl.callStaticMethod(item_class_name, "getMethodsList", (new Vector()).push(names));
+				rtl.method(item_class_name, "getMethodsList")(names);
 			}catch(_the_exception){
 				if (_the_exception instanceof Error){
 					var e = _the_exception;
@@ -219,7 +220,7 @@ class RuntimeUtils{
 			names.each((method_name) => {
 				var info = null;
 				try{
-					info = rtl.callStaticMethod(item_class_name, "getMethodInfoByName", (new Vector()).push(method_name));
+					info = rtl.method(item_class_name, "getMethodInfoByName")(method_name);
 				}catch(_the_exception){
 					if (_the_exception instanceof Error){
 						var e = _the_exception;
@@ -235,7 +236,7 @@ class RuntimeUtils{
 			/* Get class introspection */
 			var info = null;
 			try{
-				info = rtl.callStaticMethod(item_class_name, "getClassInfo", (new Vector()));
+				info = rtl.method(item_class_name, "getClassInfo")();
 			}catch(_the_exception){
 				if (_the_exception instanceof Error){
 					var e = _the_exception;
@@ -276,27 +277,18 @@ class RuntimeUtils{
 			return obj;
 		}
 		if (obj instanceof Collection){
-			var res = new Vector();
-			for (var i = 0; i < obj.count(); i++){
-				var value = obj.item(i);
-				value = RuntimeUtils.ObjectToPrimitive(value, force_class_name);
-				res.push(value);
-			}
-			return res.toCollection();
+			return obj.map((value) => {
+				return this.ObjectToPrimitive(value, force_class_name);
+			});
 		}
 		if (obj instanceof Dict){
-			var res = new Map();
-			var keys = obj.keys();
-			for (var i = 0; i < keys.count(); i++){
-				var key = keys.item(i);
-				var value = obj.item(key);
-				value = RuntimeUtils.ObjectToPrimitive(value, force_class_name);
-				res.set(key, value);
-			}
+			obj = obj.map((key, value) => {
+				return this.ObjectToPrimitive(value, force_class_name);
+			});
 			if (force_class_name){
-				res.set("__class_name__", "Runtime.Dict");
+				obj = obj.setIm("__class_name__", "Runtime.Dict");
 			}
-			return res.toDict();
+			return obj.toDict();
 		}
 		if (rtl.implements(obj, SerializeInterface)){
 			var names = new Vector();
@@ -440,15 +432,15 @@ class RuntimeUtils{
 		if (flags == undefined) flags = 0;
 		if (convert == undefined) convert = true;
 		var _Utils=null;if (isBrowser()) _Utils=Runtime.RuntimeUtils; else _Utils=RuntimeUtils;
-		var _Vector=null;if (isBrowser()) _Vector=Runtime.Vector; else _Vector=Vector;
-		var _Map=null;if (isBrowser()) _Map=Runtime.Map; else _Map=Map;
+		var _Collection=null;if (isBrowser()) _Collection=Runtime.Collection; else _Collection=Collection;
+		var _Dict=null;if (isBrowser()) _Dict=Runtime.Dict; else _Dict=Dict;
 		var _rtl=null;if (isBrowser()) _rtl=Runtime.rtl; else _rtl=rtl;
 		if (convert) value = _Utils.ObjectToPrimitive(value);
 		return JSON.stringify(value, function (key, value){
 			if (_rtl.isScalarValue(value)) return value;
-			if (value instanceof _Vector) return value;
-			if (value instanceof _Map) return value.toObject();
-			return undefined;
+			if (value instanceof _Collection) return value;
+			if (value instanceof _Dict) return value.toObject();
+			return null;
 		});
 	}
 	/**
@@ -463,13 +455,13 @@ class RuntimeUtils{
 			var _Vector=null;if (isBrowser()) _Vector=Runtime.Vector; else _Vector=Vector;
 			var _Map=null;if (isBrowser()) _Map=Runtime.Map; else _Map=Map;			
 			var obj = JSON.parse(s, function (key, value){
+				if (value == null) return value;
 				if (Array.isArray(value)){
 					return _Vector.createNewInstance(value);
 				}
 				if (typeof value == 'object'){
 					return new _Map(value);
 				}
-				
 				return value;
 			});
 			return _Utils.PrimitiveToObject(obj);
@@ -557,7 +549,7 @@ class RuntimeUtils{
 	 * @string charset - charset of the bytes vector. Default utf8
 	 * @return string
 	 */
-	bytesToString(arr, charset){
+	static bytesToString(arr, charset){
 		if (charset == undefined) charset="utf8";
 	}
 	/**
@@ -566,7 +558,7 @@ class RuntimeUtils{
 	 * @param Vector<byte> arr - output vector
 	 * @param charset - Result bytes charset. Default utf8
 	 */
-	stringToBytes(s, arr, charset){
+	static stringToBytes(s, arr, charset){
 		if (charset == undefined) charset="utf8";
 	}
 	/**
@@ -664,6 +656,17 @@ class RuntimeUtils{
 	getClassName(){return "Runtime.RuntimeUtils";}
 	static getCurrentClassName(){return "Runtime.RuntimeUtils";}
 	static getParentClassName(){return "";}
+	static getFieldsList(names, flag){
+		if (flag==undefined)flag=0;
+	}
+	static getFieldInfoByName(field_name){
+		return null;
+	}
+	static getMethodsList(names){
+	}
+	static getMethodInfoByName(method_name){
+		return null;
+	}
 }
 RuntimeUtils._global_context = null;
 RuntimeUtils._variables_names = null;

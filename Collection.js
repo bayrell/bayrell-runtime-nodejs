@@ -2,13 +2,13 @@
 /*!
  *  Bayrell Runtime Library
  *
- *  (c) Copyright 2016-2018 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2016-2019 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *      https://www.bayrell.org/licenses/APACHE-LICENSE-2.0.html
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -79,10 +79,55 @@ Runtime.Collection = class extends Array
 	 * Returns new Instance
 	 * @return Object
 	 */
-	static createNewInstance(arr){
-		var res = new Runtime.Collection();
-		if (arr != undefined && arr != null) res = res.concat(arr);
+	static Instance()
+	{
+		return new Runtime.Collection();
+	}
+	
+	
+	
+	/**
+	 * Returns new Instance
+	 * @return Object
+	 */
+	static create(arr)
+	{
+		var res = this.Instance();
+		if (arr != undefined && arr != null)
+		{
+			if (arr instanceof Array) res = res.concat(arr);
+			else
+			{
+				if (
+					arr instanceof Int8Array ||
+					arr instanceof Uint8Array ||
+					arr instanceof Int16Array ||
+					arr instanceof Uint16Array ||
+					arr instanceof Int32Array ||
+					arr instanceof Uint32Array ||
+					arr instanceof Float32Array ||
+					arr instanceof Float64Array
+				)
+				{
+					for (var i=0; i<arr.length; i++)
+					{
+						res.push(arr[i]);
+					}
+				}
+			}
+		}
 		return res;
+	}
+	
+	
+	
+	/**
+	 * Returns new Instance
+	 * @return Object
+	 */
+	static createNewInstance(arr)
+	{
+		return this.create(arr);
 	}
 	
 	
@@ -411,7 +456,12 @@ Runtime.Collection = class extends Array
 	 */
 	map(f)
 	{
-		return super.map(f);
+		var arr = this.copy();
+		for (var i=0; i<arr.length; i++)
+		{
+			arr[i] = f(arr[i], i);
+		}
+		return arr;
 	}
 	
 	
@@ -539,7 +589,7 @@ Runtime.Collection = class extends Array
 	 */
 	removeDublicatesIm()
 	{
-		var res = this.constructor.createNewInstance();
+		var res = this.constructor.create();
 		for (var i=0; i<this.length; i++)
 		{
 			if (res.indexOf(this[i]) == -1)
@@ -549,6 +599,32 @@ Runtime.Collection = class extends Array
 		}
 		return res;
 	}
+	
+	
+	
+	/**
+	 * Find item 
+	 * @param func f - Find function
+	 * @param mixed item - Search item
+	 * @return Collection
+	 */
+	find(f, item)
+	{
+		for (var i=0; i<this.length; i++)
+		{
+			if (f(this[i], item))
+			{
+				return i;
+			}
+		}
+		return -1;
+	}
+	
+	
+	getClassName(){return "Runtime.Collection";}
+	static getCurrentClassName(){return "Runtime.Collection";}
+	static getParentClassName(){return "Array";}
+	
 }
 Runtime.Collection.getVector = function(){ return require('./Vector.js'); }
 if (false){

@@ -26,55 +26,13 @@ function ObjectAssign(res, obj){
 }
 
 module.exports = {
-	VERSION: '0.7.2',
+	VERSION: '0.7.3',
 };
-
-/* Exceptions */
-ObjectAssign(module.exports, require("./Exceptions/AssignStructValueError.js"));
-ObjectAssign(module.exports, require("./Exceptions/IndexOutOfRange.js"));
-ObjectAssign(module.exports, require("./Exceptions/KeyNotFound.js"));
-ObjectAssign(module.exports, require("./Exceptions/RuntimeException.js"));
-ObjectAssign(module.exports, require("./Exceptions/UnknownError.js"));
-
-/* Interfaces */
-ObjectAssign(module.exports, require("./Interfaces/CloneableInterface.js"));
-ObjectAssign(module.exports, require("./Interfaces/ContextInterface.js"));
-ObjectAssign(module.exports, require("./Interfaces/FactoryInterface.js"));
-ObjectAssign(module.exports, require("./Interfaces/ModuleDescriptionInterface.js"));
-ObjectAssign(module.exports, require("./Interfaces/SerializeInterface.js"));
-ObjectAssign(module.exports, require("./Interfaces/StringInterface.js"));
-ObjectAssign(module.exports, require("./Interfaces/SubscribeInterface.js"));
-
-/* Root */
-ObjectAssign(module.exports, require("./AsyncTask.js"));
-ObjectAssign(module.exports, require("./AsyncThread.js"));
-ObjectAssign(module.exports, require("./Collection.js"));
-ObjectAssign(module.exports, require("./Container.js"));
-ObjectAssign(module.exports, require("./Context.js"));
-ObjectAssign(module.exports, require("./ContextObject.js"));
-ObjectAssign(module.exports, require("./CoreEvent.js"));
-ObjectAssign(module.exports, require("./CoreObject.js"));
-ObjectAssign(module.exports, require("./CoreStruct.js"));
-ObjectAssign(module.exports, require("./DateTime.js"));
-ObjectAssign(module.exports, require("./Dict.js"));
-ObjectAssign(module.exports, require("./Emitter.js"));
-ObjectAssign(module.exports, require("./IntrospectionInfo.js"));
-ObjectAssign(module.exports, require("./Map.js"));
-ObjectAssign(module.exports, require("./Maybe.js"));
-ObjectAssign(module.exports, require("./ModuleDescription.js"));
-ObjectAssign(module.exports, require("./re.js"));
-ObjectAssign(module.exports, require("./Reference.js"));
-ObjectAssign(module.exports, require("./rs.js"));
-ObjectAssign(module.exports, require("./rtl.js"));
-ObjectAssign(module.exports, require("./RuntimeConstant.js"));
-ObjectAssign(module.exports, require("./RuntimeUtils.js"));
-ObjectAssign(module.exports, require("./UIStruct.js"));
-ObjectAssign(module.exports, require("./Vector.js"));
 
 }
 else{
 module.exports = {
-	VERSION: '0.7.2',
+	VERSION: '0.7.3',
 	'Exceptions': {
 		'AssignStructValueError': require("./Exceptions/AssignStructValueError.js"),
 		'IndexOutOfRange': require("./Exceptions/IndexOutOfRange.js"),

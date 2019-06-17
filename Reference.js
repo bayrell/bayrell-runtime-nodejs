@@ -40,6 +40,7 @@ class Reference extends CoreObject{
 	}
 	/* ======================= Class Init Functions ======================= */
 	getClassName(){return "Runtime.Reference";}
+	static getCurrentNamespace(){return "Runtime";}
 	static getCurrentClassName(){return "Runtime.Reference";}
 	static getParentClassName(){return "Runtime.CoreObject";}
 	_init(){

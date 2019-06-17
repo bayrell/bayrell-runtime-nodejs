@@ -69,7 +69,6 @@ class RuntimeUtils{
 	static registerGlobalContext(modules){
 		if (modules == undefined) modules=null;
 		var context = RuntimeUtils.createContext(modules);
-		context.init();
 		RuntimeUtils.setContext(context);
 		return context;
 	}
@@ -250,6 +249,26 @@ class RuntimeUtils{
 			}
 		});
 		return res.toCollection();
+	}
+	/**
+	 * Returns item
+	 */
+	static getItem(obj, path, default_value, type_value, type_template){
+		if (type_value == undefined) type_value="mixed";
+		if (type_template == undefined) type_template="";
+		if (path.count() == 0){
+			return rtl.convert(obj, type_value, default_value, type_template);
+		}
+		if (obj == null){
+			return default_value;
+		}
+		if (obj instanceof Dict || obj instanceof Collection){
+			var item = path.first();
+			path = path.removeFirstIm();
+			obj = obj.get(item, default_value);
+			return this.getItem(obj, path, default_value, type_value, type_template);
+		}
+		return default_value;
 	}
 	/* ============================= Serialization Functions ============================= */
 	static ObjectToNative(value, force_class_name){
@@ -654,6 +673,7 @@ class RuntimeUtils{
 	}
 	/* ======================= Class Init Functions ======================= */
 	getClassName(){return "Runtime.RuntimeUtils";}
+	static getCurrentNamespace(){return "Runtime";}
 	static getCurrentClassName(){return "Runtime.RuntimeUtils";}
 	static getParentClassName(){return "";}
 	static getFieldsList(names, flag){

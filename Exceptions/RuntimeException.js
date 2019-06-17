@@ -101,6 +101,7 @@ class RuntimeException extends ClassException{
 	}
 	/* ======================= Class Init Functions ======================= */
 	getClassName(){return "Runtime.Exceptions.RuntimeException";}
+	static getCurrentNamespace(){return "Runtime.Exceptions";}
 	static getCurrentClassName(){return "Runtime.Exceptions.RuntimeException";}
 	static getParentClassName(){return "Runtime.Exceptions.ClassException";}
 	_init(){

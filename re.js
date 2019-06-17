@@ -50,6 +50,7 @@ class re{
 	}
 	/* ======================= Class Init Functions ======================= */
 	getClassName(){return "Runtime.re";}
+	static getCurrentNamespace(){return "Runtime";}
 	static getCurrentClassName(){return "Runtime.re";}
 	static getParentClassName(){return "";}
 	static getFieldsList(names, flag){

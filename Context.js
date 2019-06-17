@@ -19,6 +19,9 @@
 var rs = require('./rs.js');
 var rtl = require('./rtl.js');
 var CoreObject = require('./CoreObject.js');
+var LambdaChain = require('./LambdaChain.js');
+var Provider = require('./Provider.js');
+var Dict = require('./Dict.js');
 var Map = require('./Map.js');
 var Vector = require('./Vector.js');
 var ContextInterface = require('./Interfaces/ContextInterface.js');
@@ -30,10 +33,10 @@ class Context extends CoreObject{
 	 */
 	constructor(){
 		super();
+		this._entities = new Vector();
 		this._modules = new Vector();
-		this._providers_names = new Map();
-		this._drivers = new Map();
-		this._values = new Map();
+		this._providers = new Map();
+		this._providers_obj = new Map();
 	}
 	/**
 	 * Destructor
@@ -46,7 +49,53 @@ class Context extends CoreObject{
 	 * @return Vector<string>
 	 */
 	getModules(){
-		return this._modules.slice();
+		return this._modules.toCollection();
+	}
+	/**
+	 * Returns providers names
+	 */
+	getProviders(){
+		return this._providers.keys().toCollection();
+	}
+	/**
+	 * Returns helper
+	 *
+	 * @params string provider_name
+	 * @return CoreStruct
+	 */
+	createProvider(provider_name){
+		if (this._providers.has(provider_name)){
+			var info = this._providers.item(provider_name);
+			var obj = rtl.newInstance(info.value);
+			if (info.init){
+				var f = info.init;
+				obj = f(this, obj);
+			}
+			else {
+				var f = rtl.method(info.value, "init");
+				obj = f(this, obj);
+			}
+			obj = this.chain(info.value, obj);
+			return obj;
+		}
+		return null;
+	}
+	/**
+	 * Returns helper
+	 *
+	 * @params string provider_name
+	 * @return CoreStruct
+	 */
+	getProvider(provider_name){
+		if (this._providers_obj.has(provider_name)){
+			return this._providers_obj.item(provider_name);
+		}
+		if (this._providers.has(provider_name)){
+			var provider = this.createProvider(provider_name);
+			this._providers_obj.set(provider_name, provider);
+			return provider;
+		}
+		return null;
 	}
 	/**
 	 * Register module
@@ -55,12 +104,13 @@ class Context extends CoreObject{
 		if (this._modules.indexOf(module_name) != -1){
 			return ;
 		}
-		var args = (new Vector()).push(this);
 		var module_description_class_name = rtl.toString(module_name)+".ModuleDescription";
-		/* Add module */
+		if (!rtl.class_exists(module_description_class_name)){
+			return this;
+		}
 		this._modules.push(module_name);
 		/* Register required Modules*/
-		var modules = rtl.callStaticMethod(module_description_class_name, "getRequiredModules", args);
+		var modules = rtl.callStaticMethod(module_description_class_name, "requiredModules", (new Vector()));
 		if (modules != null){
 			var keys = modules.keys();
 			var sz = keys.count();
@@ -69,36 +119,48 @@ class Context extends CoreObject{
 				this.registerModule(module_name);
 			}
 		}
-		/* Call onRegister */
-		rtl.callStaticMethod(module_description_class_name, "onRegister", args);
+		var entities = rtl.callStaticMethod(module_description_class_name, "entities", (new Vector()).push(this));
+		if (entities != null){
+			this._entities = this._entities.appendVector(entities);
+		}
+		rtl.callStaticMethod(module_description_class_name, "onRegister", (new Vector()).push(this));
 		return this;
 	}
 	/**
-	 * Register module
-	 * @param string provider_name
-	 * @param FactoryInterface factory
+	 * Apply Lambda Chain
 	 */
-	registerProviderFactory(provider_name, factory){
-		if (!this._providers_names.has(provider_name)){
-			this._providers_names.set(provider_name, factory);
+	chain(filter_name, obj){
+		if (obj == undefined) obj=null;
+		var entities = this._entities.filter((item) => {
+			return item instanceof LambdaChain;
+		});
+		entities = entities.filter((item) => {
+			return item.name == filter_name;
+		});
+		entities = entities.sortIm((a, b) => {
+			return a.pos > b.pos;
+		});
+		for (var i = 0; i < entities.count(); i++){
+			var item = entities.item(i);
+			var f = item.value;
+			obj = f(this, obj);
 		}
-		return this;
-	}
-	/**
-	 * Register driver
-	 * @param string driver_name
-	 * @param FactoryInterface factory
-	 */
-	registerDriver(driver_name, obj){
-		if (!this._drivers.has(driver_name)){
-			this._drivers.set(driver_name, obj);
-		}
-		return this;
+		return obj;
 	}
 	/**
 	 * Read config
 	 */
 	readConfig(config){
+		this.config = config;
+		/* Set base path */
+		var runtime = config.get("Runtime", null);
+		if (runtime != null && runtime instanceof Dict){
+			var base_path = runtime.get("base_path", null, "string");
+			if (base_path != null){
+				this.base_path = base_path;
+			}
+		}
+		return this;
 		var args = new Vector();
 		args.push(this);
 		args.push(config);
@@ -110,67 +172,31 @@ class Context extends CoreObject{
 		}
 		return this;
 	}
+	getConfig(){
+		return this.config;
+	}
 	/**
 	 * Init context
 	 */
 	init(){
+		/* Register providers */
+		var providers = this._entities.filter((item) => {
+			return item instanceof Provider;
+		});
+		for (var i = 0; i < providers.count(); i++){
+			var item = providers.item(i);
+			this._providers.set(item.name, item);
+		}
+		/* Call onInitContext */
 		var args = new Vector();
 		args.push(this);
 		var sz = this._modules.count();
 		for (var i = 0; i < sz; i++){
 			var module_name = this._modules.item(i);
 			var module_description_class_name = rtl.toString(module_name)+".ModuleDescription";
-			rtl.callStaticMethod(module_description_class_name, "initContext", args);
+			rtl.callStaticMethod(module_description_class_name, "onInitContext", args);
 		}
 		return this;
-	}
-	/**
-	 * Returns provider or driver
-	 *
-	 * @params string name
-	 * @return CoreObject
-	 */
-	get(name, params){
-		if (params == undefined) params=null;
-		var is_provider = rs.strpos(name, "provider.") === 0;
-		var is_driver = rs.strpos(name, "driver.") === 0;
-		if (is_provider){
-			return this.createProvider(name, params);
-		}
-		if (is_driver){
-			return this.getDriver(name);
-		}
-		return null;
-	}
-	/**
-	 * Returns provider
-	 *
-	 * @params string provider_name
-	 * @return CoreObject
-	 */
-	createProvider(provider_name, params){
-		if (params == undefined) params=null;
-		if (!this._providers_names.has(provider_name)){
-			return null;
-		}
-		var factory_obj = this._providers_names.item(provider_name);
-		if (factory_obj == null){
-			return null;
-		}
-		var obj = factory_obj.newInstance(this, params);
-		return obj;
-	}
-	/**
-	 * Returns driver
-	 *
-	 * @params string driver_name
-	 * @return CoreObject
-	 */
-	getDriver(driver_name){
-		if (this._drivers.has(driver_name)){
-			return this._drivers.item(driver_name);
-		}
-		return null;
 	}
 	/**
 	 * Set application locale
@@ -217,6 +243,10 @@ class Context extends CoreObject{
 		this._providers_names.each((key, value) => {
 			obj._providers_names.set(key, value);
 		});
+		/* Add values */
+		this._values.each((key, value) => {
+			obj._values.set(key, value);
+		});
 		return obj;
 	}
 	/**
@@ -225,35 +255,54 @@ class Context extends CoreObject{
 	release(){
 	}
 	/**
-	 * Returns context value
-	 * @param string name
-	 * @return mixed
+	 * Returns base path
+	 * @return string
 	 */
-	getValue(name, default_value, type_value, type_template){
-		if (default_value == undefined) default_value=null;
-		if (type_value == undefined) type_value="mixed";
-		if (type_template == undefined) type_template="";
-		return this._values.get(name, default_value, type_value, type_template);
+	getBasePath(){
+		return this.base_path;
 	}
 	/**
-	 * Set context value
-	 * @param string name
-	 * @param mixed value
+	 * Call api
+	 * @param string class_name
+	 * @param string method_name
+	 * @param ApiRequest request
+	 * @return mixed The result of the api
 	 */
-	setValue(name, value){
-		this._values.set(name, value);
+	
+	callApi(class_name, interface_name, method_name, data)
+	{
+		var bus = this.getProvider("core.ui.bus");
+		method_name = (interface_name != "") ? interface_name + "." + method_name : method_name;
+		return (ctx) => {
+			bus.sendApi(
+				class_name,
+				method_name,
+				data,
+				(function (ctx){
+					return function (data){
+						var res = new Core.Http.ApiResult( data );
+						return ctx.resolve(res);
+					}
+				})(ctx)
+			);
+			return null;
+		}
 	}
 	/* ======================= Class Init Functions ======================= */
 	getClassName(){return "Runtime.Context";}
+	static getCurrentNamespace(){return "Runtime";}
 	static getCurrentClassName(){return "Runtime.Context";}
 	static getParentClassName(){return "Runtime.CoreObject";}
 	_init(){
 		super._init();
 		var names = Object.getOwnPropertyNames(this);
+		this.base_path = null;
+		this.config = null;
 		this._modules = null;
-		this._values = null;
+		this._entities = null;
 		this._drivers = null;
-		this._providers_names = null;
+		this._providers = null;
+		this._providers_obj = null;
 		if (this.__implements__ == undefined){this.__implements__ = [];}
 		this.__implements__.push(ContextInterface);
 	}

@@ -204,6 +204,7 @@ class AsyncThread extends CoreObject{
 	}
 	/* ======================= Class Init Functions ======================= */
 	getClassName(){return "Runtime.AsyncThread";}
+	static getCurrentNamespace(){return "Runtime";}
 	static getCurrentClassName(){return "Runtime.AsyncThread";}
 	static getParentClassName(){return "Runtime.CoreObject";}
 	_init(){

@@ -29,6 +29,7 @@ class KeyNotFound extends RuntimeException{
 	}
 	/* ======================= Class Init Functions ======================= */
 	getClassName(){return "Runtime.Exceptions.KeyNotFound";}
+	static getCurrentNamespace(){return "Runtime.Exceptions";}
 	static getCurrentClassName(){return "Runtime.Exceptions.KeyNotFound";}
 	static getParentClassName(){return "Runtime.Exceptions.RuntimeException";}
 	static getFieldsList(names, flag){

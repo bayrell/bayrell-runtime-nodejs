@@ -23,32 +23,11 @@ class ContextInterface{
 	registerModule(module_name){
 	}
 	/**
-	 * Register provider
-	 * @param string provider_name
-	 * @param FactoryInterface factory
-	 */
-	registerProviderFactory(provider_name, factory){
-	}
-	/**
-	 * Register driver
-	 * @param string driver_name
-	 * @param CoreObject obj
-	 */
-	registerDriver(driver_name, obj){
-	}
-	/**
 	 * Returns provider
 	 * @params string provider_name
-	 * @return CoreObject
+	 * @return CoreStruct
 	 */
-	createProvider(provider_name){
-	}
-	/**
-	 * Returns driver
-	 * @params string driver_name
-	 * @return CoreObject
-	 */
-	getDriver(driver_name){
+	getProvider(provider_name){
 	}
 	/**
 	 * Set application locale
@@ -80,22 +59,6 @@ class ContextInterface{
 	 * Realease context resources
 	 */
 	release(){
-	}
-	/**
-	 * Returns context value
-	 * @param string name
-	 * @return mixed
-	 */
-	getValue(name, default_value, type_value, type_template){
-		if (default_value == undefined) default_value=null;
-		if (type_value == undefined) type_value="mixed";
-		if (type_template == undefined) type_template="";
-	}
-	/**
-	 * Set context value
-	 * @param string name
-	 */
-	setValue(name, value){
 	}
 }
 module.exports = ContextInterface;

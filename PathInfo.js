@@ -16,53 +16,27 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-class Container{
-	/** 
-	 * Constructor
-	 */
-	constructor(x){
-		this._value = x;
-	}
-	/** 
-	 * Returns new instance of this
-	 */
-	static of(x){
-		return new Container(x);
-	}
+var StringInterface = require('./Interfaces/StringInterface.js');
+class PathInfo{
 	/**
-	 * Apply function and return new container
-	 * @param fun f
-	 * @return Container
+	 * Returns string
 	 */
-	map(f){
-		return this.of(f(this._value));
-	}
-	/**
-	 * Return values of the container
-	 * @return mixed
-	 */
-	value(){
-		return this._value;
-	}
-	/**
-	 * Returns true if value is empty
-	 */
-	isEmpty(){
-		return this._value == null;
-	}
-	/**
-	 * Returns true if is error
-	 */
-	isError(){
-		return false;
+	toString(){
+		return this.filepath;
 	}
 	/* ======================= Class Init Functions ======================= */
-	getClassName(){return "Runtime.Container";}
+	getClassName(){return "Runtime.PathInfo";}
 	static getCurrentNamespace(){return "Runtime";}
-	static getCurrentClassName(){return "Runtime.Container";}
+	static getCurrentClassName(){return "Runtime.PathInfo";}
 	static getParentClassName(){return "";}
 	_init(){
-		this._value = null;
+		this.filepath = "";
+		this.dirname = "";
+		this.basename = "";
+		this.extension = "";
+		this.filename = "";
+		if (this.__implements__ == undefined){this.__implements__ = [];}
+		this.__implements__.push(StringInterface);
 	}
 	static getFieldsList(names, flag){
 		if (flag==undefined)flag=0;
@@ -76,4 +50,6 @@ class Container{
 		return null;
 	}
 }
-module.exports = Container;
+PathInfo.__static_implements__ = [];
+PathInfo.__static_implements__.push(StringInterface)
+module.exports = PathInfo;

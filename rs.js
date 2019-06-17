@@ -17,6 +17,7 @@
  *  limitations under the License.
  */
 var rtl = require('./rtl.js');
+var PathInfo = require('./PathInfo.js');
 var Vector = require('./Vector.js');
 
 var isBrowser=function(){return typeof window !== "undefined" && this === window;}
@@ -60,7 +61,7 @@ class rs{
 	 * @return string
 	 */
 	static charAt(s, pos){
-		var sz = rs.strlen(s);
+		var sz = this.strlen(s);
 		if (pos >= 0 && pos < sz){
 			return s[pos];
 		}
@@ -115,6 +116,13 @@ class rs{
 		return res;
 	}
 	/**
+	 * Заменяет одну строку на другую
+	 */
+	
+	static replace(search, item, s){
+		return s.replace(search, item);
+	}
+	/**
 	 * Возвращает повторяющуюся строку
 	 * @param {string} s - повторяемая строка
 	 * @param {integer} n - количество раз, которые нужно повторить строку s
@@ -128,6 +136,30 @@ class rs{
 			res += s;
 		}
 		return res;
+	}
+	/**
+	 * Разбивает строку на подстроки
+	 * @param string ch - разделитель
+	 * @param string s - строка, которую нужно разбить
+	 * @param integer limit - ограничение 
+	 * @return Vector<string>
+	 */
+	
+	static split(delimiters, s, limit)
+	{
+		var _rtl; if (isBrowser()) _rtl = Runtime.rtl; else _rtl = rtl;
+		var _Vector; if (isBrowser()) _Vector = Runtime.Vector; else _Vector = Vector;
+		var arr = null;
+		var delimiter = new RegExp("[" + delimiters.join("") + "]", "g");
+		if (!_rtl.exists(limit))
+		{
+			arr = s.split(delimiter);
+		}
+		else
+		{
+			arr = s.split(delimiter, limit);
+		}
+		return (new _Vector()).concat(arr);
 	}
 	/**
 	 * Разбивает строку на подстроки
@@ -204,8 +236,113 @@ class rs{
 		};
 		return (new String(s)).replace(/[<>&"'`=]/g, function(v){ return obj[v]; });
 	}
+	/**
+	 * Разбивает путь файла на составляющие
+	 * @param {string} filepath путь к файлу
+	 * @return {json} Объект вида:
+	 *         dirname    - папка, в которой находиться файл
+	 *         basename   - полное имя файла
+	 *         extension  - расширение файла
+	 *         filename   - имя файла без расширения
+	 */
+	static pathinfo(filepath){
+		var arr1 = rs.explode(".", filepath);
+		var arr2 = rs.explode("/", filepath);
+		var ret = new PathInfo();
+		ret.filepath = filepath;
+		ret.extension = arr1.pop();
+		ret.basename = arr2.pop();
+		ret.dirname = rs.implode("/", arr2);
+		var ext_length = rs.strlen(ret.extension);
+		if (ext_length > 0){
+			ext_length++;
+		}
+		ret.filename = rs.substr(ret.basename, 0, -1 * ext_length);
+		return ret;
+	}
+	/**
+	 * Возвращает имя файла без расширения
+	 * @param {string} filepath - путь к файлу
+	 * @return {string} полное имя файла
+	 */
+	static filename(filepath){
+		var ret = rs.pathinfo(filepath);
+		var res = ret.basename;
+		var ext = ret.extension;
+		if (ext != ""){
+			var sz = 0 - rs.strlen(ext) - 1;
+			res = rs.substr(res, 0, sz);
+		}
+		return res;
+	}
+	/**
+	 * Возвращает полное имя файла
+	 * @param {string} filepath - путь к файлу
+	 * @return {string} полное имя файла
+	 */
+	static basename(filepath){
+		var ret = rs.pathinfo(filepath);
+		var res = ret.basename;
+		return res;
+	}
+	/**
+	 * Возвращает расширение файла
+	 * @param {string} filepath - путь к файлу
+	 * @return {string} расширение файла
+	 */
+	static extname(filepath){
+		var ret = rs.pathinfo(filepath);
+		var res = ret.extension;
+		return res;
+	}
+	/**
+	 * Возвращает путь к папке, содержащий файл
+	 * @param {string} filepath - путь к файлу
+	 * @return {string} путь к папке, содержащий файл
+	 */
+	static dirname(filepath){
+		var ret = rs.pathinfo(filepath);
+		var res = ret.dirname;
+		return res;
+	}
+	/**
+	 * Returns relative path of the filepath
+	 * @param string filepath
+	 * @param string basepath
+	 * @param string ch - Directory separator
+	 * @return string relative path
+	 */
+	static relativePath(filepath, basepath, ch){
+		if (ch == undefined) ch="/";
+		var source = rs.explode(ch, filepath);
+		var base = rs.explode(ch, basepath);
+		source = source.filter((s) => {
+			return s != "";
+		});
+		base = base.filter((s) => {
+			return s != "";
+		});
+		var i = 0;
+		while (source.count() > 0 && base.count() > 0 && source.item(0) == base.item(0)){
+			source.shift();
+			base.shift();
+		}
+		base.each((s) => {
+			source.unshift("..");
+		});
+		return rs.implode(ch, source);
+	}
+	/**
+	 * Return normalize path
+	 * @param string filepath - File path
+	 * @return string
+	 */
+	static normalize(filepath){
+		return filepath;
+	}
 	/* ======================= Class Init Functions ======================= */
 	getClassName(){return "Runtime.rs";}
+	static getCurrentNamespace(){return "Runtime";}
 	static getCurrentClassName(){return "Runtime.rs";}
 	static getParentClassName(){return "";}
 	static getFieldsList(names, flag){

@@ -24,7 +24,7 @@ class ModuleDescriptionInterface{
 	 * Returns module name
 	 * @return string
 	 */
-	static getName(){
+	static getModuleName(){
 	}
 	/**
 	 * Returns module name
@@ -34,9 +34,20 @@ class ModuleDescriptionInterface{
 	}
 	/**
 	 * Returns required modules
-	 * @return Map<string, string>
+	 * @return Map<string>
 	 */
-	static getRequiredModules(context){
+	static requiredModules(){
+	}
+	/**
+	 * Returns module files load order
+	 * @return Collection<string>
+	 */
+	static getModuleFiles(){
+	}
+	/**
+	 * Returns enities
+	 */
+	static entities(){
 	}
 	/**
 	 * Called then module registed in context
@@ -55,7 +66,19 @@ class ModuleDescriptionInterface{
 	 * Init context
 	 * @param ContextInterface context
 	 */
-	static initContext(context){
+	static onInitContext(context){
+		return (async_ctx_0) => {
+			var async_jump_0 = async_ctx_0.current();
+			if (async_jump_0 == "0"){
+			}
+			else if (async_jump_0 == "-1"){
+				return async_ctx_0.error( async_ctx_0.getError() )
+			}
+			else{
+				return async_ctx_0.next();
+			}
+			return async_ctx_0.end();
+		}
 	}
 }
 module.exports = ModuleDescriptionInterface;

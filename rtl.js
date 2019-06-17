@@ -189,7 +189,7 @@ class rtl{
 	static convert(value, type_value, def_value, type_template){
 		if (def_value == undefined) def_value=null;
 		if (type_template == undefined) type_template="";
-		if (type_value == "mixed" || type_value == "primitive" || type_value == "var" || type_value == "fun"){
+		if (type_value == "mixed" || type_value == "primitive" || type_value == "var" || type_value == "fun" || type_value == "callback"){
 			return value;
 		}
 		if (type_value == ""){
@@ -722,6 +722,7 @@ class rtl{
 	}
 	/* ======================= Class Init Functions ======================= */
 	getClassName(){return "Runtime.rtl";}
+	static getCurrentNamespace(){return "Runtime";}
 	static getCurrentClassName(){return "Runtime.rtl";}
 	static getParentClassName(){return "";}
 	static getFieldsList(names, flag){

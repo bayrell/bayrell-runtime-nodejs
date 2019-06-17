@@ -28,6 +28,7 @@ class IndexOutOfRange extends RuntimeException{
 	}
 	/* ======================= Class Init Functions ======================= */
 	getClassName(){return "Runtime.Exceptions.IndexOutOfRange";}
+	static getCurrentNamespace(){return "Runtime.Exceptions";}
 	static getCurrentClassName(){return "Runtime.Exceptions.IndexOutOfRange";}
 	static getParentClassName(){return "Runtime.Exceptions.RuntimeException";}
 	static getFieldsList(names, flag){

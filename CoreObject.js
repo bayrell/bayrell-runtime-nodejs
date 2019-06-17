@@ -230,6 +230,7 @@ class CoreObject{
 	}
 	/* ======================= Class Init Functions ======================= */
 	getClassName(){return "Runtime.CoreObject";}
+	static getCurrentNamespace(){return "Runtime";}
 	static getCurrentClassName(){return "Runtime.CoreObject";}
 	static getParentClassName(){return "";}
 }

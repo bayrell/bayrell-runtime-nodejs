@@ -34,6 +34,7 @@ class Maybe extends Container{
 	}
 	/* ======================= Class Init Functions ======================= */
 	getClassName(){return "Runtime.Maybe";}
+	static getCurrentNamespace(){return "Runtime";}
 	static getCurrentClassName(){return "Runtime.Maybe";}
 	static getParentClassName(){return "Runtime.Container";}
 	static getFieldsList(names, flag){

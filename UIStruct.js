@@ -112,6 +112,7 @@ class UIStruct extends CoreStruct{
 	}
 	/* ======================= Class Init Functions ======================= */
 	getClassName(){return "Runtime.UIStruct";}
+	static getCurrentNamespace(){return "Runtime";}
 	static getCurrentClassName(){return "Runtime.UIStruct";}
 	static getParentClassName(){return "Runtime.CoreStruct";}
 	_init(){
@@ -129,16 +130,22 @@ class UIStruct extends CoreStruct{
 		if (names.indexOf("name") == -1)Object.defineProperty(this, "name", { get: function() { return this.__name; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("name") }});
 		this.__space = "";
 		if (names.indexOf("space") == -1)Object.defineProperty(this, "space", { get: function() { return this.__space; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("space") }});
+		this.__bind = "";
+		if (names.indexOf("bind") == -1)Object.defineProperty(this, "bind", { get: function() { return this.__bind; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("bind") }});
 		this.__kind = "element";
 		if (names.indexOf("kind") == -1)Object.defineProperty(this, "kind", { get: function() { return this.__kind; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("kind") }});
 		this.__content = "";
 		if (names.indexOf("content") == -1)Object.defineProperty(this, "content", { get: function() { return this.__content; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("content") }});
 		this.__controller = "";
 		if (names.indexOf("controller") == -1)Object.defineProperty(this, "controller", { get: function() { return this.__controller; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("controller") }});
+		this.__reference = "";
+		if (names.indexOf("reference") == -1)Object.defineProperty(this, "reference", { get: function() { return this.__reference; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("reference") }});
 		this.__model = null;
 		if (names.indexOf("model") == -1)Object.defineProperty(this, "model", { get: function() { return this.__model; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("model") }});
 		this.__props = null;
 		if (names.indexOf("props") == -1)Object.defineProperty(this, "props", { get: function() { return this.__props; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("props") }});
+		this.__annotations = null;
+		if (names.indexOf("annotations") == -1)Object.defineProperty(this, "annotations", { get: function() { return this.__annotations; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("annotations") }});
 		this.__children = null;
 		if (names.indexOf("children") == -1)Object.defineProperty(this, "children", { get: function() { return this.__children; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("children") }});
 	}
@@ -148,11 +155,14 @@ class UIStruct extends CoreStruct{
 			this.__key = obj.__key;
 			this.__name = obj.__name;
 			this.__space = obj.__space;
+			this.__bind = obj.__bind;
 			this.__kind = obj.__kind;
 			this.__content = obj.__content;
 			this.__controller = obj.__controller;
+			this.__reference = obj.__reference;
 			this.__model = obj.__model;
 			this.__props = obj.__props;
+			this.__annotations = obj.__annotations;
 			this.__children = obj.__children;
 		}
 		super.assignObject(obj);
@@ -162,11 +172,14 @@ class UIStruct extends CoreStruct{
 		else if (variable_name == "key")this.__key = rtl.convert(value,"string","","");
 		else if (variable_name == "name")this.__name = rtl.convert(value,"string","","");
 		else if (variable_name == "space")this.__space = rtl.convert(value,"string","","");
+		else if (variable_name == "bind")this.__bind = rtl.convert(value,"string","","");
 		else if (variable_name == "kind")this.__kind = rtl.convert(value,"string","element","");
 		else if (variable_name == "content")this.__content = rtl.convert(value,"string","","");
 		else if (variable_name == "controller")this.__controller = rtl.convert(value,"string","","");
+		else if (variable_name == "reference")this.__reference = rtl.convert(value,"string","","");
 		else if (variable_name == "model")this.__model = rtl.convert(value,"Runtime.CoreStruct",null,"");
 		else if (variable_name == "props")this.__props = rtl.convert(value,"Runtime.Dict",null,"primitive");
+		else if (variable_name == "annotations")this.__annotations = rtl.convert(value,"Runtime.Collection",null,"Runtime.CoreStruct");
 		else if (variable_name == "children")this.__children = rtl.convert(value,"Runtime.Collection",null,"Runtime.UIStruct");
 		else super.assignValue(variable_name, value, sender);
 	}
@@ -176,11 +189,14 @@ class UIStruct extends CoreStruct{
 		else if (variable_name == "key") return this.__key;
 		else if (variable_name == "name") return this.__name;
 		else if (variable_name == "space") return this.__space;
+		else if (variable_name == "bind") return this.__bind;
 		else if (variable_name == "kind") return this.__kind;
 		else if (variable_name == "content") return this.__content;
 		else if (variable_name == "controller") return this.__controller;
+		else if (variable_name == "reference") return this.__reference;
 		else if (variable_name == "model") return this.__model;
 		else if (variable_name == "props") return this.__props;
+		else if (variable_name == "annotations") return this.__annotations;
 		else if (variable_name == "children") return this.__children;
 		return super.takeValue(variable_name, default_value);
 	}
@@ -191,11 +207,14 @@ class UIStruct extends CoreStruct{
 			names.push("key");
 			names.push("name");
 			names.push("space");
+			names.push("bind");
 			names.push("kind");
 			names.push("content");
 			names.push("controller");
+			names.push("reference");
 			names.push("model");
 			names.push("props");
+			names.push("annotations");
 			names.push("children");
 		}
 	}

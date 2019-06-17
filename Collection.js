@@ -147,11 +147,19 @@ Runtime.Collection = class extends Array
 	 * Returns value from position
 	 * @param int pos - position
 	 */
-	get(pos, default_value)
+	get(pos, default_value, type_value, type_template)
 	{
+		if (type_value == undefined) type_value = "mixed";
+		if (type_template == undefined) type_template = "";
 		if (pos < 0 || pos >= this.length)
 			return default_value;
-		return this[pos];
+		var val = this[pos];
+		if (type_value == "mixed")
+		{
+			if (isBrowser()) return Runtime.rtl.correct(val, type_value, default_value, type_template);
+			return rtl.correct(val, type_value, default_value, type_template);
+		}
+		return val;
 	}
 	
 	
@@ -473,7 +481,16 @@ Runtime.Collection = class extends Array
 	 */
 	filter(f)
 	{
-		return super.filter(f);
+		var res = this.constructor.create();
+		for (var i=0; i<this.length; i++)
+		{
+			var item = this[i];
+			if (f(item))
+			{
+				res.push(item);
+			}
+		}
+		return res;
 	}
 	
 	

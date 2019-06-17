@@ -27,7 +27,7 @@ class ModuleDescription{
 	 * Returns module name
 	 * @return string
 	 */
-	static getName(){
+	static getModuleName(){
 		return "Runtime";
 	}
 	/**
@@ -35,13 +35,38 @@ class ModuleDescription{
 	 * @return string
 	 */
 	static getModuleVersion(){
-		return "0.7.2";
+		return "0.7.3";
 	}
 	/**
 	 * Returns required modules
-	 * @return Map<string, string>
+	 * @return Map<string>
 	 */
-	static getRequiredModules(context){
+	static requiredModules(){
+		return null;
+	}
+	/**
+	 * Compatibility with older versions
+	 */
+	static getRequiredModules(){
+		return this.requiredModules();
+	}
+	/**
+	 * Returns module files load order
+	 * @return Collection<string>
+	 */
+	static getModuleFiles(){
+		return (new Vector()).push("Runtime.rs").push("Runtime.re").push("Runtime.rtl").push("Runtime.Collection").push("Runtime.Container").push("Runtime.CoreObject").push("Runtime.Dict").push("Runtime.Emitter").push("Runtime.RuntimeConstant").push("Runtime.RuntimeUtils").push("Runtime.Exceptions.RuntimeException").push("Runtime.Interfaces.CloneableInterface").push("Runtime.Interfaces.ContextInterface").push("Runtime.Interfaces.FactoryInterface").push("Runtime.Interfaces.ModuleDescriptionInterface").push("Runtime.Interfaces.SerializeInterface").push("Runtime.Interfaces.StringInterface").push("Runtime.Interfaces.SubscribeInterface").push("Runtime.AsyncTask").push("Runtime.AsyncThread").push("Runtime.Context").push("Runtime.ContextObject").push("Runtime.CoreStruct").push("Runtime.CoreEvent").push("Runtime.Map").push("Runtime.Maybe").push("Runtime.ModuleDescription").push("Runtime.Reference").push("Runtime.Vector").push("Runtime.Exceptions.IndexOutOfRange").push("Runtime.Exceptions.KeyNotFound").push("Runtime.Exceptions.UnknownError").push("Runtime.DateTime").push("Runtime.IntrospectionInfo").push("Runtime.LambdaChain").push("Runtime.Provider").push("Runtime.UIStruct");
+	}
+	/**
+	 * Returns enities
+	 */
+	static entities(){
+		return null;
+	}
+	/**
+	 * Register lambda filters
+	 */
+	static lambdaFilters(){
 		return null;
 	}
 	/**
@@ -49,7 +74,6 @@ class ModuleDescription{
 	 * @param ContextInterface context
 	 */
 	static onRegister(context){
-		context.registerDriver("driver.runtime.config", new Map());
 	}
 	/**
 	 * Called then context read config
@@ -62,10 +86,11 @@ class ModuleDescription{
 	 * Init context
 	 * @param ContextInterface context
 	 */
-	static initContext(context){
+	static onInitContext(context){
 	}
 	/* ======================= Class Init Functions ======================= */
 	getClassName(){return "Runtime.ModuleDescription";}
+	static getCurrentNamespace(){return "Runtime";}
 	static getCurrentClassName(){return "Runtime.ModuleDescription";}
 	static getParentClassName(){return "";}
 	_init(){

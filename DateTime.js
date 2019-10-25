@@ -1,4 +1,5 @@
 "use strict;"
+var use = require('bayrell').use;
 /*!
  *  Bayrell Runtime Library
  *
@@ -16,145 +17,60 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-var rtl = require('./rtl.js');
-var CoreStruct = require('./CoreStruct.js');
-class DateTime extends CoreStruct{
-	
-	static getTimezoneOffset(obj)
-	{
-		if (obj.tz == "GMT") return 0;
-		if (obj.tz == "GMT+1") return -60;
-		if (obj.tz == "GMT+2") return -120;
-		if (obj.tz == "GMT+3") return -180;
-		if (obj.tz == "GMT+4") return -240;
-		if (obj.tz == "GMT+5") return -300;
-		if (obj.tz == "GMT+6") return -360;
-		if (obj.tz == "GMT+7") return -420;
-		if (obj.tz == "GMT+8") return -480;
-		if (obj.tz == "GMT+9") return -540;
-		if (obj.tz == "GMT+10") return -600;
-		if (obj.tz == "GMT+11") return -660;
-		if (obj.tz == "GMT+13") return -780;
-		if (obj.tz == "GMT+14") return -840;
-		if (obj.tz == "GMT-1") return 60;
-		if (obj.tz == "GMT-2") return 120;
-		if (obj.tz == "GMT-3") return 180;
-		if (obj.tz == "GMT-4") return 240;
-		if (obj.tz == "GMT-5") return 300;
-		if (obj.tz == "GMT-6") return 360;
-		if (obj.tz == "GMT-7") return 420;
-		if (obj.tz == "GMT-8") return 480;
-		if (obj.tz == "GMT-9") return 540;
-		if (obj.tz == "GMT-10") return 600;
-		if (obj.tz == "GMT-11") return 660;
-		if (obj.tz == "GMT-12") return 720;		
-		return 0;
-	}
-	static getTimezoneOffsetString(obj)
-	{
-		var offset = this.getTimezoneOffset(obj);
-		var sign = 1;
-		if (offset <= 0){ sign = -1; offset = -offset; }
-		var h = Math.floor(offset / 60);
-		var m = offset % 60;
-		h = (h < 10) ? "0" + h : "" + h;
-		m = (m < 10) ? "0" + m : "" + m;
-		var s = h + m;
-		if (sign == 1) s = "-" + s; else s = "+" + s;
-		return s;
-	}
-	static shiftTimezone(dt, offset)
-	{
-		var h = Math.floor(offset / 60);
-		var m = offset % 60;
-		dt.setMinutes(dt.getMinutes() + m);
-		dt.setHours(dt.getHours() + h);
-		return dt;
-	}
-	static assignDatetime(dt, obj)
-	{
-		var offset = dt.getTimezoneOffset() - this.getTimezoneOffset(obj);
-		dt = this.shiftTimezone(dt, offset);
-		var y = Number(dt.getFullYear());
-		var m = Number(dt.getMonth()) + 1;
-		var d = Number(dt.getDate());
-		var h = Number(dt.getHours());
-		var i = Number(dt.getMinutes());
-		var s = Number(dt.getSeconds());
-		return obj.copy( new Map({"y":y, "m":m, "d":d, "h":h, "i":i, "s":s}) );
-	}
-	static createDatetime(dt, tz)
-	{
-		return this.assignDatetime(dt, new Runtime.DateTime( new Map({"tz":tz}) ));
-	}
-	static getDatetime(obj)
-	{
-		var dt = new Date(obj.y, obj.m - 1, obj.d, obj.h, obj.i, obj.s);
-		var offset = this.getTimezoneOffset(obj) - dt.getTimezoneOffset();
-		dt = this.shiftTimezone(dt, offset);
-		return dt;
-	}
-	/**
-	 * Returns datetime
-	 * @param string tz
-	 * @return DateTime
-	 */
-	static now(tz){
-		if (tz == undefined) tz="UTC";
-		
-		var dt = new Date();
-		return this.createDatetime(dt, tz);
-		return null;
-	}
+if (typeof Runtime == 'undefined') Runtime = {};
+Runtime.DateTime = function(__ctx)
+{
+	use("Runtime.CoreStruct").apply(this, arguments);
+};
+Runtime.DateTime.prototype = Object.create(use("Runtime.CoreStruct").prototype);
+Runtime.DateTime.prototype.constructor = Runtime.DateTime;
+Object.assign(Runtime.DateTime.prototype,
+{
 	/**
 	 * Returns day of week
-	 * @param DateTime obj
 	 * @return int
 	 */
-	static getDayOfWeek(obj){
-		
+	getDayOfWeek: function(__ctx)
+	{
 		var dt = this.getDatetime(obj);
 		return dt.getDay();
 		return null;
-	}
+	},
 	/**
 	 * Returns timestamp
-	 * @param DateTime obj
 	 * @return int
 	 */
-	static getTimestamp(obj){
-		
+	getTimestamp: function(__ctx)
+	{
 		var dt = this.getDatetime(obj);
 		return dt.getTime();
 		return null;
-	}
+	},
 	/**
 	 * Set timestamp
 	 * @param int timestamp
-	 * @param DateTime obj
 	 * @return DateTime instance
 	 */
-	static setTimestamp(timestamp, obj){
+	setTimestamp: function(__ctx, timestamp)
+	{
 		return null;
-	}
+	},
 	/**
 	 * Change time zone
 	 * @param string tz
-	 * @param DateTime obj
 	 * @return DateTime instance
 	 */
-	static changeTimezone(tz, obj){
-		
+	changeTimezone: function(__ctx, tz)
+	{
 		return obj;
 		return null;
-	}
+	},
 	/**
 	 * Return datetime in RFC822
-	 * @param DateTime obj
 	 * @return string
 	 */
-	static getRFC822(obj){
-		
+	getRFC822: function(__ctx)
+	{
 		var y,m,d,h,i,s,dow,dow_s,m_s,tz;
 		
 		y = obj.y % 100;
@@ -194,14 +110,13 @@ class DateTime extends CoreStruct{
 		
 		return dow_s + ", " + d + " " + m_s + " " + y + " " + h + ":" + i + ":" + s + " " + tz;
 		return "";
-	}
+	},
 	/**
 	 * Return datetime in ISO8601
-	 * @param DateTime obj
 	 * @return string
 	 */
-	static getISO8601(obj){
-		
+	getISO8601: function(__ctx)
+	{
 		var m = (obj.m < 10) ? "0" + obj.m : "" + obj.m;
 		var d = (obj.d < 10) ? "0" + obj.d : "" + obj.d;
 		var h = (obj.h < 10) ? "0" + obj.h : "" + obj.h;
@@ -210,14 +125,13 @@ class DateTime extends CoreStruct{
 		var tz = this.getTimezoneOffsetString(obj);
 		return obj.y + "-" + m + "-" + d + "T" + h + ":" + i + ":" + s + tz;
 		return "";
-	}
+	},
 	/**
-	 * Return datetime by GMT
-	 * @param DateTime obj
+	 * Return db datetime
 	 * @return string
 	 */
-	static getGMT(obj){
-		
+	getDBTime: function(__ctx)
+	{
 		var m = (obj.m < 10) ? "0" + obj.m : "" + obj.m;
 		var d = (obj.d < 10) ? "0" + obj.d : "" + obj.d;
 		var h = (obj.h < 10) ? "0" + obj.h : "" + obj.h;
@@ -225,14 +139,13 @@ class DateTime extends CoreStruct{
 		var s = (obj.s < 10) ? "0" + obj.s : "" + obj.s;
 		return obj.y + "-" + m + "-" + d + " " + h + ":" + i + ":" + s;
 		return "";
-	}
+	},
 	/**
 	 * Return datetime by UTC
-	 * @param DateTime obj
 	 * @return string
 	 */
-	static getUTC(obj){
-		
+	getUTC: function(__ctx)
+	{
 		var dt = this.getDatetime(obj);
 		var y = Number(dt.getUTCFullYear());
 		var m = Number(dt.getUTCMonth()) + 1;
@@ -248,88 +161,168 @@ class DateTime extends CoreStruct{
 		return y + "-" + m + "-" + d + " " +
 			h + ":" + i + ":" + s;
 		return "";
-	}
-	/* ======================= Class Init Functions ======================= */
-	getClassName(){return "Runtime.DateTime";}
-	static getCurrentNamespace(){return "Runtime";}
-	static getCurrentClassName(){return "Runtime.DateTime";}
-	static getParentClassName(){return "Runtime.CoreStruct";}
-	_init(){
-		super._init();
-		var names = Object.getOwnPropertyNames(this);
+	},
+	_init: function(__ctx)
+	{
+		var defProp = use('Runtime.rtl').defProp;
+		var a = Object.getOwnPropertyNames(this);
 		this.__y = 0;
-		if (names.indexOf("y") == -1)Object.defineProperty(this, "y", { get: function() { return this.__y; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("y") }});
+		if (a.indexOf("y") == -1) defProp(this, "y");
 		this.__m = 0;
-		if (names.indexOf("m") == -1)Object.defineProperty(this, "m", { get: function() { return this.__m; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("m") }});
+		if (a.indexOf("m") == -1) defProp(this, "m");
 		this.__d = 0;
-		if (names.indexOf("d") == -1)Object.defineProperty(this, "d", { get: function() { return this.__d; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("d") }});
+		if (a.indexOf("d") == -1) defProp(this, "d");
 		this.__h = 0;
-		if (names.indexOf("h") == -1)Object.defineProperty(this, "h", { get: function() { return this.__h; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("h") }});
+		if (a.indexOf("h") == -1) defProp(this, "h");
 		this.__u = 0;
-		if (names.indexOf("u") == -1)Object.defineProperty(this, "u", { get: function() { return this.__u; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("u") }});
+		if (a.indexOf("u") == -1) defProp(this, "u");
 		this.__s = 0;
-		if (names.indexOf("s") == -1)Object.defineProperty(this, "s", { get: function() { return this.__s; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("s") }});
+		if (a.indexOf("s") == -1) defProp(this, "s");
 		this.__ms = 0;
-		if (names.indexOf("ms") == -1)Object.defineProperty(this, "ms", { get: function() { return this.__ms; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("ms") }});
+		if (a.indexOf("ms") == -1) defProp(this, "ms");
 		this.__tz = "UTC";
-		if (names.indexOf("tz") == -1)Object.defineProperty(this, "tz", { get: function() { return this.__tz; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("tz") }});
-	}
-	assignObject(obj){
-		if (obj instanceof DateTime){
-			this.__y = obj.__y;
-			this.__m = obj.__m;
-			this.__d = obj.__d;
-			this.__h = obj.__h;
-			this.__u = obj.__u;
-			this.__s = obj.__s;
-			this.__ms = obj.__ms;
-			this.__tz = obj.__tz;
+		if (a.indexOf("tz") == -1) defProp(this, "tz");
+		use("Runtime.CoreStruct").prototype._init.call(this,__ctx);
+	},
+	assignObject: function(__ctx,o)
+	{
+		if (o instanceof use("Runtime.DateTime"))
+		{
+			this.__y = o.__y;
+			this.__m = o.__m;
+			this.__d = o.__d;
+			this.__h = o.__h;
+			this.__u = o.__u;
+			this.__s = o.__s;
+			this.__ms = o.__ms;
+			this.__tz = o.__tz;
 		}
-		super.assignObject(obj);
-	}
-	assignValue(variable_name, value, sender){if(sender==undefined)sender=null;
-		if (variable_name == "y")this.__y = rtl.convert(value,"int",0,"");
-		else if (variable_name == "m")this.__m = rtl.convert(value,"int",0,"");
-		else if (variable_name == "d")this.__d = rtl.convert(value,"int",0,"");
-		else if (variable_name == "h")this.__h = rtl.convert(value,"int",0,"");
-		else if (variable_name == "u")this.__u = rtl.convert(value,"int",0,"");
-		else if (variable_name == "s")this.__s = rtl.convert(value,"int",0,"");
-		else if (variable_name == "ms")this.__ms = rtl.convert(value,"int",0,"");
-		else if (variable_name == "tz")this.__tz = rtl.convert(value,"string","UTC","");
-		else super.assignValue(variable_name, value, sender);
-	}
-	takeValue(variable_name, default_value){
-		if (default_value == undefined) default_value = null;
-		if (variable_name == "y") return this.__y;
-		else if (variable_name == "m") return this.__m;
-		else if (variable_name == "d") return this.__d;
-		else if (variable_name == "h") return this.__h;
-		else if (variable_name == "u") return this.__u;
-		else if (variable_name == "s") return this.__s;
-		else if (variable_name == "ms") return this.__ms;
-		else if (variable_name == "tz") return this.__tz;
-		return super.takeValue(variable_name, default_value);
-	}
-	static getFieldsList(names, flag){
-		if (flag==undefined)flag=0;
-		if ((flag | 3)==3){
-			names.push("y");
-			names.push("m");
-			names.push("d");
-			names.push("h");
-			names.push("u");
-			names.push("s");
-			names.push("ms");
-			names.push("tz");
+		use("Runtime.CoreStruct").prototype.assignObject.call(this,__ctx,o);
+	},
+	assignValue: function(__ctx,k,v)
+	{
+		if (k == "y")this.__y = v;
+		else if (k == "m")this.__m = v;
+		else if (k == "d")this.__d = v;
+		else if (k == "h")this.__h = v;
+		else if (k == "u")this.__u = v;
+		else if (k == "s")this.__s = v;
+		else if (k == "ms")this.__ms = v;
+		else if (k == "tz")this.__tz = v;
+		else use("Runtime.CoreStruct").prototype.assignValue.call(this,__ctx,k,v);
+	},
+	takeValue: function(__ctx,k,d)
+	{
+		if (d == undefined) d = null;
+		if (k == "y")return this.__y;
+		else if (k == "m")return this.__m;
+		else if (k == "d")return this.__d;
+		else if (k == "h")return this.__h;
+		else if (k == "u")return this.__u;
+		else if (k == "s")return this.__s;
+		else if (k == "ms")return this.__ms;
+		else if (k == "tz")return this.__tz;
+		return use("Runtime.CoreStruct").prototype.takeValue.call(this,__ctx,k,d);
+	},
+	getClassName: function(__ctx)
+	{
+		return "Runtime.DateTime";
+	},
+});
+Object.assign(Runtime.DateTime, use("Runtime.CoreStruct"));
+Object.assign(Runtime.DateTime,
+{
+	/**
+	 * Create date time from timestamp
+	 */
+	timestamp: function(__ctx, time, tz)
+	{
+		if (tz == undefined) tz = "UTC";
+		var dt = new Date(time*1000);
+		return this.fromObject(dt, tz);
+		return null;
+	},
+	/**
+	 * Output dbtime
+	 */
+	dbtime: function(__ctx, time, tz)
+	{
+		if (tz == undefined) tz = "UTC";
+		var dt = new Date(time*1000);
+		var obj = this.fromObject(dt, tz);
+		return obj.getDBTime();
+		return "";
+	},
+	/**
+	 * Returns datetime
+	 * @param string tz
+	 * @return DateTime
+	 */
+	now: function(__ctx, tz)
+	{
+		if (tz == undefined) tz = "UTC";
+		var dt = new Date();
+		return this.createDatetime(dt, tz);
+		return null;
+	},
+	/* ======================= Class Init Functions ======================= */
+	getCurrentNamespace: function()
+	{
+		return "Runtime";
+	},
+	getCurrentClassName: function()
+	{
+		return "Runtime.DateTime";
+	},
+	getParentClassName: function()
+	{
+		return "Runtime.CoreStruct";
+	},
+	getClassInfo: function(__ctx)
+	{
+		var Collection = use("Runtime.Collection");
+		var Dict = use("Runtime.Dict");
+		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
+		return new IntrospectionInfo(__ctx, {
+			"kind": IntrospectionInfo.ITEM_CLASS,
+			"class_name": "Runtime.DateTime",
+			"name": "Runtime.DateTime",
+			"annotations": Collection.from([
+			]),
+		});
+	},
+	getFieldsList: function(__ctx, f)
+	{
+		var a = [];
+		if (f==undefined) f=0;
+		if ((f|3)==3)
+		{
+			a.push("y");
+			a.push("m");
+			a.push("d");
+			a.push("h");
+			a.push("u");
+			a.push("s");
+			a.push("ms");
+			a.push("tz");
 		}
-	}
-	static getFieldInfoByName(field_name){
+		return use("Runtime.Collection").from(a);
+	},
+	getFieldInfoByName: function(__ctx,field_name)
+	{
 		return null;
-	}
-	static getMethodsList(names){
-	}
-	static getMethodInfoByName(method_name){
+	},
+	getMethodsList: function(__ctx)
+	{
+		var a = [
+		];
+		return use("Runtime.Collection").from(a);
+	},
+	getMethodInfoByName: function(__ctx,field_name)
+	{
 		return null;
-	}
-}
-module.exports = DateTime;
+	},
+});use.add(Runtime.DateTime);
+if (module.exports == undefined) module.exports = {};
+if (module.exports.Runtime == undefined) module.exports.Runtime = {};
+module.exports.Runtime.DateTime = Runtime.DateTime;

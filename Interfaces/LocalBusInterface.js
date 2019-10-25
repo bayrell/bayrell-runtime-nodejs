@@ -3,7 +3,7 @@ var use = require('bayrell').use;
 /*!
  *  Bayrell Runtime Library
  *
- *  (c) Copyright 2016-2019 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2016-2018 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,41 +19,17 @@ var use = require('bayrell').use;
  */
 if (typeof Runtime == 'undefined') Runtime = {};
 if (typeof Runtime.Interfaces == 'undefined') Runtime.Interfaces = {};
-Runtime.Interfaces.SerializeInterface = function(__ctx)
+Runtime.Interfaces.LocalBusInterface = function(__ctx)
 {
 };
-Object.assign(Runtime.Interfaces.SerializeInterface.prototype,
+Object.assign(Runtime.Interfaces.LocalBusInterface.prototype,
 {
-	/**
-	 * Assign and clone data from other object
-	 * @param CoreObject obj
-	 */
-	assignObject: function(__ctx, obj)
-	{
-	},
-	/**
-	 * Set new value instance by variable name
-	 * @param string variable_name
-	 * @param var value
-	 */
-	assignValue: function(__ctx, variable_name, value)
-	{
-	},
-	/**
-	 * Returns instance of the value by variable name
-	 * @param string variable_name
-	 * @return var
-	 */
-	takeValue: function(__ctx, variable_name, default_value)
-	{
-		if (default_value == undefined) default_value = null;
-	},
 	getClassName: function(__ctx)
 	{
-		return "Runtime.Interfaces.SerializeInterface";
+		return "Runtime.Interfaces.LocalBusInterface";
 	},
 });
-Object.assign(Runtime.Interfaces.SerializeInterface,
+Object.assign(Runtime.Interfaces.LocalBusInterface,
 {
 	getCurrentNamespace: function()
 	{
@@ -61,10 +37,10 @@ Object.assign(Runtime.Interfaces.SerializeInterface,
 	},
 	getCurrentClassName: function()
 	{
-		return "Runtime.Interfaces.SerializeInterface";
+		return "Runtime.Interfaces.LocalBusInterface";
 	},
-});use.add(Runtime.Interfaces.SerializeInterface);
+});use.add(Runtime.Interfaces.LocalBusInterface);
 if (module.exports == undefined) module.exports = {};
 if (module.exports.Runtime == undefined) module.exports.Runtime = {};
 if (module.exports.Runtime.Interfaces == undefined) module.exports.Runtime.Interfaces = {};
-module.exports.Runtime.Interfaces.SerializeInterface = Runtime.Interfaces.SerializeInterface;
+module.exports.Runtime.Interfaces.LocalBusInterface = Runtime.Interfaces.LocalBusInterface;

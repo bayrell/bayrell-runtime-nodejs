@@ -18,72 +18,38 @@ var use = require('bayrell').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-Runtime.RuntimeConstant = function(__ctx)
+Runtime.MessageSession = function(__ctx)
 {
+	use("Runtime.CoreStruct").apply(this, arguments);
 };
-Object.assign(Runtime.RuntimeConstant.prototype,
+Runtime.MessageSession.prototype = Object.create(use("Runtime.CoreStruct").prototype);
+Runtime.MessageSession.prototype.constructor = Runtime.MessageSession;
+Object.assign(Runtime.MessageSession.prototype,
 {
 	assignObject: function(__ctx,o)
 	{
-		if (o instanceof use("Runtime.RuntimeConstant"))
+		if (o instanceof use("Runtime.MessageSession"))
 		{
 		}
+		use("Runtime.CoreStruct").prototype.assignObject.call(this,__ctx,o);
 	},
 	assignValue: function(__ctx,k,v)
 	{
+		use("Runtime.CoreStruct").prototype.assignValue.call(this,__ctx,k,v);
 	},
 	takeValue: function(__ctx,k,d)
 	{
 		if (d == undefined) d = null;
+		return use("Runtime.CoreStruct").prototype.takeValue.call(this,__ctx,k,d);
 	},
 	getClassName: function(__ctx)
 	{
-		return "Runtime.RuntimeConstant";
+		return "Runtime.MessageSession";
 	},
 });
-Object.assign(Runtime.RuntimeConstant,
+Object.assign(Runtime.MessageSession, use("Runtime.CoreStruct"));
+Object.assign(Runtime.MessageSession,
 {
-	CHAIN_ENTITIES: "Runtime.Entities",
-	LOCAL_BUS: "Runtime.Interfaces.LocalBusInterface",
-	REMOTE_BUS: "Runtime.Interfaces.RemoteBusInterface",
-	LOG_FATAL: 0,
-	LOG_CRITICAL: 2,
-	LOG_ERROR: 4,
-	LOG_WARNING: 6,
-	LOG_INFO: 8,
-	LOG_DEBUG: 10,
-	LOG_DEBUG2: 12,
-	STATUS_PLAN: 0,
-	STATUS_DONE: 1,
-	STATUS_PROCESS: 100,
-	STATUS_FAIL: -1,
-	ERROR_NULL: 0,
-	ERROR_OK: 1,
-	ERROR_PROCCESS: 100,
-	ERROR_FALSE: -100,
-	ERROR_UNKNOWN: -1,
-	ERROR_INDEX_OUT_OF_RANGE: -2,
-	ERROR_KEY_NOT_FOUND: -3,
-	ERROR_STOP_ITERATION: -4,
-	ERROR_FILE_NOT_FOUND: -5,
-	ERROR_OBJECT_DOES_NOT_EXISTS: -5,
-	ERROR_OBJECT_ALLREADY_EXISTS: -6,
-	ERROR_ASSERT: -7,
-	ERROR_REQUEST: -8,
-	ERROR_RESPONSE: -9,
-	ERROR_CSRF_TOKEN: -10,
-	ERROR_RUNTIME: -11,
-	ERROR_VALIDATION: -12,
-	ERROR_PARSE_SERIALIZATION_ERROR: -14,
-	ERROR_ASSIGN_DATA_STRUCT_VALUE: -15,
-	ERROR_AUTH: -16,
-	ERROR_DUPLICATE: -17,
-	ERROR_FATAL: -99,
-	ERROR_HTTP_CONTINUE: -100,
-	ERROR_HTTP_SWITCH: -101,
-	ERROR_HTTP_PROCESSING: -102,
-	ERROR_HTTP_OK: -200,
-	ERROR_HTTP_BAD_GATEWAY: -502,
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
 	{
@@ -91,11 +57,11 @@ Object.assign(Runtime.RuntimeConstant,
 	},
 	getCurrentClassName: function()
 	{
-		return "Runtime.RuntimeConstant";
+		return "Runtime.MessageSession";
 	},
 	getParentClassName: function()
 	{
-		return "";
+		return "Runtime.CoreStruct";
 	},
 	getClassInfo: function(__ctx)
 	{
@@ -104,8 +70,8 @@ Object.assign(Runtime.RuntimeConstant,
 		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
 		return new IntrospectionInfo(__ctx, {
 			"kind": IntrospectionInfo.ITEM_CLASS,
-			"class_name": "Runtime.RuntimeConstant",
-			"name": "Runtime.RuntimeConstant",
+			"class_name": "Runtime.MessageSession",
+			"name": "Runtime.MessageSession",
 			"annotations": Collection.from([
 			]),
 		});
@@ -130,7 +96,7 @@ Object.assign(Runtime.RuntimeConstant,
 	{
 		return null;
 	},
-});use.add(Runtime.RuntimeConstant);
+});use.add(Runtime.MessageSession);
 if (module.exports == undefined) module.exports = {};
 if (module.exports.Runtime == undefined) module.exports.Runtime = {};
-module.exports.Runtime.RuntimeConstant = Runtime.RuntimeConstant;
+module.exports.Runtime.MessageSession = Runtime.MessageSession;

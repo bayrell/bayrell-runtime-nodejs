@@ -1,4 +1,5 @@
 "use strict;"
+var use = require('bayrell').use;
 /*!
  *  Bayrell Runtime Library 
  *
@@ -16,31 +17,90 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-var rtl = require('../rtl.js');
-var RuntimeConstant = require('../RuntimeConstant.js');
-var RuntimeException = require('./RuntimeException.js');
-var ContextInterface = require('../Interfaces/ContextInterface.js');
-class AssignStructValueError extends RuntimeException{
-	constructor(name, context, prev){
-		if (context == undefined) context=null;
-		if (prev == undefined) prev=null;
-		super(rtl.translate("Can not set key '"+rtl.toString(name)+"' in immutable struct", null, "", context), RuntimeConstant.ERROR_INDEX_OUT_OF_RANGE, context, prev);
-	}
+if (typeof Runtime == 'undefined') Runtime = {};
+if (typeof Runtime.Exceptions == 'undefined') Runtime.Exceptions = {};
+Runtime.Exceptions.AssignStructValueError = function(__ctx, name, context, prev)
+{
+	var __v0 = use("Runtime.rtl");
+	var __v1 = use("Runtime.RuntimeConstant");
+	use("Runtime.Exceptions.RuntimeException").call(this, __ctx, __v0.translate(__ctx, "Can not set key '" + use("Runtime.rtl").toStr(name) + use("Runtime.rtl").toStr("' in immutable struct"), null, "", context), __v1.ERROR_INDEX_OUT_OF_RANGE, context, prev);
+};
+Runtime.Exceptions.AssignStructValueError.prototype = Object.create(use("Runtime.Exceptions.RuntimeException").prototype);
+Runtime.Exceptions.AssignStructValueError.prototype.constructor = Runtime.Exceptions.AssignStructValueError;
+Object.assign(Runtime.Exceptions.AssignStructValueError.prototype,
+{
+	assignObject: function(__ctx,o)
+	{
+		if (o instanceof use("Runtime.Exceptions.AssignStructValueError"))
+		{
+		}
+		use("Runtime.Exceptions.RuntimeException").prototype.assignObject.call(this,__ctx,o);
+	},
+	assignValue: function(__ctx,k,v)
+	{
+		use("Runtime.Exceptions.RuntimeException").prototype.assignValue.call(this,__ctx,k,v);
+	},
+	takeValue: function(__ctx,k,d)
+	{
+		if (d == undefined) d = null;
+		return use("Runtime.Exceptions.RuntimeException").prototype.takeValue.call(this,__ctx,k,d);
+	},
+	getClassName: function(__ctx)
+	{
+		return "Runtime.Exceptions.AssignStructValueError";
+	},
+});
+Object.assign(Runtime.Exceptions.AssignStructValueError, use("Runtime.Exceptions.RuntimeException"));
+Object.assign(Runtime.Exceptions.AssignStructValueError,
+{
 	/* ======================= Class Init Functions ======================= */
-	getClassName(){return "Runtime.Exceptions.AssignStructValueError";}
-	static getCurrentNamespace(){return "Runtime.Exceptions";}
-	static getCurrentClassName(){return "Runtime.Exceptions.AssignStructValueError";}
-	static getParentClassName(){return "Runtime.Exceptions.RuntimeException";}
-	static getFieldsList(names, flag){
-		if (flag==undefined)flag=0;
-	}
-	static getFieldInfoByName(field_name){
+	getCurrentNamespace: function()
+	{
+		return "Runtime.Exceptions";
+	},
+	getCurrentClassName: function()
+	{
+		return "Runtime.Exceptions.AssignStructValueError";
+	},
+	getParentClassName: function()
+	{
+		return "Runtime.Exceptions.RuntimeException";
+	},
+	getClassInfo: function(__ctx)
+	{
+		var Collection = use("Runtime.Collection");
+		var Dict = use("Runtime.Dict");
+		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
+		return new IntrospectionInfo(__ctx, {
+			"kind": IntrospectionInfo.ITEM_CLASS,
+			"class_name": "Runtime.Exceptions.AssignStructValueError",
+			"name": "Runtime.Exceptions.AssignStructValueError",
+			"annotations": Collection.from([
+			]),
+		});
+	},
+	getFieldsList: function(__ctx, f)
+	{
+		var a = [];
+		if (f==undefined) f=0;
+		return use("Runtime.Collection").from(a);
+	},
+	getFieldInfoByName: function(__ctx,field_name)
+	{
 		return null;
-	}
-	static getMethodsList(names){
-	}
-	static getMethodInfoByName(method_name){
+	},
+	getMethodsList: function(__ctx)
+	{
+		var a = [
+		];
+		return use("Runtime.Collection").from(a);
+	},
+	getMethodInfoByName: function(__ctx,field_name)
+	{
 		return null;
-	}
-}
-module.exports = AssignStructValueError;
+	},
+});use.add(Runtime.Exceptions.AssignStructValueError);
+if (module.exports == undefined) module.exports = {};
+if (module.exports.Runtime == undefined) module.exports.Runtime = {};
+if (module.exports.Runtime.Exceptions == undefined) module.exports.Runtime.Exceptions = {};
+module.exports.Runtime.Exceptions.AssignStructValueError = Runtime.Exceptions.AssignStructValueError;

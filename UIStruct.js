@@ -1,4 +1,5 @@
 "use strict;"
+var use = require('bayrell').use;
 /*!
  *  Bayrell Runtime Library
  *
@@ -16,219 +17,304 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-var CoreStruct = require('./CoreStruct.js');
-var Dict = require('./Dict.js');
-var Map = require('./Map.js');
-var rs = require('./rs.js');
-var rtl = require('./rtl.js');
-var Collection = require('./Collection.js');
-var Vector = require('./Vector.js');
-class UIStruct extends CoreStruct{
+if (typeof Runtime == 'undefined') Runtime = {};
+Runtime.UIStruct = function(__ctx)
+{
+	use("Runtime.CoreStruct").apply(this, arguments);
+};
+Runtime.UIStruct.prototype = Object.create(use("Runtime.CoreStruct").prototype);
+Runtime.UIStruct.prototype.constructor = Runtime.UIStruct;
+Object.assign(Runtime.UIStruct.prototype,
+{
 	/**
 	 * Returns true if component
 	 * @return bool
 	 */
-	static isComponent(ui){
-		return ui.kind == UIStruct.TYPE_COMPONENT;
-	}
+	getTag: function(__ctx)
+	{
+		if (this.props == null)
+		{
+			return null;
+		}
+		return this.props.get(__ctx, "@tag", null);
+	},
+	/**
+	 * Returns true if component
+	 * @return bool
+	 */
+	isComponent: function(__ctx)
+	{
+		return this.kind == Runtime.UIStruct.TYPE_COMPONENT;
+	},
 	/**
 	 * Returns true if element
 	 * @return bool
 	 */
-	static isElement(ui){
-		return ui.kind == UIStruct.TYPE_ELEMENT;
-	}
+	isElement: function(__ctx)
+	{
+		return this.kind == Runtime.UIStruct.TYPE_ELEMENT;
+	},
 	/**
 	 * Returns true if string
 	 * @return bool
 	 */
-	static isString(ui){
-		return ui.kind == UIStruct.TYPE_STRING || ui.kind == UIStruct.TYPE_RAW;
-	}
+	isString: function(__ctx)
+	{
+		return this.kind == Runtime.UIStruct.TYPE_STRING || this.kind == Runtime.UIStruct.TYPE_RAW;
+	},
 	/**
 	 * Returns model
 	 * @return CoreStruct
 	 */
-	static getModel(ui){
-		if (ui.model != null){
-			return ui.model;
+	getModel: function(__ctx)
+	{
+		return this.model;
+		if (this.model != null)
+		{
+			return this.model;
 		}
-		if (ui.kind == UIStruct.TYPE_COMPONENT){
-			var model_name = rtl.method(ui.name, "modelName")();
-			if (model_name == ""){
+		if (this.kind == Runtime.UIStruct.TYPE_COMPONENT)
+		{
+			var __v0 = use("Runtime.rtl");
+			var modelName = __v0.method(this.name, "modelName");
+			var model_name = modelName(__ctx);
+			if (model_name == "")
+			{
 				return null;
 			}
-			var model = rtl.newInstance(model_name, (new Vector()).push(ui.props));
+			var __v0 = use("Runtime.rtl");
+			var model = __v0.newInstance(__ctx, model_name, use("Runtime.Collection").from([this.props]));
 			return model;
 		}
 		return null;
-	}
+	},
 	/**
 	 * Returns key path
 	 * @return string
 	 */
-	static getKey(ui, index){
-		return (ui.key !== "") ? (ui.key) : (index);
-	}
+	getKey: function(__ctx, index)
+	{
+		return (this.key !== "") ? this.key : index;
+	},
 	/**
 	 * Returns key path
 	 * @return string
 	 */
-	static getKeyPath(ui, key_path, index){
-		return (key_path !== "") ? (rtl.toString(key_path)+"."+rtl.toString(this.getKey(ui, index))) : (this.getKey(ui, index));
-	}
+	getKeyPath: function(__ctx, key_path, index)
+	{
+		return (key_path !== "") ? key_path + use("Runtime.rtl").toStr(".") + use("Runtime.rtl").toStr(this.getKey(__ctx, index)) : this.getKey(__ctx, index);
+	},
 	/**
 	 * Returns attrs
 	 */
-	static getAttrs(ui){
-		if (ui.props != null){
-			return ui.props.filter((key, value) => {
-				return rs.strpos(key, "@") != 0 || key == "@class" || key == "@style";
+	getAttrs: function(__ctx)
+	{
+		if (this.props != null)
+		{
+			return this.props.filter(__ctx, (__ctx, key, value) => 
+			{
+				var __v0 = use("Runtime.rs");
+				return __v0.strpos(__ctx, key, "@") != 0 || key == "@class" || key == "@style";
 			});
 		}
-		return new Dict();
-	}
+		var __v0 = use("Runtime.Dict");
+		return new __v0(__ctx);
+	},
 	/**
 	 * Returns props
 	 */
-	static getProps(ui){
-		if (ui.props != null){
-			return ui.props.filter((key, value) => {
-				return rs.strpos(key, "@") == 0 && rs.strpos(key, "@on") != 0 && key != "@class";
+	getProps: function(__ctx)
+	{
+		if (this.props != null)
+		{
+			return this.props.filter(__ctx, (__ctx, key, value) => 
+			{
+				var __v0 = use("Runtime.rs");
+				var __v1 = use("Runtime.rs");
+				return __v0.strpos(__ctx, key, "@") == 0 && __v1.strpos(__ctx, key, "@on") != 0 && key != "@class";
 			});
 		}
-		return new Dict();
-	}
+		var __v0 = use("Runtime.Dict");
+		return new __v0(__ctx);
+	},
 	/**
 	 * Returns events
 	 */
-	static getEvents(ui){
-		if (ui.props != null){
-			return ui.props.filter((key, value) => {
-				return rs.strpos(key, "@on") == 0;
+	getEvents: function(__ctx)
+	{
+		if (this.props != null)
+		{
+			return this.props.filter(__ctx, (__ctx, key, value) => 
+			{
+				var __v0 = use("Runtime.rs");
+				return __v0.strpos(__ctx, key, "@on") == 0;
 			});
 		}
-		return new Dict();
-	}
-	/* ======================= Class Init Functions ======================= */
-	getClassName(){return "Runtime.UIStruct";}
-	static getCurrentNamespace(){return "Runtime";}
-	static getCurrentClassName(){return "Runtime.UIStruct";}
-	static getParentClassName(){return "Runtime.CoreStruct";}
-	_init(){
-		super._init();
-		var names = Object.getOwnPropertyNames(this);
-		this.TYPE_ELEMENT = "element";
-		this.TYPE_COMPONENT = "component";
-		this.TYPE_STRING = "string";
-		this.TYPE_RAW = "raw";
+		var __v0 = use("Runtime.Dict");
+		return new __v0(__ctx);
+	},
+	_init: function(__ctx)
+	{
+		var defProp = use('Runtime.rtl').defProp;
+		var a = Object.getOwnPropertyNames(this);
 		this.__class_name = "";
-		if (names.indexOf("class_name") == -1)Object.defineProperty(this, "class_name", { get: function() { return this.__class_name; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("class_name") }});
+		if (a.indexOf("class_name") == -1) defProp(this, "class_name");
 		this.__key = "";
-		if (names.indexOf("key") == -1)Object.defineProperty(this, "key", { get: function() { return this.__key; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("key") }});
+		if (a.indexOf("key") == -1) defProp(this, "key");
 		this.__name = "";
-		if (names.indexOf("name") == -1)Object.defineProperty(this, "name", { get: function() { return this.__name; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("name") }});
-		this.__space = "";
-		if (names.indexOf("space") == -1)Object.defineProperty(this, "space", { get: function() { return this.__space; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("space") }});
+		if (a.indexOf("name") == -1) defProp(this, "name");
 		this.__bind = "";
-		if (names.indexOf("bind") == -1)Object.defineProperty(this, "bind", { get: function() { return this.__bind; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("bind") }});
+		if (a.indexOf("bind") == -1) defProp(this, "bind");
 		this.__kind = "element";
-		if (names.indexOf("kind") == -1)Object.defineProperty(this, "kind", { get: function() { return this.__kind; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("kind") }});
+		if (a.indexOf("kind") == -1) defProp(this, "kind");
 		this.__content = "";
-		if (names.indexOf("content") == -1)Object.defineProperty(this, "content", { get: function() { return this.__content; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("content") }});
-		this.__controller = "";
-		if (names.indexOf("controller") == -1)Object.defineProperty(this, "controller", { get: function() { return this.__controller; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("controller") }});
+		if (a.indexOf("content") == -1) defProp(this, "content");
 		this.__reference = "";
-		if (names.indexOf("reference") == -1)Object.defineProperty(this, "reference", { get: function() { return this.__reference; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("reference") }});
+		if (a.indexOf("reference") == -1) defProp(this, "reference");
+		this.__value = null;
+		if (a.indexOf("value") == -1) defProp(this, "value");
+		this.__layout = null;
+		if (a.indexOf("layout") == -1) defProp(this, "layout");
 		this.__model = null;
-		if (names.indexOf("model") == -1)Object.defineProperty(this, "model", { get: function() { return this.__model; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("model") }});
+		if (a.indexOf("model") == -1) defProp(this, "model");
 		this.__props = null;
-		if (names.indexOf("props") == -1)Object.defineProperty(this, "props", { get: function() { return this.__props; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("props") }});
+		if (a.indexOf("props") == -1) defProp(this, "props");
 		this.__annotations = null;
-		if (names.indexOf("annotations") == -1)Object.defineProperty(this, "annotations", { get: function() { return this.__annotations; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("annotations") }});
+		if (a.indexOf("annotations") == -1) defProp(this, "annotations");
 		this.__children = null;
-		if (names.indexOf("children") == -1)Object.defineProperty(this, "children", { get: function() { return this.__children; }, set: function(value) { throw new Runtime.Exceptions.AssignStructValueError("children") }});
-	}
-	assignObject(obj){
-		if (obj instanceof UIStruct){
-			this.__class_name = obj.__class_name;
-			this.__key = obj.__key;
-			this.__name = obj.__name;
-			this.__space = obj.__space;
-			this.__bind = obj.__bind;
-			this.__kind = obj.__kind;
-			this.__content = obj.__content;
-			this.__controller = obj.__controller;
-			this.__reference = obj.__reference;
-			this.__model = obj.__model;
-			this.__props = obj.__props;
-			this.__annotations = obj.__annotations;
-			this.__children = obj.__children;
+		if (a.indexOf("children") == -1) defProp(this, "children");
+		use("Runtime.CoreStruct").prototype._init.call(this,__ctx);
+	},
+	assignObject: function(__ctx,o)
+	{
+		if (o instanceof use("Runtime.UIStruct"))
+		{
+			this.__class_name = o.__class_name;
+			this.__key = o.__key;
+			this.__name = o.__name;
+			this.__bind = o.__bind;
+			this.__kind = o.__kind;
+			this.__content = o.__content;
+			this.__reference = o.__reference;
+			this.__value = o.__value;
+			this.__layout = o.__layout;
+			this.__model = o.__model;
+			this.__props = o.__props;
+			this.__annotations = o.__annotations;
+			this.__children = o.__children;
 		}
-		super.assignObject(obj);
-	}
-	assignValue(variable_name, value, sender){if(sender==undefined)sender=null;
-		if (variable_name == "class_name")this.__class_name = rtl.convert(value,"string","","");
-		else if (variable_name == "key")this.__key = rtl.convert(value,"string","","");
-		else if (variable_name == "name")this.__name = rtl.convert(value,"string","","");
-		else if (variable_name == "space")this.__space = rtl.convert(value,"string","","");
-		else if (variable_name == "bind")this.__bind = rtl.convert(value,"string","","");
-		else if (variable_name == "kind")this.__kind = rtl.convert(value,"string","element","");
-		else if (variable_name == "content")this.__content = rtl.convert(value,"string","","");
-		else if (variable_name == "controller")this.__controller = rtl.convert(value,"string","","");
-		else if (variable_name == "reference")this.__reference = rtl.convert(value,"string","","");
-		else if (variable_name == "model")this.__model = rtl.convert(value,"Runtime.CoreStruct",null,"");
-		else if (variable_name == "props")this.__props = rtl.convert(value,"Runtime.Dict",null,"primitive");
-		else if (variable_name == "annotations")this.__annotations = rtl.convert(value,"Runtime.Collection",null,"Runtime.CoreStruct");
-		else if (variable_name == "children")this.__children = rtl.convert(value,"Runtime.Collection",null,"Runtime.UIStruct");
-		else super.assignValue(variable_name, value, sender);
-	}
-	takeValue(variable_name, default_value){
-		if (default_value == undefined) default_value = null;
-		if (variable_name == "class_name") return this.__class_name;
-		else if (variable_name == "key") return this.__key;
-		else if (variable_name == "name") return this.__name;
-		else if (variable_name == "space") return this.__space;
-		else if (variable_name == "bind") return this.__bind;
-		else if (variable_name == "kind") return this.__kind;
-		else if (variable_name == "content") return this.__content;
-		else if (variable_name == "controller") return this.__controller;
-		else if (variable_name == "reference") return this.__reference;
-		else if (variable_name == "model") return this.__model;
-		else if (variable_name == "props") return this.__props;
-		else if (variable_name == "annotations") return this.__annotations;
-		else if (variable_name == "children") return this.__children;
-		return super.takeValue(variable_name, default_value);
-	}
-	static getFieldsList(names, flag){
-		if (flag==undefined)flag=0;
-		if ((flag | 3)==3){
-			names.push("class_name");
-			names.push("key");
-			names.push("name");
-			names.push("space");
-			names.push("bind");
-			names.push("kind");
-			names.push("content");
-			names.push("controller");
-			names.push("reference");
-			names.push("model");
-			names.push("props");
-			names.push("annotations");
-			names.push("children");
+		use("Runtime.CoreStruct").prototype.assignObject.call(this,__ctx,o);
+	},
+	assignValue: function(__ctx,k,v)
+	{
+		if (k == "class_name")this.__class_name = v;
+		else if (k == "key")this.__key = v;
+		else if (k == "name")this.__name = v;
+		else if (k == "bind")this.__bind = v;
+		else if (k == "kind")this.__kind = v;
+		else if (k == "content")this.__content = v;
+		else if (k == "reference")this.__reference = v;
+		else if (k == "value")this.__value = v;
+		else if (k == "layout")this.__layout = v;
+		else if (k == "model")this.__model = v;
+		else if (k == "props")this.__props = v;
+		else if (k == "annotations")this.__annotations = v;
+		else if (k == "children")this.__children = v;
+		else use("Runtime.CoreStruct").prototype.assignValue.call(this,__ctx,k,v);
+	},
+	takeValue: function(__ctx,k,d)
+	{
+		if (d == undefined) d = null;
+		if (k == "class_name")return this.__class_name;
+		else if (k == "key")return this.__key;
+		else if (k == "name")return this.__name;
+		else if (k == "bind")return this.__bind;
+		else if (k == "kind")return this.__kind;
+		else if (k == "content")return this.__content;
+		else if (k == "reference")return this.__reference;
+		else if (k == "value")return this.__value;
+		else if (k == "layout")return this.__layout;
+		else if (k == "model")return this.__model;
+		else if (k == "props")return this.__props;
+		else if (k == "annotations")return this.__annotations;
+		else if (k == "children")return this.__children;
+		return use("Runtime.CoreStruct").prototype.takeValue.call(this,__ctx,k,d);
+	},
+	getClassName: function(__ctx)
+	{
+		return "Runtime.UIStruct";
+	},
+});
+Object.assign(Runtime.UIStruct, use("Runtime.CoreStruct"));
+Object.assign(Runtime.UIStruct,
+{
+	TYPE_ELEMENT: "element",
+	TYPE_COMPONENT: "component",
+	TYPE_STRING: "string",
+	TYPE_RAW: "raw",
+	/* ======================= Class Init Functions ======================= */
+	getCurrentNamespace: function()
+	{
+		return "Runtime";
+	},
+	getCurrentClassName: function()
+	{
+		return "Runtime.UIStruct";
+	},
+	getParentClassName: function()
+	{
+		return "Runtime.CoreStruct";
+	},
+	getClassInfo: function(__ctx)
+	{
+		var Collection = use("Runtime.Collection");
+		var Dict = use("Runtime.Dict");
+		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
+		return new IntrospectionInfo(__ctx, {
+			"kind": IntrospectionInfo.ITEM_CLASS,
+			"class_name": "Runtime.UIStruct",
+			"name": "Runtime.UIStruct",
+			"annotations": Collection.from([
+			]),
+		});
+	},
+	getFieldsList: function(__ctx, f)
+	{
+		var a = [];
+		if (f==undefined) f=0;
+		if ((f|3)==3)
+		{
+			a.push("class_name");
+			a.push("key");
+			a.push("name");
+			a.push("bind");
+			a.push("kind");
+			a.push("content");
+			a.push("reference");
+			a.push("value");
+			a.push("layout");
+			a.push("model");
+			a.push("props");
+			a.push("annotations");
+			a.push("children");
 		}
-	}
-	static getFieldInfoByName(field_name){
+		return use("Runtime.Collection").from(a);
+	},
+	getFieldInfoByName: function(__ctx,field_name)
+	{
 		return null;
-	}
-	static getMethodsList(names){
-	}
-	static getMethodInfoByName(method_name){
+	},
+	getMethodsList: function(__ctx)
+	{
+		var a = [
+		];
+		return use("Runtime.Collection").from(a);
+	},
+	getMethodInfoByName: function(__ctx,field_name)
+	{
 		return null;
-	}
-}
-UIStruct.TYPE_ELEMENT = "element";
-UIStruct.TYPE_COMPONENT = "component";
-UIStruct.TYPE_STRING = "string";
-UIStruct.TYPE_RAW = "raw";
-module.exports = UIStruct;
+	},
+});use.add(Runtime.UIStruct);
+if (module.exports == undefined) module.exports = {};
+if (module.exports.Runtime == undefined) module.exports.Runtime = {};
+module.exports.Runtime.UIStruct = Runtime.UIStruct;

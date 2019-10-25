@@ -1,4 +1,5 @@
 "use strict;"
+var use = require('bayrell').use;
 /*!
  *  Bayrell Runtime Library
  *
@@ -16,643 +17,640 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-var rtl = require('./rtl.js');
-var IndexOutOfRange = require('./Exceptions/IndexOutOfRange.js');
-
+if (typeof Runtime == 'undefined') Runtime = {};
+var use = require('bayrell').use; use.platform = "nodejs";
 var isBrowser=function(){return typeof window !== "undefined" && this === window;}
-
-if (typeof Runtime == "undefined") Runtime = {};
-
-Runtime.Collection = class extends Array
+if (typeof Runtime == 'undefined') Runtime = {};
+Runtime._Collection = function()
 {
-	
-	copy()
+	Array.call(this);
+	for (var i=1; i<arguments.length; i++) Array.prototype.push.call(this, arguments[i]);
+	this.__uq__ = Symbol();
+}
+Runtime._Collection.prototype = Object.create(Array.prototype);
+Runtime._Collection.prototype.constructor = Runtime._Collection;
+Object.assign(Runtime._Collection.prototype,
+{
+	toStr: function(value)
 	{
-		return super.slice();
-	}
-	
-	
-	
-	/**
-	 * Convert to dict
-	 */
-	toCollection()
-	{
-		var obj = super.slice();
-		Object.setPrototypeOf(obj, Runtime.Collection.prototype);
-		return obj;
-	}
-	
-	
-	
-	/**
-	 * Convert to dict
-	 */
-	toVector()
-	{
-		var obj = super.slice();
-		Object.setPrototypeOf(obj, Runtime.Collection.getVector().prototype);
-		return obj;
-	}
-	
-	
-	
-	/**
-	 * Correct items
-	 */
-	_correctItemsByType(type)
-	{
-		if (type == "mixed" || type == "primitive" || type == "var") return this;
-		
-		var arr = this.copy();
-		for (var i=0; i<arr.length; i++)
-		{
-			if (isBrowser()) arr[i] = Runtime.rtl.correct(arr[i], type, null);
-			else arr[i] = rtl.correct(arr[i], type, null);
-		}
-		return arr;
-	}
-	
-	
-	
-	/**
-	 * Returns new Instance
-	 * @return Object
-	 */
-	static Instance()
-	{
-		return new Runtime.Collection();
-	}
-	
-	
-	
-	/**
-	 * Returns new Instance
-	 * @return Object
-	 */
-	static create(arr)
+		return use("Runtime.rtl").toStr(value);
+	},
+	getClassName: function(){ return "Runtime._Collection"; },
+});
+Object.assign(Runtime._Collection,
+{
+	from: function(arr)
 	{
 		var res = this.Instance();
-		if (arr != undefined && arr != null)
+		if (arr == undefined && arr == null) return this.Instance();
+		
+		if (arr instanceof Array)
 		{
-			if (arr instanceof Array) res = res.concat(arr);
-			else
+			var new_arr = arr.slice();
+			Object.setPrototypeOf(new_arr, this.prototype);
+			return new_arr;
+		}
+		
+		var res = this.Instance();
+		if (
+			arr instanceof Int8Array ||
+			arr instanceof Uint8Array ||
+			arr instanceof Int16Array ||
+			arr instanceof Uint16Array ||
+			arr instanceof Int32Array ||
+			arr instanceof Uint32Array ||
+			arr instanceof Float32Array ||
+			arr instanceof Float64Array
+		)
+		{
+			for (var i=0; i<arr.length; i++)
 			{
-				if (
-					arr instanceof Int8Array ||
-					arr instanceof Uint8Array ||
-					arr instanceof Int16Array ||
-					arr instanceof Uint16Array ||
-					arr instanceof Int32Array ||
-					arr instanceof Uint32Array ||
-					arr instanceof Float32Array ||
-					arr instanceof Float64Array
-				)
-				{
-					for (var i=0; i<arr.length; i++)
-					{
-						res.push(arr[i]);
-					}
-				}
+				Array.prototype.push.call(res, arr[i]);
 			}
 		}
-		return res;
-	}
-	
-	
-	
+		
+		return res;	
+	},
+	getCurrentNamespace: function(){ return "Runtime"; },
+	getCurrentClassName: function(){ return "Runtime._Collection"; },
+	getParentClassName: function(){ return ""; },
+});
+use.add(Runtime._Collection);
+Runtime.Collection = function(__ctx)
+{
+	use("Runtime._Collection").apply(this, arguments);
+};
+Runtime.Collection.prototype = Object.create(use("Runtime._Collection").prototype);
+Runtime.Collection.prototype.constructor = Runtime.Collection;
+Object.assign(Runtime.Collection.prototype,
+{
 	/**
-	 * Returns new Instance
-	 * @return Object
+	 * Returns copy of Collectiom
+	 * @param int pos - position
 	 */
-	static createNewInstance(arr)
+	copy: function(__ctx)
 	{
-		return this.create(arr);
-	}
-	
-	
-	
+		var arr = Array.prototype.slice.call(this);
+		Object.setPrototypeOf(arr, this.constructor.prototype);
+		return arr;
+	},
 	/**
-	 * Collection constructor
+	 * Convert to collection
 	 */
-	constructor()
+	toCollection: function(__ctx)
 	{
-		super();
-		for (var i=0; i<arguments.length; i++) super.push( arguments[i] );
-		this.__uq__ = Symbol();
-	}
-	
-	
+		var obj = Array.prototype.slice.call(this);
+		Object.setPrototypeOf(obj, Runtime.Collection.prototype);
+		return obj;
+	},
+	/**
+	 * Convert to vector
+	 */
+	toVector: function(__ctx)
+	{
+		var obj = Array.prototype.slice.call(this);
+		Object.setPrototypeOf(obj, use("Runtime.Vector").prototype);
+		return obj;
+	},
 	/**
 	 * Returns value from position
 	 * @param int pos - position
 	 */
-	get(pos, default_value, type_value, type_template)
+	get: function(__ctx, pos, default_value)
 	{
-		if (type_value == undefined) type_value = "mixed";
-		if (type_template == undefined) type_template = "";
-		if (pos < 0 || pos >= this.length)
-			return default_value;
+		if (pos < 0 || pos >= this.length) return default_value;
 		var val = this[pos];
-		if (type_value == "mixed")
-		{
-			if (isBrowser()) return Runtime.rtl.correct(val, type_value, default_value, type_template);
-			return rtl.correct(val, type_value, default_value, type_template);
-		}
 		return val;
-	}
-	
-	
-	
+	},
 	/**
 	 * Returns value from position. Throw exception, if position does not exists
 	 * @param int pos - position
 	 */
-	item(pos)
+	item: function(__ctx, pos)
 	{
-		if (pos < 0 || pos >= this.length){
-			if (isBrowser()) throw new Runtime.Exceptions.IndexOutOfRange();
-			throw new IndexOutOfRange();
+		if (pos < 0 || pos >= this.length)
+		{
+			var _IndexOutOfRange = use("Runtime.Exceptions.IndexOutOfRange");
+			throw new _IndexOutOfRange(__ctx);
 		}
 		return this[pos];
-	}
-	
-	
-	
+	},
 	/**
 	 * Returns count items in vector
 	 */
-	count()
+	count: function(__ctx)
 	{
 		return this.length;
-	}
-	
-	
-	
+	},
 	/**
-	 * Find value in array
+	 * Find value in array. Returns -1 if value not found.
 	 * @param T value
 	 * @return  int
 	 */
-	indexOf(value)
+	indexOf: function(__ctx, value)
 	{
-		for (var i=0; i<this.count(); i++){
+		for (var i=0; i<this.count(__ctx); i++)
+		{
 			if (this[i] == value)
 				return i;
 		}
 		return -1;
-	}
-	
-	
-	
+	},
 	/**
-	 * Find value in array in range pos_begin <= pos <= pos_end, and returns position. 
+	 * Find value in array, and returns position. Returns -1 if value not found.
 	 * @param T value
 	 * @param int pos_begin - begin position
 	 * @param int pos_end - end position
-	 * @return int - position
+	 * @return  int
 	 */
-	indexOfRange(value, pos_begin, pos_end)
+	indexOfRange: function(__ctx, value, pos_begin, pos_end)
 	{
-		var pos = super.indexOf(value, pos_begin);
+		var pos = Array.prototype.indexOf.call(this, value, pos_begin);
 		if (pos == -1 || pos > pos_end)
 			return -1;
 		return pos;
-	}
-	
-	
-	
+	},
 	/**
-	 * Get last item
+	 * Get first item
 	 */
-	first(default_value)
+	first: function(__ctx, default_value)
 	{
-		if (this.length == 0)
-			return default_value;	
+		if (default_value == undefined) default_value = null;
+		if (this.length == 0) return default_value;	
 		return this[0];
-	}
-	
-	
-	
+	},
 	/**
 	 * Get last item
 	 */
-	last(default_value, pos)
+	last: function(__ctx, default_value, pos)
 	{
+		if (default_value == undefined) default_value = null;
 		if (pos == undefined) pos = -1;
-		if (this.length == 0)
-			return default_value;
-		if (this.length + pos + 1 == 0)
-			return default_value;	
+		if (pos == undefined) pos = -1;
+		if (this.length == 0) return default_value;
+		if (this.length + pos + 1 == 0) return default_value;	
 		return this[this.length + pos];
-	}
-	getLastItem(default_value, pos)
-	{
-		return this.last(default_value, pos); 
-	}
-	
-	
-	
+	},
 	/**
-	 * Append value to the end of array
+	 * Get last item
+	 */
+	getLastItem: function(__ctx, default_value, pos)
+	{
+		if (default_value == undefined) default_value = null;
+		if (pos == undefined) pos = -1;
+		return this.last(__ctx, default_value, pos);
+	},
+	/**
+	 * Append value to the end of the Collection and return new Collection
 	 * @param T value
 	 */
-	pushIm(value)
+	pushIm: function(__ctx, value)
 	{
 		var arr = this.copy();
-		arr.push(value);
+		Array.prototype.push.call(arr, value);
 		return arr;
-	}
-	
-	
-	
+	},
 	/**
 	 * Insert first value size_to array
 	 * @return T value
 	 */
-	unshiftIm(value)
+	unshiftIm: function(__ctx, value)
 	{
 		var arr = this.copy();
-		arr.unshift(value);
+		Array.prototype.unshift.call(arr, value);
 		return arr;
-	}
-	
-	
-	
+	},
 	/**
 	 * Extract last value from array
 	 * @return T value
 	 */
-	removeLastIm()
+	removeLastIm: function(__ctx)
 	{
-		return this.slice(0, -1);
-	}
-	
-	
-	
+		var arr = Array.prototype.slice.call(this, 0, -1);
+		Object.setPrototypeOf(arr, this.constructor.prototype);
+		return arr;
+	},
 	/**
-	 * Extract last value from array
+	 * Extract first value from array
 	 * @return T value
 	 */
-	removeFirstIm()
+	removeFirstIm: function(__ctx)
 	{
-		return this.slice(1);
-	}
-	
-	
-	
+		var arr = Array.prototype.slice.call(this, 1);
+		Object.setPrototypeOf(arr, this.constructor.prototype);
+		return arr;
+	},
 	/**
-	 * Insert value size_to position
+	 * Insert value to position
 	 * @param T value
 	 * @param int pos - position
 	 */
-	insertIm(pos, value)
+	insertIm: function(__ctx, pos, value)
 	{
-		var arr = this.copy();
+		var arr = this.copy(__ctx);
 		arr.splice(pos, 0, value);
 		return arr;
-	}
-	
-	
-	
+	},
 	/**
 	 * Remove value from position
 	 * @param int pos - position
+	 * @param int count - count remove items
 	 */
-	removeIm(pos, count)
+	removeIm: function(__ctx, pos, count)
 	{
 		if (count == undefined) count = 1;
-		var arr = this.copy();
+		if (count == undefined) count = 1;
+		var arr = this.copy(__ctx);
 		arr.splice(pos, count);
 		return arr;
-	}
-	
-	
-	
+	},
 	/**
 	 * Remove range
 	 * @param int pos_begin - start position
 	 * @param int pos_end - end position
 	 */
-	removeRangeIm(pos_begin, pos_end)
+	removeRangeIm: function(__ctx, pos_begin, pos_end)
 	{
-		var arr = this.copy();
+		var arr = this.copy(__ctx);
 		arr.splice(pos_begin, pos_end - pos_begin + 1);
 		return arr;
-	}
-	
-	
-	
+	},
 	/**
 	 * Set value size_to position
 	 * @param int pos - position
 	 * @param T value 
 	 */
-	setIm(pos, value)
+	setIm: function(__ctx, pos, value)
 	{
-		if (pos < 0 || pos >= this.length){
-			if (isBrowser()) throw new Runtime.Exceptions.IndexOutOfRange();
-			throw new IndexOutOfRange();
+		if (pos < 0 || pos >= this.length)
+		{
+			var _IndexOutOfRange = use("Runtime.Exceptions.IndexOutOfRange");
+			throw new _IndexOutOfRange(__ctx);
 		}
-		var arr = this.copy();
+		var arr = this.copy(__ctx);
 		arr[pos] = value;
 		return arr;
-	}
-	
-	
-	
+	},
 	/**
 	 * Append value to the end of the vector
 	 * @param T value
 	 */
-	appendIm(value)
+	appendIm: function(__ctx, value)
 	{
-		return this.pushIm(value);
-	}
-	
-	
-	
+		return this.pushIm(__ctx, value);
+	},
 	/**
-	 * Insert first value to the begin of the vector
+	 * Insert first value to begin of the vector
 	 * @return T value
 	 */
-	prependIm(value)
+	prependIm: function(__ctx, value)
 	{
-		return this.unshift(value);
-	}
-	
-	
-	
+		return this.unshiftIm(__ctx, value);
+	},
 	/**
 	 * Append vector to the end of the vector
 	 * @param Collection<T> arr
 	 */
-	appendCollectionIm(arr)
+	appendCollectionIm: function(__ctx, arr)
 	{
-		if (!arr) return this;
+		if (arr == null) return this;
 		if (arr.length == 0) return this;
-		var res = this.copy();
+		var res = this.copy(__ctx);
 		for (var i=0; i<arr.length; i++)
 		{
-			res.push(arr[i]);
+			Array.prototype.push.call(res, arr[i]);
 		}
 		return res;
-	}
-	
-	
-	
+	},
 	/**
 	 * Prepend vector to the begin of the vector
 	 * @param Collection<T> arr
 	 */
-	prependCollectionIm(arr)
+	prependCollectionIm: function(__ctx, arr)
 	{
-		var res = this.copy();
-		for (var i=0; i<arr.length; i++)
+		if (arr == null) return this;
+		if (arr.length == 0) return this;
+		var res = this.copy(__ctx);
+		for (var i=arr.length-1; i>=0; i--)
 		{
-			res.unshift(arr[i]);
+			Array.prototype.unshift.call(res, arr[i]);
 		}
 		return res;
-	}
-	
-	
-	
+	},
 	/**
 	 * Remove value
 	 */
-	removeValueIm(value)
+	removeValueIm: function(__ctx, value)
 	{
-		var index = this.indexOf(value);
+		var index = this.indexOf(__ctx, value);
 		if (index != -1)
 		{
-			return this.removeIm(index);
+			return this.removeIm(__ctx, index);
 		}
 		return this;
-	}
-	
-	
-	
+	},
 	/**
 	 * Remove value
 	 */
-	removeItemIm(value)
+	removeItemIm: function(__ctx, value)
 	{
-		return this.removeValueIm(value);
-	}
-	
-	
-	
+		return this.removeValueIm(__ctx, value);
+	},
 	/**
-	 * Remove values
+	 * Remove value
 	 */
-	removeItemsIm(values)
+	removeItemsIm: function(__ctx, values)
 	{
 		var res = this;
-		for (var i=0; i<values.count(); i++)
+		for (var i = 0;i < values.count(__ctx);i++)
 		{
-			res = res.removeItem( values.item(i) );
+			res = res.removeItem(__ctx, values.item(__ctx, i));
 		}
 		return res;
-	}
-	
-	
-	
+	},
 	/**
 	 * Map
-	 * @param func f
+	 * @param fn f
 	 * @return Collection
 	 */
-	map(f)
+	map: function(__ctx, f)
 	{
-		var arr = this.copy();
+		var arr = this.copy(__ctx);
 		for (var i=0; i<arr.length; i++)
 		{
-			arr[i] = f(arr[i], i);
+			arr[i] = f(__ctx, arr[i], i);
 		}
 		return arr;
-	}
-	
-	
-	
+	},
 	/**
 	 * Filter items
-	 * @param func f
+	 * @param fn f
 	 * @return Collection
 	 */
-	filter(f)
+	filter: function(__ctx, f)
 	{
-		var res = this.constructor.create();
+		var res = this.constructor.Instance(__ctx);
 		for (var i=0; i<this.length; i++)
 		{
 			var item = this[i];
-			if (f(item))
+			var flag = f(__ctx, item, i);
+			if (flag)
 			{
-				res.push(item);
+				Array.prototype.push.call(res, item);
 			}
 		}
 		return res;
-	}
-	
-	
-	
+	},
+	/**
+	 * Transition Collection to Dict
+	 * @param fn f
+	 * @return Dict
+	 */
+	transition: function(__ctx, f)
+	{
+		var Dict = use("Runtime.Dict");
+		var d = new Dict();
+		for (var i=0; i<this.length; i++)
+		{
+			var value = this[i];
+			var p = f(__ctx, value, i);
+			d[p[1]] = p[0];
+		}
+		return d;
+	},
 	/**
 	 * Reduce
-	 * @param func f
-	 * @param mixed init_value
+	 * @param fn f
+	 * @param var init_value
 	 * @return init_value
 	 */
-	reduce(f, init_value)
+	reduce: function(__ctx, f, init_value)
 	{
-		return super.reduce(f, init_value);
-	}
-	
-	
-	
+		for (var i=0; i<this.length; i++)
+		{
+			var item = this[i];
+			init_value = f(__ctx, init_value, item, i);
+		}
+		return init_value;
+	},
 	/**
 	 * Call function for each item
-	 * @param func f
+	 * @param fn f
 	 */
-	each(f)
+	each: function(__ctx, f)
 	{
-		super.forEach(f);
-		return this;
-	}
-	
-	
-	
-	/**
-	 * Each item recursive
-	 * @param func f
-	 * @param func childs Returns childs items
-	 * @param func kind. 1 - Node item first, -1 - Node item last
-	 */
-	recurse(f, childs, kind)
-	{
-		if (kind == undefined) kind=1;
-		return this;
-	}
-	
-	
-	
+		for (var i=0; i<this.length; i++)
+		{
+			var item = this[i];
+			f(__ctx, item, i);
+		}
+	},
 	/**
 	 * Returns Collection
 	 * @param Collection<T> arr
 	 * @return Collection<T>
 	 */
-	concat(arr)
+	concat: function(__ctx, arr)
 	{
+		if (arr == undefined) arr = null;
 		if (arr == null && arr == undefined)
 		{
-			return this.slice();
+			return this;
 		}
-		return super.concat(arr);
-	}
-	
-	
-	
+		var new_arr = Array.prototype.slice.call(this).concat(arr);
+		Object.setPrototypeOf(new_arr, this.constructor.prototype);
+		return new_arr;
+	},
 	/**
 	 * Returns Collection
-	 * @param int offset
-	 * @param int length
+	 * @param Collection<T> arr
 	 * @return Collection<T>
 	 */
-	slice(offset, length)
+	intersect: function(__ctx, arr)
 	{
+		return this.filter(__ctx, (__ctx, item) => 
+		{
+			return arr.indexOf(__ctx, item) >= 0;
+		});
+	},
+	/**
+	 * Returns new Collection
+	 * @param int offset
+	 * @param int lenght
+	 * @return Collection<T>
+	 */
+	slice: function(__ctx, offset, length)
+	{
+		if (length == undefined) length = null;
 		if (offset == undefined) offset = 0;
 		if (length == undefined)
 		{
 			if (offset == 0) return this;
-			return super.slice(offset);
+			var arr = Array.prototype.slice.call(this, offset);
+			Object.setPrototypeOf(arr, this.constructor.prototype);
+			return arr;
 		}
 		if (offset == 0 && length == this.length) return this;
 		if (length >= 0)
 		{
-			length = this.count() - offset + length - 1;
+			length = offset + length;
 		}
-		return super.slice(offset, length);
-	}
-	
-	
-	
-	
+		var arr = Array.prototype.slice.call(this, offset, length);
+		Object.setPrototypeOf(arr, this.constructor.prototype);
+		return arr;
+	},
 	/**
 	 * Reverse array
 	 */
-	reverseIm()
+	reverseIm: function(__ctx)
 	{
-		var arr = this.copy();
-		arr.reverse();
+		var arr = this.copy(__ctx);
+		Array.prototype.reverse.call(arr);
 		return arr;
-	}
-	
-	
-	
+	},
 	/**
-	 * Returns sorted vector
-	 * @param func f - Sort user function
+	 * Sort vector
+	 * @param fn f - Sort user function
 	 */
-	sortIm(f)
+	sortIm: function(__ctx, f)
 	{
-		var arr = this.copy();
-		if (f == undefined) arr.sort();
-		arr.sort(f);
-		return this;
-	}
-	
-	
-	
+		if (f == undefined) f = null;
+		var arr = this.copy(__ctx);
+		if (f == undefined) Array.prototype.sort.call(arr);
+		Array.prototype.sort.call(arr, f);
+		return arr;
+	},
 	/**
 	 * Remove dublicate values
 	 */
-	removeDublicatesIm()
+	removeDublicatesIm: function(__ctx)
 	{
-		var res = this.constructor.create();
+		var res = this.constructor.Instance(__ctx);
 		for (var i=0; i<this.length; i++)
 		{
-			if (res.indexOf(this[i]) == -1)
+			var p = res.indexOf(__ctx, this[i]);
+			if (p == -1)
 			{
-				res.push( this[i] );
+				Array.prototype.push.call(res, this[i]);
 			}
 		}
 		return res;
-	}
-	
-	
-	
+	},
 	/**
-	 * Find item 
-	 * @param func f - Find function
-	 * @param mixed item - Search item
-	 * @return Collection
+	 * Find item pos
+	 * @param fn f - Find function
+	 * @return int - position
 	 */
-	find(f, item)
+	find: function(__ctx, f)
 	{
 		for (var i=0; i<this.length; i++)
 		{
-			if (f(this[i], item))
-			{
-				return i;
-			}
+			var flag = f(__ctx, this[i]);
+			if (flag) return i;
 		}
 		return -1;
-	}
-	
-	
-	getClassName(){return "Runtime.Collection";}
-	static getCurrentClassName(){return "Runtime.Collection";}
-	static getParentClassName(){return "Array";}
-	
-}
-Runtime.Collection.getVector = function(){ return require('./Vector.js'); }
-if (false){
-
-module.exports = {
-	"Collection": Runtime.Collection
-}
-
-}
-else{
-
-module.exports = Runtime.Collection;
-
-}
+	},
+	/**
+	 * Find item
+	 * @param var item - Find function
+	 * @param fn f - Find function
+	 * @param T def_value - Find function
+	 * @return item
+	 */
+	findItem: function(__ctx, f, def_value)
+	{
+		if (def_value == undefined) def_value = null;
+		var pos = this.find(__ctx, f);
+		return this.get(__ctx, pos, def_value);
+	},
+	assignObject: function(__ctx,o)
+	{
+		if (o instanceof use("Runtime.Collection"))
+		{
+		}
+		use("Runtime._Collection").prototype.assignObject.call(this,__ctx,o);
+	},
+	assignValue: function(__ctx,k,v)
+	{
+		use("Runtime._Collection").prototype.assignValue.call(this,__ctx,k,v);
+	},
+	takeValue: function(__ctx,k,d)
+	{
+		if (d == undefined) d = null;
+		return use("Runtime._Collection").prototype.takeValue.call(this,__ctx,k,d);
+	},
+	getClassName: function(__ctx)
+	{
+		return "Runtime.Collection";
+	},
+});
+Object.assign(Runtime.Collection, use("Runtime._Collection"));
+Object.assign(Runtime.Collection,
+{
+	/**
+	 * Returns new Instance
+	 * @return Object
+	 */
+	Instance: function(__ctx)
+	{
+		var __v0 = use("Runtime.Collection");
+		return new __v0(__ctx);
+	},
+	/**
+	 * Returns new Instance
+	 * @return Object
+	 */
+	create: function(__ctx, arr)
+	{
+		return this.from(arr);
+	},
+	/* ======================= Class Init Functions ======================= */
+	getCurrentNamespace: function()
+	{
+		return "Runtime";
+	},
+	getCurrentClassName: function()
+	{
+		return "Runtime.Collection";
+	},
+	getParentClassName: function()
+	{
+		return "Runtime._Collection";
+	},
+	getClassInfo: function(__ctx)
+	{
+		var Collection = use("Runtime.Collection");
+		var Dict = use("Runtime.Dict");
+		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
+		return new IntrospectionInfo(__ctx, {
+			"kind": IntrospectionInfo.ITEM_CLASS,
+			"class_name": "Runtime.Collection",
+			"name": "Runtime.Collection",
+			"annotations": Collection.from([
+			]),
+		});
+	},
+	getFieldsList: function(__ctx, f)
+	{
+		var a = [];
+		if (f==undefined) f=0;
+		return use("Runtime.Collection").from(a);
+	},
+	getFieldInfoByName: function(__ctx,field_name)
+	{
+		return null;
+	},
+	getMethodsList: function(__ctx)
+	{
+		var a = [
+		];
+		return use("Runtime.Collection").from(a);
+	},
+	getMethodInfoByName: function(__ctx,field_name)
+	{
+		return null;
+	},
+});use.add(Runtime.Collection);
+if (module.exports == undefined) module.exports = {};
+if (module.exports.Runtime == undefined) module.exports.Runtime = {};
+module.exports.Runtime.Collection = Runtime.Collection;

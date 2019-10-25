@@ -1,4 +1,5 @@
 "use strict;"
+var use = require('bayrell').use;
 /*!
  *  Bayrell Runtime Library
  *
@@ -16,256 +17,251 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-var rtl = require('./rtl.js');
-var Collection = require('./Collection.js');
-var IndexOutOfRange = require('./Exceptions/IndexOutOfRange.js');
-
+if (typeof Runtime == 'undefined') Runtime = {};
 var isBrowser=function(){return typeof window !== "undefined" && this === window;}
-
-if (typeof Runtime == "undefined") Runtime = {};
-var _Collection = require('./Collection.js');
-Runtime.Vector = class extends _Collection
+Runtime.Vector = function(__ctx)
 {
-	
-	/**
-	 * Returns new Instance
-	 * @return Object
-	 */
-	static Instance(){
-		return new Runtime.Vector();
-	}
-	
-	
-	
-	/**
-	 * Assign all data from other object
-	 * @param Vector obj
-	 */
-	assignObject(obj)
-	{
-		this.clear();
-		obj.each(
-			(item)=>{
-				if (isBrowser()) this.push( Runtime.rtl._clone(item) );
-				else this.push( rtl._clone(item) );
-			}
-		);
-	}
-	
-	
-	
+	use("Runtime.Collection").apply(this, arguments);
+};
+Runtime.Vector.prototype = Object.create(use("Runtime.Collection").prototype);
+Runtime.Vector.prototype.constructor = Runtime.Vector;
+Object.assign(Runtime.Vector.prototype,
+{
 	/**
 	 * Append value to the end of array
 	 * @param T value
 	 */
-	push(value)
+	push: function(__ctx, value)
 	{
-		super.push(value);
+		Array.prototype.push.call(this, value);
 		return this;
-	}
-	
-	
-	
+	},
 	/**
 	 * Insert first value size_to array
 	 * @return T value
 	 */
-	unshift(value)
+	unshift: function(__ctx, value)
 	{
-		super.unshift(value);
+		Array.prototype.unshift.call(this, value);
 		return this;
-	}
-	
-	
-	
+	},
 	/**
 	 * Extract last value from array
 	 * @return T value
 	 */
-	pop()
+	pop: function(__ctx)
 	{
-		return super.pop();
-	}
-	
-	
-	
+		return Array.prototype.pop.call(this);
+	},
 	/**
 	 * Extract first value from array
 	 * @return T value
 	 */
-	shift()
+	shift: function(__ctx)
 	{
-		return super.shift();
-	}
-	
-	
-	
+		return Array.prototype.shift.call(this);
+	},
 	/**
-	 * Insert value size_to position
+	 * Insert value to position
 	 * @param T value
 	 * @param int pos - position
 	 */
-	insert(pos, value)
+	insert: function(__ctx, pos, value)
 	{
-		super.splice(pos, 0, value);
+		Array.prototype.splice.call(this, pos, 0, value);
 		return this;
-	}
-	
-	
-	
+	},
 	/**
 	 * Remove value from position
 	 * @param int pos - position
+	 * @param int count - count remove items
 	 */
-	remove(pos, count)
+	remove: function(__ctx, pos, count)
 	{
 		if (count == undefined) count = 1;
-		super.splice(pos, count);
+		Array.prototype.splice.call(this, pos, count);
 		return this;
-	}
-	
-	
-	
+	},
 	/**
 	 * Remove range
 	 * @param int pos_begin - start position
 	 * @param int pos_end - end position
 	 */
-	removeRange(pos_begin, pos_end)
+	removeRange: function(__ctx, pos_begin, pos_end)
 	{
-		super.splice(pos_begin, pos_end - pos_begin + 1);
+		Array.prototype.splice.call(this, pos_begin, pos_end - pos_begin + 1);
 		return this;
-	}
-	
-	
-	
+	},
 	/**
 	 * Set value size_to position
 	 * @param int pos - position
 	 * @param T value 
 	 */
-	set(pos, value)
+	set: function(__ctx, pos, value)
 	{
 		if (pos < 0 || pos >= this.length)
 		{
-			if (isBrowser()) throw new Runtime.Exceptions.IndexOutOfRange();
+			var IndexOutOfRange = use ("Runtime.Exceptions.IndexOutOfRange");
 			throw new IndexOutOfRange();
 		}
 		this[pos] = value;
 		return this;
-	}
-	
-	
-	
+	},
 	/**
 	 * Clear all values from vector
 	 */
-	clear(){
-		super.splice(0, this.length);
+	clear: function(__ctx)
+	{
+		Array.prototype.splice.call(this, 0, this.length);
 		return this;
-	}
-	
-	
-	
+	},
 	/**
 	 * Append value to the end of the vector
 	 * @param T value
 	 */
-	append(value)
+	append: function(__ctx, value)
 	{
-		this.push(value);
+		this.push(__ctx, value);
 		return this;
-	}
-	
-	
-	
+	},
 	/**
-	 * Insert first value to the begin of the vector
+	 * Insert first value to begin of the vector
 	 * @return T value
 	 */
-	prepend(value)
+	prepend: function(__ctx, value)
 	{
-		this.unshift(value);
+		this.unshift(__ctx, value);
 		return this;
-	}
-	
-	
-	
+	},
 	/**
 	 * Append vector to the end of the vector
 	 * @param Vector<T> arr
 	 */
-	appendVector(arr)
+	appendVector: function(__ctx, arr)
 	{
 		if (!arr) return this;
-		for (var i=0; i<arr.length; i++) super.push(arr[i]);
+		for (var i=0; i<arr.length; i++) Array.prototype.push.call(this, arr[i]);
 		return this;
-	}
-	
-	
-	
+	},
 	/**
 	 * Prepend vector to the begin of the vector
 	 * @param Vector<T> arr
 	 */
-	prependVector(arr)
+	prependVector: function(__ctx, arr)
 	{
-		for (var i=0; i<arr.length; i++) super.unshift(arr[i]);
+		for (var i=0; i<arr.length; i++) Array.prototype.unshift.call(this, arr[i]);
 		return this;
-	}
-	
-	
-	
+	},
 	/**
 	 * Remove value
 	 */
-	removeValue(value)
+	removeValue: function(__ctx, value)
 	{
-		var index = this.indexOf(value);
+		var index = this.indexOf(__ctx, value);
 		if (index != -1)
-			this.remove(index, 1);
-		return this;
-	}
-	
-	
-	
-	/**
-	 * Remove value
-	 */
-	removeItem(value)
-	{
-		return this.removeValue(value);
-	}
-	
-	
-	
-	/**
-	 * Remove values
-	 */
-	removeItems(values)
-	{
-		for (var i=0; i<values.count(); i++)
 		{
-			this.removeItem( values.item(i) );
+			this.remove(__ctx, index, 1);
 		}
 		return this;
-	}
-	
-	
-	getClassName(){return "Runtime.Vector";}
-	static getCurrentClassName(){return "Runtime.Vector";}
-	static getParentClassName(){return "Runtime.Collection";}
-	
-}
-if (false){
-
-module.exports = {
-	"Vector": Runtime.Vector
-}
-
-}
-else{
-
-module.exports = Runtime.Vector;
-
-}
+	},
+	/**
+	 * Remove value
+	 */
+	removeItem: function(__ctx, value)
+	{
+		return this.removeValue(__ctx, value);
+	},
+	/**
+	 * Remove value
+	 */
+	removeItems: function(__ctx, values)
+	{
+		for (var i = 0;i < values.count(__ctx);i++)
+		{
+			this.removeValue(__ctx, values.item(__ctx, i));
+		}
+		return this;
+	},
+	assignObject: function(__ctx,o)
+	{
+		if (o instanceof use("Runtime.Vector"))
+		{
+		}
+		use("Runtime.Collection").prototype.assignObject.call(this,__ctx,o);
+	},
+	assignValue: function(__ctx,k,v)
+	{
+		use("Runtime.Collection").prototype.assignValue.call(this,__ctx,k,v);
+	},
+	takeValue: function(__ctx,k,d)
+	{
+		if (d == undefined) d = null;
+		return use("Runtime.Collection").prototype.takeValue.call(this,__ctx,k,d);
+	},
+	getClassName: function(__ctx)
+	{
+		return "Runtime.Vector";
+	},
+});
+Object.assign(Runtime.Vector, use("Runtime.Collection"));
+Object.assign(Runtime.Vector,
+{
+	/**
+	 * Returns new Instance
+	 * @return Object
+	 */
+	Instance: function(__ctx)
+	{
+		var __v0 = use("Runtime.Vector");
+		return new __v0(__ctx);
+	},
+	/* ======================= Class Init Functions ======================= */
+	getCurrentNamespace: function()
+	{
+		return "Runtime";
+	},
+	getCurrentClassName: function()
+	{
+		return "Runtime.Vector";
+	},
+	getParentClassName: function()
+	{
+		return "Runtime.Collection";
+	},
+	getClassInfo: function(__ctx)
+	{
+		var Collection = use("Runtime.Collection");
+		var Dict = use("Runtime.Dict");
+		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
+		return new IntrospectionInfo(__ctx, {
+			"kind": IntrospectionInfo.ITEM_CLASS,
+			"class_name": "Runtime.Vector",
+			"name": "Runtime.Vector",
+			"annotations": Collection.from([
+			]),
+		});
+	},
+	getFieldsList: function(__ctx, f)
+	{
+		var a = [];
+		if (f==undefined) f=0;
+		return use("Runtime.Collection").from(a);
+	},
+	getFieldInfoByName: function(__ctx,field_name)
+	{
+		return null;
+	},
+	getMethodsList: function(__ctx)
+	{
+		var a = [
+		];
+		return use("Runtime.Collection").from(a);
+	},
+	getMethodInfoByName: function(__ctx,field_name)
+	{
+		return null;
+	},
+});use.add(Runtime.Vector);
+if (module.exports == undefined) module.exports = {};
+if (module.exports.Runtime == undefined) module.exports.Runtime = {};
+module.exports.Runtime.Vector = Runtime.Vector;

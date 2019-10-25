@@ -1,4 +1,5 @@
 "use strict;"
+var use = require('bayrell').use;
 /*!
  *  Bayrell Runtime Library
  *
@@ -16,27 +17,52 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-var Vector = require('./Vector.js');
-class re{
+if (typeof Runtime == 'undefined') Runtime = {};
+Runtime.re = function(__ctx)
+{
+};
+Object.assign(Runtime.re.prototype,
+{
+	assignObject: function(__ctx,o)
+	{
+		if (o instanceof use("Runtime.re"))
+		{
+		}
+	},
+	assignValue: function(__ctx,k,v)
+	{
+	},
+	takeValue: function(__ctx,k,d)
+	{
+		if (d == undefined) d = null;
+	},
+	getClassName: function(__ctx)
+	{
+		return "Runtime.re";
+	},
+});
+Object.assign(Runtime.re,
+{
 	/**
 	 * Search regular expression
 	 * @param string r regular expression
 	 * @param string s string
 	 * @return bool
 	 */
-	static match(r, s){
-		
+	match: function(__ctx, r, s)
+	{
 		return s.match( new RegExp(r, "g") ) != null;
-	}
+	},
 	/**
 	 * Search regular expression
 	 * @param string r regular expression
 	 * @param string s string
 	 * @return Vector result
 	 */
-	static matchAll(r, s){
+	matchAll: function(__ctx, r, s)
+	{
 		return null;
-	}
+	},
 	/**
 	 * Replace with regular expression
 	 * @param string r - regular expression
@@ -44,25 +70,57 @@ class re{
 	 * @param string s - replaceable string
 	 * @return string
 	 */
-	static replace(r, replace, s){
-		
+	replace: function(__ctx, r, replace, s)
+	{
 		return s.replace(new RegExp(r, "g"), replace);
-	}
+	},
 	/* ======================= Class Init Functions ======================= */
-	getClassName(){return "Runtime.re";}
-	static getCurrentNamespace(){return "Runtime";}
-	static getCurrentClassName(){return "Runtime.re";}
-	static getParentClassName(){return "";}
-	static getFieldsList(names, flag){
-		if (flag==undefined)flag=0;
-	}
-	static getFieldInfoByName(field_name){
+	getCurrentNamespace: function()
+	{
+		return "Runtime";
+	},
+	getCurrentClassName: function()
+	{
+		return "Runtime.re";
+	},
+	getParentClassName: function()
+	{
+		return "";
+	},
+	getClassInfo: function(__ctx)
+	{
+		var Collection = use("Runtime.Collection");
+		var Dict = use("Runtime.Dict");
+		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
+		return new IntrospectionInfo(__ctx, {
+			"kind": IntrospectionInfo.ITEM_CLASS,
+			"class_name": "Runtime.re",
+			"name": "Runtime.re",
+			"annotations": Collection.from([
+			]),
+		});
+	},
+	getFieldsList: function(__ctx, f)
+	{
+		var a = [];
+		if (f==undefined) f=0;
+		return use("Runtime.Collection").from(a);
+	},
+	getFieldInfoByName: function(__ctx,field_name)
+	{
 		return null;
-	}
-	static getMethodsList(names){
-	}
-	static getMethodInfoByName(method_name){
+	},
+	getMethodsList: function(__ctx)
+	{
+		var a = [
+		];
+		return use("Runtime.Collection").from(a);
+	},
+	getMethodInfoByName: function(__ctx,field_name)
+	{
 		return null;
-	}
-}
-module.exports = re;
+	},
+});use.add(Runtime.re);
+if (module.exports == undefined) module.exports = {};
+if (module.exports.Runtime == undefined) module.exports.Runtime = {};
+module.exports.Runtime.re = Runtime.re;

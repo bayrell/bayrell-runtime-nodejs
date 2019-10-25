@@ -1,4 +1,5 @@
 "use strict;"
+var use = require('bayrell').use;
 /*!
  *  Bayrell Runtime Library
  *
@@ -16,99 +17,140 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-var Emitter = require('./Emitter.js');
-var Map = require('./Map.js');
-var rtl = require('./rtl.js');
-var Vector = require('./Vector.js');
-var ContextInterface = require('./Interfaces/ContextInterface.js');
-var ModuleDescriptionInterface = require('./Interfaces/ModuleDescriptionInterface.js');
-class ModuleDescription{
+if (typeof Runtime == 'undefined') Runtime = {};
+Runtime.ModuleDescription = function(__ctx)
+{
+};
+Object.assign(Runtime.ModuleDescription.prototype,
+{
+	assignObject: function(__ctx,o)
+	{
+		if (o instanceof use("Runtime.ModuleDescription"))
+		{
+		}
+	},
+	assignValue: function(__ctx,k,v)
+	{
+	},
+	takeValue: function(__ctx,k,d)
+	{
+		if (d == undefined) d = null;
+	},
+	getClassName: function(__ctx)
+	{
+		return "Runtime.ModuleDescription";
+	},
+});
+Object.assign(Runtime.ModuleDescription,
+{
 	/**
 	 * Returns module name
 	 * @return string
 	 */
-	static getModuleName(){
+	getModuleName: function(__ctx)
+	{
 		return "Runtime";
-	}
+	},
 	/**
 	 * Returns module name
 	 * @return string
 	 */
-	static getModuleVersion(){
-		return "0.7.3";
-	}
+	getModuleVersion: function(__ctx)
+	{
+		return "0.8.0-alpha.9";
+	},
 	/**
 	 * Returns required modules
 	 * @return Map<string>
 	 */
-	static requiredModules(){
+	requiredModules: function(__ctx)
+	{
 		return null;
-	}
+	},
 	/**
 	 * Compatibility with older versions
 	 */
-	static getRequiredModules(){
-		return this.requiredModules();
-	}
+	getRequiredModules: function(__ctx)
+	{
+		return this.requiredModules(__ctx);
+	},
 	/**
 	 * Returns module files load order
 	 * @return Collection<string>
 	 */
-	static getModuleFiles(){
-		return (new Vector()).push("Runtime.rs").push("Runtime.re").push("Runtime.rtl").push("Runtime.Collection").push("Runtime.Container").push("Runtime.CoreObject").push("Runtime.Dict").push("Runtime.Emitter").push("Runtime.RuntimeConstant").push("Runtime.RuntimeUtils").push("Runtime.Exceptions.RuntimeException").push("Runtime.Interfaces.CloneableInterface").push("Runtime.Interfaces.ContextInterface").push("Runtime.Interfaces.FactoryInterface").push("Runtime.Interfaces.ModuleDescriptionInterface").push("Runtime.Interfaces.SerializeInterface").push("Runtime.Interfaces.StringInterface").push("Runtime.Interfaces.SubscribeInterface").push("Runtime.AsyncTask").push("Runtime.AsyncThread").push("Runtime.Context").push("Runtime.ContextObject").push("Runtime.CoreStruct").push("Runtime.CoreEvent").push("Runtime.Map").push("Runtime.Maybe").push("Runtime.ModuleDescription").push("Runtime.Reference").push("Runtime.Vector").push("Runtime.Exceptions.IndexOutOfRange").push("Runtime.Exceptions.KeyNotFound").push("Runtime.Exceptions.UnknownError").push("Runtime.DateTime").push("Runtime.IntrospectionInfo").push("Runtime.LambdaChain").push("Runtime.Provider").push("Runtime.UIStruct");
-	}
+	assets: function(__ctx)
+	{
+		return use("Runtime.Collection").from(["Runtime/rtl","Runtime/rs","Runtime/re","Runtime/lib","Runtime/Collection","Runtime/Container","Runtime/CoreObject","Runtime/Dict","Runtime/Emitter","Runtime/RuntimeConstant","Runtime/RuntimeUtils","Runtime/Exceptions/RuntimeException","Runtime/Interfaces/CloneableInterface","Runtime/Interfaces/FactoryInterface","Runtime/Interfaces/LocalBusInterface","Runtime/Interfaces/ModuleDescriptionInterface","Runtime/Interfaces/RemoteBusInterface","Runtime/Interfaces/SerializeInterface","Runtime/Interfaces/StringInterface","Runtime/Interfaces/SubscribeInterface","Runtime/AsyncTask","Runtime/AsyncThread","Runtime/CoreStruct","Runtime/CoreProvider","Runtime/CoreEvent","Runtime/BusResult","Runtime/Map","Runtime/Message","Runtime/MessageRPC","Runtime/PathInfo","Runtime/ModuleDescription","Runtime/Reference","Runtime/Vector","Runtime/Exceptions/ApiException","Runtime/Exceptions/IndexOutOfRange","Runtime/Exceptions/KeyNotFound","Runtime/Exceptions/UnknownError","Runtime/DateTime","Runtime/Annotations/Entity","Runtime/Annotations/IntrospectionClass","Runtime/Annotations/IntrospectionInfo","Runtime/Annotations/LambdaChain","Runtime/Annotations/LambdaChainDeclare","Runtime/Annotations/Driver","Runtime/Annotations/Provider","Runtime/UIStruct","Runtime/Context","Runtime/ContextObject"]);
+	},
 	/**
 	 * Returns enities
 	 */
-	static entities(){
+	entities: function(__ctx)
+	{
+		var __v0 = use("Runtime.Annotations.Provider");
+		var __v1 = use("Runtime.Annotations.Provider");
+		var __v2 = use("Runtime.Annotations.LambdaChainDeclare");
+		return use("Runtime.Collection").from([new __v0(__ctx, use("Runtime.Dict").from({"name":"Runtime.Interfaces.LocalBusInterface","kind":"interface"})),new __v1(__ctx, use("Runtime.Dict").from({"name":"Runtime.Interfaces.RemoteBusInterface","kind":"interface"})),new __v2(__ctx, use("Runtime.Dict").from({"name":"Runtime.Entities"}))]);
+	},
+	/**
+	 * Returns enities
+	 */
+	resources: function(__ctx)
+	{
 		return null;
-	}
-	/**
-	 * Register lambda filters
-	 */
-	static lambdaFilters(){
-		return null;
-	}
-	/**
-	 * Called then module registed in context
-	 * @param ContextInterface context
-	 */
-	static onRegister(context){
-	}
-	/**
-	 * Called then context read config
-	 * @param ContextInterface context
-	 * @param Map<mixed> config
-	 */
-	static onReadConfig(context, config){
-	}
-	/**
-	 * Init context
-	 * @param ContextInterface context
-	 */
-	static onInitContext(context){
-	}
+	},
 	/* ======================= Class Init Functions ======================= */
-	getClassName(){return "Runtime.ModuleDescription";}
-	static getCurrentNamespace(){return "Runtime";}
-	static getCurrentClassName(){return "Runtime.ModuleDescription";}
-	static getParentClassName(){return "";}
-	_init(){
-		if (this.__implements__ == undefined){this.__implements__ = [];}
-		this.__implements__.push(ModuleDescriptionInterface);
-	}
-	static getFieldsList(names, flag){
-		if (flag==undefined)flag=0;
-	}
-	static getFieldInfoByName(field_name){
+	getCurrentNamespace: function()
+	{
+		return "Runtime";
+	},
+	getCurrentClassName: function()
+	{
+		return "Runtime.ModuleDescription";
+	},
+	getParentClassName: function()
+	{
+		return "";
+	},
+	getClassInfo: function(__ctx)
+	{
+		var Collection = use("Runtime.Collection");
+		var Dict = use("Runtime.Dict");
+		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
+		return new IntrospectionInfo(__ctx, {
+			"kind": IntrospectionInfo.ITEM_CLASS,
+			"class_name": "Runtime.ModuleDescription",
+			"name": "Runtime.ModuleDescription",
+			"annotations": Collection.from([
+			]),
+		});
+	},
+	getFieldsList: function(__ctx, f)
+	{
+		var a = [];
+		if (f==undefined) f=0;
+		return use("Runtime.Collection").from(a);
+	},
+	getFieldInfoByName: function(__ctx,field_name)
+	{
 		return null;
-	}
-	static getMethodsList(names){
-	}
-	static getMethodInfoByName(method_name){
+	},
+	getMethodsList: function(__ctx)
+	{
+		var a = [
+		];
+		return use("Runtime.Collection").from(a);
+	},
+	getMethodInfoByName: function(__ctx,field_name)
+	{
 		return null;
-	}
-}
-ModuleDescription.__static_implements__ = [];
-ModuleDescription.__static_implements__.push(ModuleDescriptionInterface)
-module.exports = ModuleDescription;
+	},
+	__implements__:
+	[
+		use("Runtime.Interfaces.ModuleDescriptionInterface"),
+		use("Runtime.Interfaces.AssetsInterface"),
+	],
+});use.add(Runtime.ModuleDescription);
+if (module.exports == undefined) module.exports = {};
+if (module.exports.Runtime == undefined) module.exports.Runtime = {};
+module.exports.Runtime.ModuleDescription = Runtime.ModuleDescription;

@@ -18,57 +18,78 @@ var use = require('bayrell').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-Runtime.CoreEvent = function(__ctx)
+if (typeof Runtime.Annotations == 'undefined') Runtime.Annotations = {};
+Runtime.Annotations.IntrospectionClass = function(__ctx)
 {
 	use("Runtime.CoreStruct").apply(this, arguments);
 };
-Runtime.CoreEvent.prototype = Object.create(use("Runtime.CoreStruct").prototype);
-Runtime.CoreEvent.prototype.constructor = Runtime.CoreEvent;
-Object.assign(Runtime.CoreEvent.prototype,
+Runtime.Annotations.IntrospectionClass.prototype = Object.create(use("Runtime.CoreStruct").prototype);
+Runtime.Annotations.IntrospectionClass.prototype.constructor = Runtime.Annotations.IntrospectionClass;
+Object.assign(Runtime.Annotations.IntrospectionClass.prototype,
 {
 	_init: function(__ctx)
 	{
 		var defProp = use('Runtime.rtl').defProp;
 		var a = Object.getOwnPropertyNames(this);
-		this.__sender = null;
-		if (a.indexOf("sender") == -1) defProp(this, "sender");
+		this.__class_name = "";
+		if (a.indexOf("class_name") == -1) defProp(this, "class_name");
+		this.__class_info = null;
+		if (a.indexOf("class_info") == -1) defProp(this, "class_info");
+		this.__fields = null;
+		if (a.indexOf("fields") == -1) defProp(this, "fields");
+		this.__methods = null;
+		if (a.indexOf("methods") == -1) defProp(this, "methods");
+		this.__interfaces = null;
+		if (a.indexOf("interfaces") == -1) defProp(this, "interfaces");
 		use("Runtime.CoreStruct").prototype._init.call(this,__ctx);
 	},
 	assignObject: function(__ctx,o)
 	{
-		if (o instanceof use("Runtime.CoreEvent"))
+		if (o instanceof use("Runtime.Annotations.IntrospectionClass"))
 		{
-			this.__sender = o.__sender;
+			this.__class_name = o.__class_name;
+			this.__class_info = o.__class_info;
+			this.__fields = o.__fields;
+			this.__methods = o.__methods;
+			this.__interfaces = o.__interfaces;
 		}
 		use("Runtime.CoreStruct").prototype.assignObject.call(this,__ctx,o);
 	},
 	assignValue: function(__ctx,k,v)
 	{
-		if (k == "sender")this.__sender = v;
+		if (k == "class_name")this.__class_name = v;
+		else if (k == "class_info")this.__class_info = v;
+		else if (k == "fields")this.__fields = v;
+		else if (k == "methods")this.__methods = v;
+		else if (k == "interfaces")this.__interfaces = v;
 		else use("Runtime.CoreStruct").prototype.assignValue.call(this,__ctx,k,v);
 	},
 	takeValue: function(__ctx,k,d)
 	{
 		if (d == undefined) d = null;
-		if (k == "sender")return this.__sender;
+		if (k == "class_name")return this.__class_name;
+		else if (k == "class_info")return this.__class_info;
+		else if (k == "fields")return this.__fields;
+		else if (k == "methods")return this.__methods;
+		else if (k == "interfaces")return this.__interfaces;
 		return use("Runtime.CoreStruct").prototype.takeValue.call(this,__ctx,k,d);
 	},
 	getClassName: function(__ctx)
 	{
-		return "Runtime.CoreEvent";
+		return "Runtime.Annotations.IntrospectionClass";
 	},
 });
-Object.assign(Runtime.CoreEvent, use("Runtime.CoreStruct"));
-Object.assign(Runtime.CoreEvent,
+Object.assign(Runtime.Annotations.IntrospectionClass, use("Runtime.CoreStruct"));
+Object.assign(Runtime.Annotations.IntrospectionClass,
 {
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
 	{
-		return "Runtime";
+		return "Runtime.Annotations";
 	},
 	getCurrentClassName: function()
 	{
-		return "Runtime.CoreEvent";
+		return "Runtime.Annotations.IntrospectionClass";
 	},
 	getParentClassName: function()
 	{
@@ -81,8 +102,8 @@ Object.assign(Runtime.CoreEvent,
 		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
 		return new IntrospectionInfo(__ctx, {
 			"kind": IntrospectionInfo.ITEM_CLASS,
-			"class_name": "Runtime.CoreEvent",
-			"name": "Runtime.CoreEvent",
+			"class_name": "Runtime.Annotations.IntrospectionClass",
+			"name": "Runtime.Annotations.IntrospectionClass",
 			"annotations": Collection.from([
 			]),
 		});
@@ -93,7 +114,11 @@ Object.assign(Runtime.CoreEvent,
 		if (f==undefined) f=0;
 		if ((f|3)==3)
 		{
-			a.push("sender");
+			a.push("class_name");
+			a.push("class_info");
+			a.push("fields");
+			a.push("methods");
+			a.push("interfaces");
 		}
 		return use("Runtime.Collection").from(a);
 	},
@@ -111,7 +136,8 @@ Object.assign(Runtime.CoreEvent,
 	{
 		return null;
 	},
-});use.add(Runtime.CoreEvent);
+});use.add(Runtime.Annotations.IntrospectionClass);
 if (module.exports == undefined) module.exports = {};
 if (module.exports.Runtime == undefined) module.exports.Runtime = {};
-module.exports.Runtime.CoreEvent = Runtime.CoreEvent;
+if (module.exports.Runtime.Annotations == undefined) module.exports.Runtime.Annotations = {};
+module.exports.Runtime.Annotations.IntrospectionClass = Runtime.Annotations.IntrospectionClass;

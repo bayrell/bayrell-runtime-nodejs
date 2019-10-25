@@ -1,4 +1,5 @@
 "use strict;"
+var use = require('bayrell').use;
 /*!
  *  Bayrell Runtime Library
  *
@@ -16,32 +17,90 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-var rtl = require('../rtl.js');
-var RuntimeConstant = require('../RuntimeConstant.js');
-var RuntimeException = require('./RuntimeException.js');
-var ContextInterface = require('../Interfaces/ContextInterface.js');
-class KeyNotFound extends RuntimeException{
-	constructor(key, context, prev){
-		if (context == undefined) context=null;
-		if (prev == undefined) prev=null;
-		/* RuntimeUtils::translate("ERROR_KEY_NOT_FOUND", null, "", context),  */
-		super("Key '"+rtl.toString(key)+"' not found", RuntimeConstant.ERROR_KEY_NOT_FOUND, context, prev);
-	}
+if (typeof Runtime == 'undefined') Runtime = {};
+if (typeof Runtime.Exceptions == 'undefined') Runtime.Exceptions = {};
+Runtime.Exceptions.KeyNotFound = function(__ctx, key, context, prev)
+{
+	/* RuntimeUtils::translate("ERROR_KEY_NOT_FOUND", null, "", context),  */
+	var __v0 = use("Runtime.RuntimeConstant");
+	use("Runtime.Exceptions.RuntimeException").call(this, __ctx, "Key '" + use("Runtime.rtl").toStr(key) + use("Runtime.rtl").toStr("' not found"), __v0.ERROR_KEY_NOT_FOUND, context, prev);
+};
+Runtime.Exceptions.KeyNotFound.prototype = Object.create(use("Runtime.Exceptions.RuntimeException").prototype);
+Runtime.Exceptions.KeyNotFound.prototype.constructor = Runtime.Exceptions.KeyNotFound;
+Object.assign(Runtime.Exceptions.KeyNotFound.prototype,
+{
+	assignObject: function(__ctx,o)
+	{
+		if (o instanceof use("Runtime.Exceptions.KeyNotFound"))
+		{
+		}
+		use("Runtime.Exceptions.RuntimeException").prototype.assignObject.call(this,__ctx,o);
+	},
+	assignValue: function(__ctx,k,v)
+	{
+		use("Runtime.Exceptions.RuntimeException").prototype.assignValue.call(this,__ctx,k,v);
+	},
+	takeValue: function(__ctx,k,d)
+	{
+		if (d == undefined) d = null;
+		return use("Runtime.Exceptions.RuntimeException").prototype.takeValue.call(this,__ctx,k,d);
+	},
+	getClassName: function(__ctx)
+	{
+		return "Runtime.Exceptions.KeyNotFound";
+	},
+});
+Object.assign(Runtime.Exceptions.KeyNotFound, use("Runtime.Exceptions.RuntimeException"));
+Object.assign(Runtime.Exceptions.KeyNotFound,
+{
 	/* ======================= Class Init Functions ======================= */
-	getClassName(){return "Runtime.Exceptions.KeyNotFound";}
-	static getCurrentNamespace(){return "Runtime.Exceptions";}
-	static getCurrentClassName(){return "Runtime.Exceptions.KeyNotFound";}
-	static getParentClassName(){return "Runtime.Exceptions.RuntimeException";}
-	static getFieldsList(names, flag){
-		if (flag==undefined)flag=0;
-	}
-	static getFieldInfoByName(field_name){
+	getCurrentNamespace: function()
+	{
+		return "Runtime.Exceptions";
+	},
+	getCurrentClassName: function()
+	{
+		return "Runtime.Exceptions.KeyNotFound";
+	},
+	getParentClassName: function()
+	{
+		return "Runtime.Exceptions.RuntimeException";
+	},
+	getClassInfo: function(__ctx)
+	{
+		var Collection = use("Runtime.Collection");
+		var Dict = use("Runtime.Dict");
+		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
+		return new IntrospectionInfo(__ctx, {
+			"kind": IntrospectionInfo.ITEM_CLASS,
+			"class_name": "Runtime.Exceptions.KeyNotFound",
+			"name": "Runtime.Exceptions.KeyNotFound",
+			"annotations": Collection.from([
+			]),
+		});
+	},
+	getFieldsList: function(__ctx, f)
+	{
+		var a = [];
+		if (f==undefined) f=0;
+		return use("Runtime.Collection").from(a);
+	},
+	getFieldInfoByName: function(__ctx,field_name)
+	{
 		return null;
-	}
-	static getMethodsList(names){
-	}
-	static getMethodInfoByName(method_name){
+	},
+	getMethodsList: function(__ctx)
+	{
+		var a = [
+		];
+		return use("Runtime.Collection").from(a);
+	},
+	getMethodInfoByName: function(__ctx,field_name)
+	{
 		return null;
-	}
-}
-module.exports = KeyNotFound;
+	},
+});use.add(Runtime.Exceptions.KeyNotFound);
+if (module.exports == undefined) module.exports = {};
+if (module.exports.Runtime == undefined) module.exports.Runtime = {};
+if (module.exports.Runtime.Exceptions == undefined) module.exports.Runtime.Exceptions = {};
+module.exports.Runtime.Exceptions.KeyNotFound = Runtime.Exceptions.KeyNotFound;

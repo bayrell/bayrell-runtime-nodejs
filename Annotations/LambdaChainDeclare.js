@@ -18,84 +18,67 @@ var use = require('bayrell').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-/**
- * Deprecated
- */
-Runtime.ContextObject = function(__ctx, context)
+if (typeof Runtime.Annotations == 'undefined') Runtime.Annotations = {};
+Runtime.Annotations.LambdaChainDeclare = function(__ctx)
 {
-	use("Runtime.CoreObject").call(this, __ctx);
-	this._context = context;
+	use("Runtime.CoreStruct").apply(this, arguments);
 };
-Runtime.ContextObject.prototype = Object.create(use("Runtime.CoreObject").prototype);
-Runtime.ContextObject.prototype.constructor = Runtime.ContextObject;
-Object.assign(Runtime.ContextObject.prototype,
+Runtime.Annotations.LambdaChainDeclare.prototype = Object.create(use("Runtime.CoreStruct").prototype);
+Runtime.Annotations.LambdaChainDeclare.prototype.constructor = Runtime.Annotations.LambdaChainDeclare;
+Object.assign(Runtime.Annotations.LambdaChainDeclare.prototype,
 {
-	/**
-	 * Returns context
-	 *
-	 * @return ContextInterface 
-	 */
-	context: function(__ctx)
-	{
-		return this._context;
-	},
-	/**
-	 * Translate message
-	 * @params string message - message need to be translated
-	 * @params Map params - Messages params. Default null.
-	 * @params string locale - Different locale. Default "".
-	 * @return string - translated string
-	 */
-	translate: function(__ctx, message, params, locale)
-	{
-		if (params == undefined) params = null;
-		if (locale == undefined) locale = "";
-		return this._context.translate(__ctx, message, params, locale);
-	},
 	_init: function(__ctx)
 	{
-		this._context = null;
-		use("Runtime.CoreObject").prototype._init.call(this,__ctx);
+		var defProp = use('Runtime.rtl').defProp;
+		var a = Object.getOwnPropertyNames(this);
+		this.__name = "";
+		if (a.indexOf("name") == -1) defProp(this, "name");
+		this.__is_await = false;
+		if (a.indexOf("is_await") == -1) defProp(this, "is_await");
+		use("Runtime.CoreStruct").prototype._init.call(this,__ctx);
 	},
 	assignObject: function(__ctx,o)
 	{
-		if (o instanceof use("Runtime.ContextObject"))
+		if (o instanceof use("Runtime.Annotations.LambdaChainDeclare"))
 		{
-			this._context = o._context;
+			this.__name = o.__name;
+			this.__is_await = o.__is_await;
 		}
-		use("Runtime.CoreObject").prototype.assignObject.call(this,__ctx,o);
+		use("Runtime.CoreStruct").prototype.assignObject.call(this,__ctx,o);
 	},
 	assignValue: function(__ctx,k,v)
 	{
-		if (k == "_context")this._context = v;
-		else use("Runtime.CoreObject").prototype.assignValue.call(this,__ctx,k,v);
+		if (k == "name")this.__name = v;
+		else if (k == "is_await")this.__is_await = v;
+		else use("Runtime.CoreStruct").prototype.assignValue.call(this,__ctx,k,v);
 	},
 	takeValue: function(__ctx,k,d)
 	{
 		if (d == undefined) d = null;
-		if (k == "_context")return this._context;
-		return use("Runtime.CoreObject").prototype.takeValue.call(this,__ctx,k,d);
+		if (k == "name")return this.__name;
+		else if (k == "is_await")return this.__is_await;
+		return use("Runtime.CoreStruct").prototype.takeValue.call(this,__ctx,k,d);
 	},
 	getClassName: function(__ctx)
 	{
-		return "Runtime.ContextObject";
+		return "Runtime.Annotations.LambdaChainDeclare";
 	},
 });
-Object.assign(Runtime.ContextObject, use("Runtime.CoreObject"));
-Object.assign(Runtime.ContextObject,
+Object.assign(Runtime.Annotations.LambdaChainDeclare, use("Runtime.CoreStruct"));
+Object.assign(Runtime.Annotations.LambdaChainDeclare,
 {
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
 	{
-		return "Runtime";
+		return "Runtime.Annotations";
 	},
 	getCurrentClassName: function()
 	{
-		return "Runtime.ContextObject";
+		return "Runtime.Annotations.LambdaChainDeclare";
 	},
 	getParentClassName: function()
 	{
-		return "Runtime.CoreObject";
+		return "Runtime.CoreStruct";
 	},
 	getClassInfo: function(__ctx)
 	{
@@ -104,8 +87,8 @@ Object.assign(Runtime.ContextObject,
 		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
 		return new IntrospectionInfo(__ctx, {
 			"kind": IntrospectionInfo.ITEM_CLASS,
-			"class_name": "Runtime.ContextObject",
-			"name": "Runtime.ContextObject",
+			"class_name": "Runtime.Annotations.LambdaChainDeclare",
+			"name": "Runtime.Annotations.LambdaChainDeclare",
 			"annotations": Collection.from([
 			]),
 		});
@@ -114,9 +97,10 @@ Object.assign(Runtime.ContextObject,
 	{
 		var a = [];
 		if (f==undefined) f=0;
-		if ((f|2)==2)
+		if ((f|3)==3)
 		{
-			a.push("_context");
+			a.push("name");
+			a.push("is_await");
 		}
 		return use("Runtime.Collection").from(a);
 	},
@@ -134,7 +118,8 @@ Object.assign(Runtime.ContextObject,
 	{
 		return null;
 	},
-});use.add(Runtime.ContextObject);
+});use.add(Runtime.Annotations.LambdaChainDeclare);
 if (module.exports == undefined) module.exports = {};
 if (module.exports.Runtime == undefined) module.exports.Runtime = {};
-module.exports.Runtime.ContextObject = Runtime.ContextObject;
+if (module.exports.Runtime.Annotations == undefined) module.exports.Runtime.Annotations = {};
+module.exports.Runtime.Annotations.LambdaChainDeclare = Runtime.Annotations.LambdaChainDeclare;

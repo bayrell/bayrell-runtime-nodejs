@@ -18,84 +18,51 @@ var use = require('bayrell').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-Runtime.RuntimeConstant = function(__ctx)
+if (typeof Runtime.Annotations == 'undefined') Runtime.Annotations = {};
+Runtime.Annotations.Driver = function(__ctx)
 {
+	use("Runtime.Annotations.Entity").apply(this, arguments);
 };
-Object.assign(Runtime.RuntimeConstant.prototype,
+Runtime.Annotations.Driver.prototype = Object.create(use("Runtime.Annotations.Entity").prototype);
+Runtime.Annotations.Driver.prototype.constructor = Runtime.Annotations.Driver;
+Object.assign(Runtime.Annotations.Driver.prototype,
 {
 	assignObject: function(__ctx,o)
 	{
-		if (o instanceof use("Runtime.RuntimeConstant"))
+		if (o instanceof use("Runtime.Annotations.Driver"))
 		{
 		}
+		use("Runtime.Annotations.Entity").prototype.assignObject.call(this,__ctx,o);
 	},
 	assignValue: function(__ctx,k,v)
 	{
+		use("Runtime.Annotations.Entity").prototype.assignValue.call(this,__ctx,k,v);
 	},
 	takeValue: function(__ctx,k,d)
 	{
 		if (d == undefined) d = null;
+		return use("Runtime.Annotations.Entity").prototype.takeValue.call(this,__ctx,k,d);
 	},
 	getClassName: function(__ctx)
 	{
-		return "Runtime.RuntimeConstant";
+		return "Runtime.Annotations.Driver";
 	},
 });
-Object.assign(Runtime.RuntimeConstant,
+Object.assign(Runtime.Annotations.Driver, use("Runtime.Annotations.Entity"));
+Object.assign(Runtime.Annotations.Driver,
 {
-	CHAIN_ENTITIES: "Runtime.Entities",
-	LOCAL_BUS: "Runtime.Interfaces.LocalBusInterface",
-	REMOTE_BUS: "Runtime.Interfaces.RemoteBusInterface",
-	LOG_FATAL: 0,
-	LOG_CRITICAL: 2,
-	LOG_ERROR: 4,
-	LOG_WARNING: 6,
-	LOG_INFO: 8,
-	LOG_DEBUG: 10,
-	LOG_DEBUG2: 12,
-	STATUS_PLAN: 0,
-	STATUS_DONE: 1,
-	STATUS_PROCESS: 100,
-	STATUS_FAIL: -1,
-	ERROR_NULL: 0,
-	ERROR_OK: 1,
-	ERROR_PROCCESS: 100,
-	ERROR_FALSE: -100,
-	ERROR_UNKNOWN: -1,
-	ERROR_INDEX_OUT_OF_RANGE: -2,
-	ERROR_KEY_NOT_FOUND: -3,
-	ERROR_STOP_ITERATION: -4,
-	ERROR_FILE_NOT_FOUND: -5,
-	ERROR_OBJECT_DOES_NOT_EXISTS: -5,
-	ERROR_OBJECT_ALLREADY_EXISTS: -6,
-	ERROR_ASSERT: -7,
-	ERROR_REQUEST: -8,
-	ERROR_RESPONSE: -9,
-	ERROR_CSRF_TOKEN: -10,
-	ERROR_RUNTIME: -11,
-	ERROR_VALIDATION: -12,
-	ERROR_PARSE_SERIALIZATION_ERROR: -14,
-	ERROR_ASSIGN_DATA_STRUCT_VALUE: -15,
-	ERROR_AUTH: -16,
-	ERROR_DUPLICATE: -17,
-	ERROR_FATAL: -99,
-	ERROR_HTTP_CONTINUE: -100,
-	ERROR_HTTP_SWITCH: -101,
-	ERROR_HTTP_PROCESSING: -102,
-	ERROR_HTTP_OK: -200,
-	ERROR_HTTP_BAD_GATEWAY: -502,
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
 	{
-		return "Runtime";
+		return "Runtime.Annotations";
 	},
 	getCurrentClassName: function()
 	{
-		return "Runtime.RuntimeConstant";
+		return "Runtime.Annotations.Driver";
 	},
 	getParentClassName: function()
 	{
-		return "";
+		return "Runtime.Annotations.Entity";
 	},
 	getClassInfo: function(__ctx)
 	{
@@ -104,8 +71,8 @@ Object.assign(Runtime.RuntimeConstant,
 		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
 		return new IntrospectionInfo(__ctx, {
 			"kind": IntrospectionInfo.ITEM_CLASS,
-			"class_name": "Runtime.RuntimeConstant",
-			"name": "Runtime.RuntimeConstant",
+			"class_name": "Runtime.Annotations.Driver",
+			"name": "Runtime.Annotations.Driver",
 			"annotations": Collection.from([
 			]),
 		});
@@ -130,7 +97,8 @@ Object.assign(Runtime.RuntimeConstant,
 	{
 		return null;
 	},
-});use.add(Runtime.RuntimeConstant);
+});use.add(Runtime.Annotations.Driver);
 if (module.exports == undefined) module.exports = {};
 if (module.exports.Runtime == undefined) module.exports.Runtime = {};
-module.exports.Runtime.RuntimeConstant = Runtime.RuntimeConstant;
+if (module.exports.Runtime.Annotations == undefined) module.exports.Runtime.Annotations = {};
+module.exports.Runtime.Annotations.Driver = Runtime.Annotations.Driver;

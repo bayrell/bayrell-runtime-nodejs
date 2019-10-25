@@ -18,72 +18,62 @@ var use = require('bayrell').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-Runtime.RuntimeConstant = function(__ctx)
+Runtime.Message = function(__ctx)
 {
+	use("Runtime.CoreStruct").apply(this, arguments);
 };
-Object.assign(Runtime.RuntimeConstant.prototype,
+Runtime.Message.prototype = Object.create(use("Runtime.CoreStruct").prototype);
+Runtime.Message.prototype.constructor = Runtime.Message;
+Object.assign(Runtime.Message.prototype,
 {
+	_init: function(__ctx)
+	{
+		var defProp = use('Runtime.rtl').defProp;
+		var a = Object.getOwnPropertyNames(this);
+		this.__is_external = false;
+		if (a.indexOf("is_external") == -1) defProp(this, "is_external");
+		this.__session = null;
+		if (a.indexOf("session") == -1) defProp(this, "session");
+		use("Runtime.CoreStruct").prototype._init.call(this,__ctx);
+	},
 	assignObject: function(__ctx,o)
 	{
-		if (o instanceof use("Runtime.RuntimeConstant"))
+		if (o instanceof use("Runtime.Message"))
 		{
+			this.__is_external = o.__is_external;
+			this.__session = o.__session;
 		}
+		use("Runtime.CoreStruct").prototype.assignObject.call(this,__ctx,o);
 	},
 	assignValue: function(__ctx,k,v)
 	{
+		if (k == "is_external")this.__is_external = v;
+		else if (k == "session")this.__session = v;
+		else use("Runtime.CoreStruct").prototype.assignValue.call(this,__ctx,k,v);
 	},
 	takeValue: function(__ctx,k,d)
 	{
 		if (d == undefined) d = null;
+		if (k == "is_external")return this.__is_external;
+		else if (k == "session")return this.__session;
+		return use("Runtime.CoreStruct").prototype.takeValue.call(this,__ctx,k,d);
 	},
 	getClassName: function(__ctx)
 	{
-		return "Runtime.RuntimeConstant";
+		return "Runtime.Message";
 	},
 });
-Object.assign(Runtime.RuntimeConstant,
+Object.assign(Runtime.Message, use("Runtime.CoreStruct"));
+Object.assign(Runtime.Message,
 {
-	CHAIN_ENTITIES: "Runtime.Entities",
-	LOCAL_BUS: "Runtime.Interfaces.LocalBusInterface",
-	REMOTE_BUS: "Runtime.Interfaces.RemoteBusInterface",
-	LOG_FATAL: 0,
-	LOG_CRITICAL: 2,
-	LOG_ERROR: 4,
-	LOG_WARNING: 6,
-	LOG_INFO: 8,
-	LOG_DEBUG: 10,
-	LOG_DEBUG2: 12,
-	STATUS_PLAN: 0,
-	STATUS_DONE: 1,
-	STATUS_PROCESS: 100,
-	STATUS_FAIL: -1,
-	ERROR_NULL: 0,
-	ERROR_OK: 1,
-	ERROR_PROCCESS: 100,
-	ERROR_FALSE: -100,
-	ERROR_UNKNOWN: -1,
-	ERROR_INDEX_OUT_OF_RANGE: -2,
-	ERROR_KEY_NOT_FOUND: -3,
-	ERROR_STOP_ITERATION: -4,
-	ERROR_FILE_NOT_FOUND: -5,
-	ERROR_OBJECT_DOES_NOT_EXISTS: -5,
-	ERROR_OBJECT_ALLREADY_EXISTS: -6,
-	ERROR_ASSERT: -7,
-	ERROR_REQUEST: -8,
-	ERROR_RESPONSE: -9,
-	ERROR_CSRF_TOKEN: -10,
-	ERROR_RUNTIME: -11,
-	ERROR_VALIDATION: -12,
-	ERROR_PARSE_SERIALIZATION_ERROR: -14,
-	ERROR_ASSIGN_DATA_STRUCT_VALUE: -15,
-	ERROR_AUTH: -16,
-	ERROR_DUPLICATE: -17,
-	ERROR_FATAL: -99,
-	ERROR_HTTP_CONTINUE: -100,
-	ERROR_HTTP_SWITCH: -101,
-	ERROR_HTTP_PROCESSING: -102,
-	ERROR_HTTP_OK: -200,
-	ERROR_HTTP_BAD_GATEWAY: -502,
+	isExternal: function(__ctx, s)
+	{
+		return s.is_external == true;
+	},
+	isInternal: function(__ctx, s)
+	{
+		return s.is_external == false;
+	},
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
 	{
@@ -91,11 +81,11 @@ Object.assign(Runtime.RuntimeConstant,
 	},
 	getCurrentClassName: function()
 	{
-		return "Runtime.RuntimeConstant";
+		return "Runtime.Message";
 	},
 	getParentClassName: function()
 	{
-		return "";
+		return "Runtime.CoreStruct";
 	},
 	getClassInfo: function(__ctx)
 	{
@@ -104,8 +94,8 @@ Object.assign(Runtime.RuntimeConstant,
 		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
 		return new IntrospectionInfo(__ctx, {
 			"kind": IntrospectionInfo.ITEM_CLASS,
-			"class_name": "Runtime.RuntimeConstant",
-			"name": "Runtime.RuntimeConstant",
+			"class_name": "Runtime.Message",
+			"name": "Runtime.Message",
 			"annotations": Collection.from([
 			]),
 		});
@@ -114,6 +104,11 @@ Object.assign(Runtime.RuntimeConstant,
 	{
 		var a = [];
 		if (f==undefined) f=0;
+		if ((f|3)==3)
+		{
+			a.push("is_external");
+			a.push("session");
+		}
 		return use("Runtime.Collection").from(a);
 	},
 	getFieldInfoByName: function(__ctx,field_name)
@@ -130,7 +125,7 @@ Object.assign(Runtime.RuntimeConstant,
 	{
 		return null;
 	},
-});use.add(Runtime.RuntimeConstant);
+});use.add(Runtime.Message);
 if (module.exports == undefined) module.exports = {};
 if (module.exports.Runtime == undefined) module.exports.Runtime = {};
-module.exports.Runtime.RuntimeConstant = Runtime.RuntimeConstant;
+module.exports.Runtime.Message = Runtime.Message;

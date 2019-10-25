@@ -1,4 +1,5 @@
 "use strict;"
+var use = require('bayrell').use;
 /*!
  *  Bayrell Runtime Library
  *
@@ -16,11 +17,36 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-class StringInterface{
+if (typeof Runtime == 'undefined') Runtime = {};
+if (typeof Runtime.Interfaces == 'undefined') Runtime.Interfaces = {};
+Runtime.Interfaces.StringInterface = function(__ctx)
+{
+};
+Object.assign(Runtime.Interfaces.StringInterface.prototype,
+{
 	/**
 	 * Returns string
 	 */
-	toString(){
-	}
-}
-module.exports = StringInterface;
+	toString: function(__ctx)
+	{
+	},
+	getClassName: function(__ctx)
+	{
+		return "Runtime.Interfaces.StringInterface";
+	},
+});
+Object.assign(Runtime.Interfaces.StringInterface,
+{
+	getCurrentNamespace: function()
+	{
+		return "Runtime.Interfaces";
+	},
+	getCurrentClassName: function()
+	{
+		return "Runtime.Interfaces.StringInterface";
+	},
+});use.add(Runtime.Interfaces.StringInterface);
+if (module.exports == undefined) module.exports = {};
+if (module.exports.Runtime == undefined) module.exports.Runtime = {};
+if (module.exports.Runtime.Interfaces == undefined) module.exports.Runtime.Interfaces = {};
+module.exports.Runtime.Interfaces.StringInterface = Runtime.Interfaces.StringInterface;

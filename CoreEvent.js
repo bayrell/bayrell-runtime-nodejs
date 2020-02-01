@@ -3,7 +3,7 @@ var use = require('bayrell').use;
 /*!
  *  Bayrell Runtime Library
  *
- *  (c) Copyright 2016-2019 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ var use = require('bayrell').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-Runtime.CoreEvent = function(__ctx)
+Runtime.CoreEvent = function(ctx)
 {
 	use("Runtime.CoreStruct").apply(this, arguments);
 };
@@ -26,34 +26,34 @@ Runtime.CoreEvent.prototype = Object.create(use("Runtime.CoreStruct").prototype)
 Runtime.CoreEvent.prototype.constructor = Runtime.CoreEvent;
 Object.assign(Runtime.CoreEvent.prototype,
 {
-	_init: function(__ctx)
+	_init: function(ctx)
 	{
 		var defProp = use('Runtime.rtl').defProp;
 		var a = Object.getOwnPropertyNames(this);
 		this.__sender = null;
 		if (a.indexOf("sender") == -1) defProp(this, "sender");
-		use("Runtime.CoreStruct").prototype._init.call(this,__ctx);
+		use("Runtime.CoreStruct").prototype._init.call(this,ctx);
 	},
-	assignObject: function(__ctx,o)
+	assignObject: function(ctx,o)
 	{
 		if (o instanceof use("Runtime.CoreEvent"))
 		{
 			this.__sender = o.__sender;
 		}
-		use("Runtime.CoreStruct").prototype.assignObject.call(this,__ctx,o);
+		use("Runtime.CoreStruct").prototype.assignObject.call(this,ctx,o);
 	},
-	assignValue: function(__ctx,k,v)
+	assignValue: function(ctx,k,v)
 	{
 		if (k == "sender")this.__sender = v;
-		else use("Runtime.CoreStruct").prototype.assignValue.call(this,__ctx,k,v);
+		else use("Runtime.CoreStruct").prototype.assignValue.call(this,ctx,k,v);
 	},
-	takeValue: function(__ctx,k,d)
+	takeValue: function(ctx,k,d)
 	{
 		if (d == undefined) d = null;
 		if (k == "sender")return this.__sender;
-		return use("Runtime.CoreStruct").prototype.takeValue.call(this,__ctx,k,d);
+		return use("Runtime.CoreStruct").prototype.takeValue.call(this,ctx,k,d);
 	},
-	getClassName: function(__ctx)
+	getClassName: function(ctx)
 	{
 		return "Runtime.CoreEvent";
 	},
@@ -74,12 +74,12 @@ Object.assign(Runtime.CoreEvent,
 	{
 		return "Runtime.CoreStruct";
 	},
-	getClassInfo: function(__ctx)
+	getClassInfo: function(ctx)
 	{
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
 		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
-		return new IntrospectionInfo(__ctx, {
+		return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_CLASS,
 			"class_name": "Runtime.CoreEvent",
 			"name": "Runtime.CoreEvent",
@@ -87,7 +87,7 @@ Object.assign(Runtime.CoreEvent,
 			]),
 		});
 	},
-	getFieldsList: function(__ctx, f)
+	getFieldsList: function(ctx, f)
 	{
 		var a = [];
 		if (f==undefined) f=0;
@@ -97,17 +97,27 @@ Object.assign(Runtime.CoreEvent,
 		}
 		return use("Runtime.Collection").from(a);
 	},
-	getFieldInfoByName: function(__ctx,field_name)
+	getFieldInfoByName: function(ctx,field_name)
 	{
+		var Collection = use("Runtime.Collection");
+		var Dict = use("Runtime.Dict");
+		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
+		if (field_name == "sender") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.CoreEvent",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
 		return null;
 	},
-	getMethodsList: function(__ctx)
+	getMethodsList: function(ctx)
 	{
 		var a = [
 		];
 		return use("Runtime.Collection").from(a);
 	},
-	getMethodInfoByName: function(__ctx,field_name)
+	getMethodInfoByName: function(ctx,field_name)
 	{
 		return null;
 	},

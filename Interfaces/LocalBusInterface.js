@@ -19,12 +19,12 @@ var use = require('bayrell').use;
  */
 if (typeof Runtime == 'undefined') Runtime = {};
 if (typeof Runtime.Interfaces == 'undefined') Runtime.Interfaces = {};
-Runtime.Interfaces.LocalBusInterface = function(__ctx)
+Runtime.Interfaces.LocalBusInterface = function(ctx)
 {
 };
 Object.assign(Runtime.Interfaces.LocalBusInterface.prototype,
 {
-	getClassName: function(__ctx)
+	getClassName: function(ctx)
 	{
 		return "Runtime.Interfaces.LocalBusInterface";
 	},

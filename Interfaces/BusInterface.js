@@ -3,7 +3,7 @@ var use = require('bayrell').use;
 /*!
  *  Bayrell Runtime Library
  *
- *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2016-2018 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,23 +19,17 @@ var use = require('bayrell').use;
  */
 if (typeof Runtime == 'undefined') Runtime = {};
 if (typeof Runtime.Interfaces == 'undefined') Runtime.Interfaces = {};
-Runtime.Interfaces.StringInterface = function(ctx)
+Runtime.Interfaces.BusInterface = function(ctx)
 {
 };
-Object.assign(Runtime.Interfaces.StringInterface.prototype,
+Object.assign(Runtime.Interfaces.BusInterface.prototype,
 {
-	/**
-	 * Returns string
-	 */
-	toString: function(ctx)
-	{
-	},
 	getClassName: function(ctx)
 	{
-		return "Runtime.Interfaces.StringInterface";
+		return "Runtime.Interfaces.BusInterface";
 	},
 });
-Object.assign(Runtime.Interfaces.StringInterface,
+Object.assign(Runtime.Interfaces.BusInterface,
 {
 	getCurrentNamespace: function()
 	{
@@ -43,10 +37,10 @@ Object.assign(Runtime.Interfaces.StringInterface,
 	},
 	getCurrentClassName: function()
 	{
-		return "Runtime.Interfaces.StringInterface";
+		return "Runtime.Interfaces.BusInterface";
 	},
-});use.add(Runtime.Interfaces.StringInterface);
+});use.add(Runtime.Interfaces.BusInterface);
 if (module.exports == undefined) module.exports = {};
 if (module.exports.Runtime == undefined) module.exports.Runtime = {};
 if (module.exports.Runtime.Interfaces == undefined) module.exports.Runtime.Interfaces = {};
-module.exports.Runtime.Interfaces.StringInterface = Runtime.Interfaces.StringInterface;
+module.exports.Runtime.Interfaces.BusInterface = Runtime.Interfaces.BusInterface;

@@ -3,7 +3,7 @@ var use = require('bayrell').use;
 /*!
  *  Bayrell Runtime Library
  *
- *  (c) Copyright 2016-2019 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ var use = require('bayrell').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-Runtime.PathInfo = function(__ctx)
+Runtime.PathInfo = function(ctx)
 {
 };
 Object.assign(Runtime.PathInfo.prototype,
@@ -26,11 +26,11 @@ Object.assign(Runtime.PathInfo.prototype,
 	/**
 	 * Returns string
 	 */
-	toString: function(__ctx)
+	toString: function(ctx)
 	{
 		return this.filepath;
 	},
-	_init: function(__ctx)
+	_init: function(ctx)
 	{
 		this.filepath = "";
 		this.dirname = "";
@@ -38,7 +38,7 @@ Object.assign(Runtime.PathInfo.prototype,
 		this.extension = "";
 		this.filename = "";
 	},
-	assignObject: function(__ctx,o)
+	assignObject: function(ctx,o)
 	{
 		if (o instanceof use("Runtime.PathInfo"))
 		{
@@ -49,7 +49,7 @@ Object.assign(Runtime.PathInfo.prototype,
 			this.filename = o.filename;
 		}
 	},
-	assignValue: function(__ctx,k,v)
+	assignValue: function(ctx,k,v)
 	{
 		if (k == "filepath")this.filepath = v;
 		else if (k == "dirname")this.dirname = v;
@@ -57,7 +57,7 @@ Object.assign(Runtime.PathInfo.prototype,
 		else if (k == "extension")this.extension = v;
 		else if (k == "filename")this.filename = v;
 	},
-	takeValue: function(__ctx,k,d)
+	takeValue: function(ctx,k,d)
 	{
 		if (d == undefined) d = null;
 		if (k == "filepath")return this.filepath;
@@ -66,7 +66,7 @@ Object.assign(Runtime.PathInfo.prototype,
 		else if (k == "extension")return this.extension;
 		else if (k == "filename")return this.filename;
 	},
-	getClassName: function(__ctx)
+	getClassName: function(ctx)
 	{
 		return "Runtime.PathInfo";
 	},
@@ -86,12 +86,12 @@ Object.assign(Runtime.PathInfo,
 	{
 		return "";
 	},
-	getClassInfo: function(__ctx)
+	getClassInfo: function(ctx)
 	{
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
 		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
-		return new IntrospectionInfo(__ctx, {
+		return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_CLASS,
 			"class_name": "Runtime.PathInfo",
 			"name": "Runtime.PathInfo",
@@ -99,7 +99,7 @@ Object.assign(Runtime.PathInfo,
 			]),
 		});
 	},
-	getFieldsList: function(__ctx, f)
+	getFieldsList: function(ctx, f)
 	{
 		var a = [];
 		if (f==undefined) f=0;
@@ -113,17 +113,55 @@ Object.assign(Runtime.PathInfo,
 		}
 		return use("Runtime.Collection").from(a);
 	},
-	getFieldInfoByName: function(__ctx,field_name)
+	getFieldInfoByName: function(ctx,field_name)
 	{
+		var Collection = use("Runtime.Collection");
+		var Dict = use("Runtime.Dict");
+		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
+		if (field_name == "filepath") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.PathInfo",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "dirname") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.PathInfo",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "basename") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.PathInfo",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "extension") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.PathInfo",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "filename") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.PathInfo",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
 		return null;
 	},
-	getMethodsList: function(__ctx)
+	getMethodsList: function(ctx)
 	{
 		var a = [
 		];
 		return use("Runtime.Collection").from(a);
 	},
-	getMethodInfoByName: function(__ctx,field_name)
+	getMethodInfoByName: function(ctx,field_name)
 	{
 		return null;
 	},

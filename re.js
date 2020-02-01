@@ -3,7 +3,7 @@ var use = require('bayrell').use;
 /*!
  *  Bayrell Runtime Library
  *
- *  (c) Copyright 2016-2019 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,25 +18,25 @@ var use = require('bayrell').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-Runtime.re = function(__ctx)
+Runtime.re = function(ctx)
 {
 };
 Object.assign(Runtime.re.prototype,
 {
-	assignObject: function(__ctx,o)
+	assignObject: function(ctx,o)
 	{
 		if (o instanceof use("Runtime.re"))
 		{
 		}
 	},
-	assignValue: function(__ctx,k,v)
+	assignValue: function(ctx,k,v)
 	{
 	},
-	takeValue: function(__ctx,k,d)
+	takeValue: function(ctx,k,d)
 	{
 		if (d == undefined) d = null;
 	},
-	getClassName: function(__ctx)
+	getClassName: function(ctx)
 	{
 		return "Runtime.re";
 	},
@@ -49,7 +49,7 @@ Object.assign(Runtime.re,
 	 * @param string s string
 	 * @return bool
 	 */
-	match: function(__ctx, r, s)
+	match: function(ctx, r, s)
 	{
 		return s.match( new RegExp(r, "g") ) != null;
 	},
@@ -59,7 +59,7 @@ Object.assign(Runtime.re,
 	 * @param string s string
 	 * @return Vector result
 	 */
-	matchAll: function(__ctx, r, s)
+	matchAll: function(ctx, r, s)
 	{
 		return null;
 	},
@@ -70,7 +70,7 @@ Object.assign(Runtime.re,
 	 * @param string s - replaceable string
 	 * @return string
 	 */
-	replace: function(__ctx, r, replace, s)
+	replace: function(ctx, r, replace, s)
 	{
 		return s.replace(new RegExp(r, "g"), replace);
 	},
@@ -87,12 +87,12 @@ Object.assign(Runtime.re,
 	{
 		return "";
 	},
-	getClassInfo: function(__ctx)
+	getClassInfo: function(ctx)
 	{
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
 		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
-		return new IntrospectionInfo(__ctx, {
+		return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_CLASS,
 			"class_name": "Runtime.re",
 			"name": "Runtime.re",
@@ -100,23 +100,26 @@ Object.assign(Runtime.re,
 			]),
 		});
 	},
-	getFieldsList: function(__ctx, f)
+	getFieldsList: function(ctx, f)
 	{
 		var a = [];
 		if (f==undefined) f=0;
 		return use("Runtime.Collection").from(a);
 	},
-	getFieldInfoByName: function(__ctx,field_name)
+	getFieldInfoByName: function(ctx,field_name)
 	{
+		var Collection = use("Runtime.Collection");
+		var Dict = use("Runtime.Dict");
+		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
 		return null;
 	},
-	getMethodsList: function(__ctx)
+	getMethodsList: function(ctx)
 	{
 		var a = [
 		];
 		return use("Runtime.Collection").from(a);
 	},
-	getMethodInfoByName: function(__ctx,field_name)
+	getMethodInfoByName: function(ctx,field_name)
 	{
 		return null;
 	},

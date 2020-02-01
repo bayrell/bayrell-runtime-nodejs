@@ -3,7 +3,7 @@ var use = require('bayrell').use;
 /*!
  *  Bayrell Runtime Library
  *
- *  (c) Copyright 2016-2019 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ var use = require('bayrell').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-Runtime.DateTime = function(__ctx)
+Runtime.DateTime = function(ctx)
 {
 	use("Runtime.CoreStruct").apply(this, arguments);
 };
@@ -30,7 +30,7 @@ Object.assign(Runtime.DateTime.prototype,
 	 * Returns day of week
 	 * @return int
 	 */
-	getDayOfWeek: function(__ctx)
+	getDayOfWeek: function(ctx)
 	{
 		var dt = this.getDatetime(obj);
 		return dt.getDay();
@@ -40,7 +40,7 @@ Object.assign(Runtime.DateTime.prototype,
 	 * Returns timestamp
 	 * @return int
 	 */
-	getTimestamp: function(__ctx)
+	getTimestamp: function(ctx)
 	{
 		var dt = this.getDatetime(obj);
 		return dt.getTime();
@@ -51,7 +51,7 @@ Object.assign(Runtime.DateTime.prototype,
 	 * @param int timestamp
 	 * @return DateTime instance
 	 */
-	setTimestamp: function(__ctx, timestamp)
+	setTimestamp: function(ctx, timestamp)
 	{
 		return null;
 	},
@@ -60,7 +60,7 @@ Object.assign(Runtime.DateTime.prototype,
 	 * @param string tz
 	 * @return DateTime instance
 	 */
-	changeTimezone: function(__ctx, tz)
+	changeTimezone: function(ctx, tz)
 	{
 		return obj;
 		return null;
@@ -69,7 +69,7 @@ Object.assign(Runtime.DateTime.prototype,
 	 * Return datetime in RFC822
 	 * @return string
 	 */
-	getRFC822: function(__ctx)
+	getRFC822: function(ctx)
 	{
 		var y,m,d,h,i,s,dow,dow_s,m_s,tz;
 		
@@ -115,7 +115,7 @@ Object.assign(Runtime.DateTime.prototype,
 	 * Return datetime in ISO8601
 	 * @return string
 	 */
-	getISO8601: function(__ctx)
+	getISO8601: function(ctx)
 	{
 		var m = (obj.m < 10) ? "0" + obj.m : "" + obj.m;
 		var d = (obj.d < 10) ? "0" + obj.d : "" + obj.d;
@@ -130,7 +130,7 @@ Object.assign(Runtime.DateTime.prototype,
 	 * Return db datetime
 	 * @return string
 	 */
-	getDBTime: function(__ctx)
+	getDBTime: function(ctx)
 	{
 		var m = (obj.m < 10) ? "0" + obj.m : "" + obj.m;
 		var d = (obj.d < 10) ? "0" + obj.d : "" + obj.d;
@@ -144,7 +144,7 @@ Object.assign(Runtime.DateTime.prototype,
 	 * Return datetime by UTC
 	 * @return string
 	 */
-	getUTC: function(__ctx)
+	getUTC: function(ctx)
 	{
 		var dt = this.getDatetime(obj);
 		var y = Number(dt.getUTCFullYear());
@@ -162,7 +162,7 @@ Object.assign(Runtime.DateTime.prototype,
 			h + ":" + i + ":" + s;
 		return "";
 	},
-	_init: function(__ctx)
+	_init: function(ctx)
 	{
 		var defProp = use('Runtime.rtl').defProp;
 		var a = Object.getOwnPropertyNames(this);
@@ -174,17 +174,17 @@ Object.assign(Runtime.DateTime.prototype,
 		if (a.indexOf("d") == -1) defProp(this, "d");
 		this.__h = 0;
 		if (a.indexOf("h") == -1) defProp(this, "h");
-		this.__u = 0;
-		if (a.indexOf("u") == -1) defProp(this, "u");
+		this.__i = 0;
+		if (a.indexOf("i") == -1) defProp(this, "i");
 		this.__s = 0;
 		if (a.indexOf("s") == -1) defProp(this, "s");
 		this.__ms = 0;
 		if (a.indexOf("ms") == -1) defProp(this, "ms");
 		this.__tz = "UTC";
 		if (a.indexOf("tz") == -1) defProp(this, "tz");
-		use("Runtime.CoreStruct").prototype._init.call(this,__ctx);
+		use("Runtime.CoreStruct").prototype._init.call(this,ctx);
 	},
-	assignObject: function(__ctx,o)
+	assignObject: function(ctx,o)
 	{
 		if (o instanceof use("Runtime.DateTime"))
 		{
@@ -192,39 +192,39 @@ Object.assign(Runtime.DateTime.prototype,
 			this.__m = o.__m;
 			this.__d = o.__d;
 			this.__h = o.__h;
-			this.__u = o.__u;
+			this.__i = o.__i;
 			this.__s = o.__s;
 			this.__ms = o.__ms;
 			this.__tz = o.__tz;
 		}
-		use("Runtime.CoreStruct").prototype.assignObject.call(this,__ctx,o);
+		use("Runtime.CoreStruct").prototype.assignObject.call(this,ctx,o);
 	},
-	assignValue: function(__ctx,k,v)
+	assignValue: function(ctx,k,v)
 	{
 		if (k == "y")this.__y = v;
 		else if (k == "m")this.__m = v;
 		else if (k == "d")this.__d = v;
 		else if (k == "h")this.__h = v;
-		else if (k == "u")this.__u = v;
+		else if (k == "i")this.__i = v;
 		else if (k == "s")this.__s = v;
 		else if (k == "ms")this.__ms = v;
 		else if (k == "tz")this.__tz = v;
-		else use("Runtime.CoreStruct").prototype.assignValue.call(this,__ctx,k,v);
+		else use("Runtime.CoreStruct").prototype.assignValue.call(this,ctx,k,v);
 	},
-	takeValue: function(__ctx,k,d)
+	takeValue: function(ctx,k,d)
 	{
 		if (d == undefined) d = null;
 		if (k == "y")return this.__y;
 		else if (k == "m")return this.__m;
 		else if (k == "d")return this.__d;
 		else if (k == "h")return this.__h;
-		else if (k == "u")return this.__u;
+		else if (k == "i")return this.__i;
 		else if (k == "s")return this.__s;
 		else if (k == "ms")return this.__ms;
 		else if (k == "tz")return this.__tz;
-		return use("Runtime.CoreStruct").prototype.takeValue.call(this,__ctx,k,d);
+		return use("Runtime.CoreStruct").prototype.takeValue.call(this,ctx,k,d);
 	},
-	getClassName: function(__ctx)
+	getClassName: function(ctx)
 	{
 		return "Runtime.DateTime";
 	},
@@ -235,7 +235,7 @@ Object.assign(Runtime.DateTime,
 	/**
 	 * Create date time from timestamp
 	 */
-	timestamp: function(__ctx, time, tz)
+	timestamp: function(ctx, time, tz)
 	{
 		if (tz == undefined) tz = "UTC";
 		var dt = new Date(time*1000);
@@ -245,7 +245,7 @@ Object.assign(Runtime.DateTime,
 	/**
 	 * Output dbtime
 	 */
-	dbtime: function(__ctx, time, tz)
+	dbtime: function(ctx, time, tz)
 	{
 		if (tz == undefined) tz = "UTC";
 		var dt = new Date(time*1000);
@@ -258,7 +258,7 @@ Object.assign(Runtime.DateTime,
 	 * @param string tz
 	 * @return DateTime
 	 */
-	now: function(__ctx, tz)
+	now: function(ctx, tz)
 	{
 		if (tz == undefined) tz = "UTC";
 		var dt = new Date();
@@ -278,12 +278,12 @@ Object.assign(Runtime.DateTime,
 	{
 		return "Runtime.CoreStruct";
 	},
-	getClassInfo: function(__ctx)
+	getClassInfo: function(ctx)
 	{
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
 		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
-		return new IntrospectionInfo(__ctx, {
+		return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_CLASS,
 			"class_name": "Runtime.DateTime",
 			"name": "Runtime.DateTime",
@@ -291,7 +291,7 @@ Object.assign(Runtime.DateTime,
 			]),
 		});
 	},
-	getFieldsList: function(__ctx, f)
+	getFieldsList: function(ctx, f)
 	{
 		var a = [];
 		if (f==undefined) f=0;
@@ -301,24 +301,83 @@ Object.assign(Runtime.DateTime,
 			a.push("m");
 			a.push("d");
 			a.push("h");
-			a.push("u");
+			a.push("i");
 			a.push("s");
 			a.push("ms");
 			a.push("tz");
 		}
 		return use("Runtime.Collection").from(a);
 	},
-	getFieldInfoByName: function(__ctx,field_name)
+	getFieldInfoByName: function(ctx,field_name)
 	{
+		var Collection = use("Runtime.Collection");
+		var Dict = use("Runtime.Dict");
+		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
+		if (field_name == "y") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.DateTime",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "m") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.DateTime",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "d") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.DateTime",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "h") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.DateTime",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "i") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.DateTime",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "s") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.DateTime",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "ms") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.DateTime",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "tz") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.DateTime",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
 		return null;
 	},
-	getMethodsList: function(__ctx)
+	getMethodsList: function(ctx)
 	{
 		var a = [
 		];
 		return use("Runtime.Collection").from(a);
 	},
-	getMethodInfoByName: function(__ctx,field_name)
+	getMethodInfoByName: function(ctx,field_name)
 	{
 		return null;
 	},

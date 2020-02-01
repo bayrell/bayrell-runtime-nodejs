@@ -18,7 +18,7 @@ var use = require('bayrell').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-Runtime.BusResult = function(__ctx)
+Runtime.BusResult = function(ctx)
 {
 	use("Runtime.CoreStruct").apply(this, arguments);
 };
@@ -26,7 +26,7 @@ Runtime.BusResult.prototype = Object.create(use("Runtime.CoreStruct").prototype)
 Runtime.BusResult.prototype.constructor = Runtime.BusResult;
 Object.assign(Runtime.BusResult.prototype,
 {
-	_init: function(__ctx)
+	_init: function(ctx)
 	{
 		var defProp = use('Runtime.rtl').defProp;
 		var a = Object.getOwnPropertyNames(this);
@@ -52,9 +52,9 @@ Object.assign(Runtime.BusResult.prototype,
 		if (a.indexOf("params") == -1) defProp(this, "params");
 		this.__logs = null;
 		if (a.indexOf("logs") == -1) defProp(this, "logs");
-		use("Runtime.CoreStruct").prototype._init.call(this,__ctx);
+		use("Runtime.CoreStruct").prototype._init.call(this,ctx);
 	},
-	assignObject: function(__ctx,o)
+	assignObject: function(ctx,o)
 	{
 		if (o instanceof use("Runtime.BusResult"))
 		{
@@ -70,9 +70,9 @@ Object.assign(Runtime.BusResult.prototype,
 			this.__params = o.__params;
 			this.__logs = o.__logs;
 		}
-		use("Runtime.CoreStruct").prototype.assignObject.call(this,__ctx,o);
+		use("Runtime.CoreStruct").prototype.assignObject.call(this,ctx,o);
 	},
-	assignValue: function(__ctx,k,v)
+	assignValue: function(ctx,k,v)
 	{
 		if (k == "success")this.__success = v;
 		else if (k == "code")this.__code = v;
@@ -85,9 +85,9 @@ Object.assign(Runtime.BusResult.prototype,
 		else if (k == "data")this.__data = v;
 		else if (k == "params")this.__params = v;
 		else if (k == "logs")this.__logs = v;
-		else use("Runtime.CoreStruct").prototype.assignValue.call(this,__ctx,k,v);
+		else use("Runtime.CoreStruct").prototype.assignValue.call(this,ctx,k,v);
 	},
-	takeValue: function(__ctx,k,d)
+	takeValue: function(ctx,k,d)
 	{
 		if (d == undefined) d = null;
 		if (k == "success")return this.__success;
@@ -101,9 +101,9 @@ Object.assign(Runtime.BusResult.prototype,
 		else if (k == "data")return this.__data;
 		else if (k == "params")return this.__params;
 		else if (k == "logs")return this.__logs;
-		return use("Runtime.CoreStruct").prototype.takeValue.call(this,__ctx,k,d);
+		return use("Runtime.CoreStruct").prototype.takeValue.call(this,ctx,k,d);
 	},
-	getClassName: function(__ctx)
+	getClassName: function(ctx)
 	{
 		return "Runtime.BusResult";
 	},
@@ -115,7 +115,7 @@ Object.assign(Runtime.BusResult,
 	 * Returns true if success
 	 * @return bool
 	 */
-	isSuccess: function(__ctx, bus)
+	isSuccess: function(ctx, bus)
 	{
 		var __v0 = use("Runtime.RuntimeConstant");
 		return bus.success && bus.code >= __v0.ERROR_OK;
@@ -126,52 +126,52 @@ Object.assign(Runtime.BusResult,
 	 * @param string error
 	 * @return BusResult
 	 */
-	setError: function(__ctx, bus, error, code)
+	setError: function(ctx, bus, error, code)
 	{
 		if (error == undefined) error = "";
-		return bus.copy(__ctx, use("Runtime.Dict").from({"code":code,"error":error,"success":false}));
+		return bus.copy(ctx, use("Runtime.Dict").from({"code":code,"error":error,"success":false}));
 	},
 	/**
 	 * Set result
 	 * @param primitive res
 	 * @return BusResult
 	 */
-	setSuccess: function(__ctx, bus, res)
+	setSuccess: function(ctx, bus, res)
 	{
 		var __v0 = use("Runtime.RuntimeConstant");
-		return bus.copy(__ctx, use("Runtime.Dict").from({"code":__v0.ERROR_OK,"error":"","success":true,"data":res}));
+		return bus.copy(ctx, use("Runtime.Dict").from({"code":__v0.ERROR_OK,"error":"","success":true,"data":res}));
 	},
 	/**
 	 * Set result
 	 * @param primitive res
 	 * @return BusResult
 	 */
-	setResult: function(__ctx, bus, res)
+	setResult: function(ctx, bus, res)
 	{
-		return bus.copy(__ctx, res.takeDict(__ctx));
+		return bus.copy(ctx, res.takeDict(ctx));
 	},
 	/**
 	 * Set result
 	 * @param primitive res
 	 * @return BusResult
 	 */
-	create: function(__ctx, res)
+	create: function(ctx, res)
 	{
 		var __v0 = use("Runtime.BusResult");
 		var __v1 = use("Runtime.RuntimeConstant");
-		return new __v0(__ctx, use("Runtime.Dict").from({"code":__v1.ERROR_OK,"error":"","success":true,"data":res}));
+		return new __v0(ctx, use("Runtime.Dict").from({"code":__v1.ERROR_OK,"error":"","success":true,"data":res}));
 	},
 	/**
 	 * Set result
 	 * @param primitive res
 	 * @return BusResult
 	 */
-	fail: function(__ctx, res, error, code)
+	fail: function(ctx, res, error, code)
 	{
 		if (error == undefined) error = "";
 		if (code == undefined) code = -1;
 		var __v0 = use("Runtime.BusResult");
-		return new __v0(__ctx, use("Runtime.Dict").from({"code":code,"error":error,"success":false,"data":res}));
+		return new __v0(ctx, use("Runtime.Dict").from({"code":code,"error":error,"success":false,"data":res}));
 	},
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
@@ -186,12 +186,12 @@ Object.assign(Runtime.BusResult,
 	{
 		return "Runtime.CoreStruct";
 	},
-	getClassInfo: function(__ctx)
+	getClassInfo: function(ctx)
 	{
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
 		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
-		return new IntrospectionInfo(__ctx, {
+		return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_CLASS,
 			"class_name": "Runtime.BusResult",
 			"name": "Runtime.BusResult",
@@ -199,7 +199,7 @@ Object.assign(Runtime.BusResult,
 			]),
 		});
 	},
-	getFieldsList: function(__ctx, f)
+	getFieldsList: function(ctx, f)
 	{
 		var a = [];
 		if (f==undefined) f=0;
@@ -219,17 +219,17 @@ Object.assign(Runtime.BusResult,
 		}
 		return use("Runtime.Collection").from(a);
 	},
-	getFieldInfoByName: function(__ctx,field_name)
+	getFieldInfoByName: function(ctx,field_name)
 	{
 		return null;
 	},
-	getMethodsList: function(__ctx)
+	getMethodsList: function(ctx)
 	{
 		var a = [
 		];
 		return use("Runtime.Collection").from(a);
 	},
-	getMethodInfoByName: function(__ctx,field_name)
+	getMethodInfoByName: function(ctx,field_name)
 	{
 		return null;
 	},

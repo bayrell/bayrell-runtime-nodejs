@@ -3,7 +3,7 @@ var use = require('bayrell').use;
 /*!
  *  Bayrell Runtime Library
  *
- *  (c) Copyright 2016-2019 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,25 +19,25 @@ var use = require('bayrell').use;
  */
 if (typeof Runtime == 'undefined') Runtime = {};
 var isBrowser=function(){return typeof window !== "undefined" && this === window;}
-Runtime.rs = function(__ctx)
+Runtime.rs = function(ctx)
 {
 };
 Object.assign(Runtime.rs.prototype,
 {
-	assignObject: function(__ctx,o)
+	assignObject: function(ctx,o)
 	{
 		if (o instanceof use("Runtime.rs"))
 		{
 		}
 	},
-	assignValue: function(__ctx,k,v)
+	assignValue: function(ctx,k,v)
 	{
 	},
-	takeValue: function(__ctx,k,d)
+	takeValue: function(ctx,k,d)
 	{
 		if (d == undefined) d = null;
 	},
-	getClassName: function(__ctx)
+	getClassName: function(ctx)
 	{
 		return "Runtime.rs";
 	},
@@ -49,19 +49,19 @@ Object.assign(Runtime.rs,
 	 * @param string s The string
 	 * @return int
 	 */
-	strlen: function(__ctx, s)
+	strlen: function(ctx, s)
 	{
-		return use("Runtime.rtl").toString(s).length;
+		return use("Runtime.rtl").toStr(s).length;
 		/*
 		if (isBrowser())
-			return Runtime.rtl.toString(s).length;
-		return rtl.toString(s).length;
+			return Runtime.rtl.toStr(s).length;
+		return rtl.toStr(s).length;
 		*/
 	},
 	/**
 	 * Search 'search' in s.
 	 */
-	search: function(__ctx, s, search, offset)
+	search: function(ctx, s, search, offset)
 	{
 		if (offset == undefined) offset = 0;
 		var _rtl = use("Runtime.rtl");
@@ -69,7 +69,7 @@ Object.assign(Runtime.rs,
 		if (isBrowser()) _rtl = Runtime.rtl; else _rtl = rtl;
 		if (!_rtl.exists(offset)) offset = 0;
 		*/
-		var res = _rtl.toString(s).indexOf(search);
+		var res = _rtl.toStr(s).indexOf(search);
 		return res;
 	},
 	/**
@@ -79,7 +79,7 @@ Object.assign(Runtime.rs,
 	 * @param int length
 	 * @return string
 	 */
-	substr: function(__ctx, s, start, length)
+	substr: function(ctx, s, start, length)
 	{
 		if (length == undefined) length = null;
 		/*
@@ -90,14 +90,14 @@ Object.assign(Runtime.rs,
 		var _rs = use("Runtime.rs");
 		if (start < 0) start = s.length + start;
 		if (length === null){
-			return _rtl.toString(s).substring(start);
+			return _rtl.toStr(s).substring(start);
 		}
 		var end = start + length;
 		if (length < 0){
 			var sz = _rs.strlen(s);
 			end = sz + length;
 		}
-		return _rtl.toString(s).substring(start, end);
+		return _rtl.toStr(s).substring(start, end);
 	},
 	/**
 	 * Returns char from string at the position
@@ -105,12 +105,12 @@ Object.assign(Runtime.rs,
 	 * @param int pos The position
 	 * @return string
 	 */
-	charAt: function(__ctx, s, pos)
+	charAt: function(ctx, s, pos)
 	{
-		var sz = this.strlen(__ctx, s);
+		var sz = this.strlen(ctx, s);
 		if (pos >= 0 && pos < sz)
 		{
-			return this.substr(__ctx, s, pos, 1);
+			return this.substr(ctx, s, pos, 1);
 		}
 		return "";
 	},
@@ -118,50 +118,50 @@ Object.assign(Runtime.rs,
 	 * Returns ASCII symbol code
 	 * @param char ch
 	 */
-	ord: function(__ctx, ch)
+	ord: function(ctx, ch)
 	{
 		/*
 		if (isBrowser())
-			return Runtime.rtl.toString(ch).charCodeAt(0);
-		return rtl.toString(ch).charCodeAt(0);
+			return Runtime.rtl.toStr(ch).charCodeAt(0);
+		return rtl.toStr(ch).charCodeAt(0);
 		*/
 		
-		return use("Runtime.rtl").toString(ch).charCodeAt(0);
+		return use("Runtime.rtl").toStr(ch).charCodeAt(0);
 	},
 	/**
 	 * Convert string to lower case
 	 * @param string s 
 	 * @return string
 	 */
-	strtolower: function(__ctx, s)
+	strtolower: function(ctx, s)
 	{
 		/*
 		if (isBrowser())
-			return Runtime.rtl.toString(s).toLowerCase();
-		return rtl.toString(s).toLowerCase();
+			return Runtime.rtl.toStr(s).toLowerCase();
+		return rtl.toStr(s).toLowerCase();
 		*/
 		
-		return use("Runtime.rtl").toString(s).toLowerCase();
+		return use("Runtime.rtl").toStr(s).toLowerCase();
 	},
 	/**
 	 * Convert string to upper case
 	 * @param string s
 	 * @return string
 	 */
-	strtoupper: function(__ctx, s)
+	strtoupper: function(ctx, s)
 	{
 		/*
 		if (isBrowser())
-			return Runtime.rtl.toString(s).toUpperCase();
-		return rtl.toString(s).toUpperCase();
+			return Runtime.rtl.toStr(s).toUpperCase();
+		return rtl.toStr(s).toUpperCase();
 		*/
 		
-		return use("Runtime.rtl").toString(s).toUpperCase();
+		return use("Runtime.rtl").toStr(s).toUpperCase();
 	},
 	/**
 	 * Заменяет одну строку на другую
 	 */
-	replace: function(__ctx, search, item, s)
+	replace: function(ctx, search, item, s)
 	{
 		return s.replace(new RegExp(search, "g"), item);
 	},
@@ -171,7 +171,7 @@ Object.assign(Runtime.rs,
 	 * @param {integer} n - количество раз, которые нужно повторить строку s
 	 * @return {string} строка
 	 */
-	str_repeat: function(__ctx, s, n)
+	str_repeat: function(ctx, s, n)
 	{
 		if (n <= 0) return "";
 		var res = '';
@@ -187,7 +187,7 @@ Object.assign(Runtime.rs,
 	 * @param integer limit - ограничение 
 	 * @return Collection<string>
 	 */
-	split: function(__ctx, delimiter, s, limit)
+	split: function(ctx, delimiter, s, limit)
 	{
 		if (limit == undefined) limit = -1;
 		/*
@@ -216,7 +216,7 @@ Object.assign(Runtime.rs,
 	 * @param integer limit - ограничение 
 	 * @return Collection<string>
 	 */
-	splitArr: function(__ctx, delimiters, s, limit)
+	splitArr: function(ctx, delimiters, s, limit)
 	{
 		if (limit == undefined) limit = -1;
 		/*
@@ -245,27 +245,27 @@ Object.assign(Runtime.rs,
 	 * @param integer limit - ограничение 
 	 * @return Vector<string>
 	 */
-	join: function(__ctx, ch, arr)
+	join: function(ctx, ch, arr)
 	{
 		if (arr == null) return "";
-		return arr.join(ch);
+		return Array.prototype.join.call(arr, ch);
 	},
 	/**
 	 * Удаляет лишние символы слева и справа
 	 * @param {string} s - входная строка
 	 * @return {integer} новая строка
 	 */
-	trim: function(__ctx, s, ch)
+	trim: function(ctx, s, ch)
 	{
 		if (ch == undefined) ch = "";
 		if (ch == undefined) ch = "";
 		
 		/*
-		if (isBrowser()) s = Runtime.rtl.toString(s);
-		else s = rtl.toString(s);
+		if (isBrowser()) s = Runtime.rtl.toStr(s);
+		else s = rtl.toStr(s);
 		*/
 		
-		s = use("Runtime.rtl").toString(s);
+		s = use("Runtime.rtl").toStr(s);
 		
 		if (ch == ""){
 			return s.trim();
@@ -278,7 +278,7 @@ Object.assign(Runtime.rs,
 	 * @param {int} flags - Флаги
 	 * @return {string} json строка
 	 */
-	json_encode: function(__ctx, s, flags)
+	json_encode: function(ctx, s, flags)
 	{
 		if (flags & 128 == 128) 
 			return JSON.stringify(obj, null, 2);
@@ -289,7 +289,7 @@ Object.assign(Runtime.rs,
 	 * @param string s
 	 * @return string
 	 */
-	htmlEscape: function(__ctx, s)
+	htmlEscape: function(ctx, s)
 	{
 		if (s instanceof Runtime.Collection) return s;
 		if (s instanceof Runtime.UIStruct) return s;
@@ -304,9 +304,9 @@ Object.assign(Runtime.rs,
 		};
 		return (new String(s)).replace(/[<>&"'`=]/g, function(v){ return obj[v]; });
 	},
-	escapeHtml: function(__ctx, s)
+	escapeHtml: function(ctx, s)
 	{
-		return this.htmlEscape(__ctx, s);
+		return this.htmlEscape(ctx, s);
 	},
 	/**
 	 * Разбивает путь файла на составляющие
@@ -317,27 +317,27 @@ Object.assign(Runtime.rs,
 	 *         extension  - расширение файла
 	 *         filename   - имя файла без расширения
 	 */
-	pathinfo: function(__ctx, filepath)
+	pathinfo: function(ctx, filepath)
 	{
 		var __v0 = use("Runtime.rs");
-		var arr1 = __v0.explode(__ctx, ".", filepath).toVector(__ctx);
+		var arr1 = __v0.explode(ctx, ".", filepath).toVector(ctx);
 		var __v0 = use("Runtime.rs");
-		var arr2 = __v0.explode(__ctx, "/", filepath).toVector(__ctx);
+		var arr2 = __v0.explode(ctx, "/", filepath).toVector(ctx);
 		var __v0 = use("Runtime.PathInfo");
-		var ret = new __v0(__ctx);
+		var ret = new __v0(ctx);
 		ret.filepath = filepath;
-		ret.extension = arr1.pop(__ctx);
-		ret.basename = arr2.pop(__ctx);
+		ret.extension = arr1.pop(ctx);
+		ret.basename = arr2.pop(ctx);
 		var __v0 = use("Runtime.rs");
-		ret.dirname = __v0.implode(__ctx, "/", arr2);
+		ret.dirname = __v0.implode(ctx, "/", arr2);
 		var __v0 = use("Runtime.rs");
-		var ext_length = __v0.strlen(__ctx, ret.extension);
+		var ext_length = __v0.strlen(ctx, ret.extension);
 		if (ext_length > 0)
 		{
 			ext_length++;
 		}
 		var __v0 = use("Runtime.rs");
-		ret.filename = __v0.substr(__ctx, ret.basename, 0, -1 * ext_length);
+		ret.filename = __v0.substr(ctx, ret.basename, 0, -1 * ext_length);
 		return ret;
 	},
 	/**
@@ -345,17 +345,17 @@ Object.assign(Runtime.rs,
 	 * @param {string} filepath - путь к файлу
 	 * @return {string} полное имя файла
 	 */
-	filename: function(__ctx, filepath)
+	filename: function(ctx, filepath)
 	{
-		var ret = Runtime.rs.pathinfo(__ctx, filepath);
+		var ret = Runtime.rs.pathinfo(ctx, filepath);
 		var res = ret.basename;
 		var ext = ret.extension;
 		if (ext != "")
 		{
 			var __v0 = use("Runtime.rs");
-			var sz = 0 - __v0.strlen(__ctx, ext) - 1;
+			var sz = 0 - __v0.strlen(ctx, ext) - 1;
 			var __v0 = use("Runtime.rs");
-			res = __v0.substr(__ctx, res, 0, sz);
+			res = __v0.substr(ctx, res, 0, sz);
 		}
 		return res;
 	},
@@ -364,9 +364,9 @@ Object.assign(Runtime.rs,
 	 * @param {string} filepath - путь к файлу
 	 * @return {string} полное имя файла
 	 */
-	basename: function(__ctx, filepath)
+	basename: function(ctx, filepath)
 	{
-		var ret = Runtime.rs.pathinfo(__ctx, filepath);
+		var ret = Runtime.rs.pathinfo(ctx, filepath);
 		var res = ret.basename;
 		return res;
 	},
@@ -375,9 +375,9 @@ Object.assign(Runtime.rs,
 	 * @param {string} filepath - путь к файлу
 	 * @return {string} расширение файла
 	 */
-	extname: function(__ctx, filepath)
+	extname: function(ctx, filepath)
 	{
-		var ret = Runtime.rs.pathinfo(__ctx, filepath);
+		var ret = Runtime.rs.pathinfo(ctx, filepath);
 		var res = ret.extension;
 		return res;
 	},
@@ -386,9 +386,9 @@ Object.assign(Runtime.rs,
 	 * @param {string} filepath - путь к файлу
 	 * @return {string} путь к папке, содержащий файл
 	 */
-	dirname: function(__ctx, filepath)
+	dirname: function(ctx, filepath)
 	{
-		var ret = Runtime.rs.pathinfo(__ctx, filepath);
+		var ret = Runtime.rs.pathinfo(ctx, filepath);
 		var res = ret.dirname;
 		return res;
 	},
@@ -399,49 +399,49 @@ Object.assign(Runtime.rs,
 	 * @param string ch - Directory separator
 	 * @return string relative path
 	 */
-	relativePath: function(__ctx, filepath, basepath, ch)
+	relativePath: function(ctx, filepath, basepath, ch)
 	{
 		if (ch == undefined) ch = "/";
 		var __v0 = use("Runtime.rs");
-		var source = __v0.explode(__ctx, ch, filepath);
+		var source = __v0.explode(ctx, ch, filepath);
 		var __v0 = use("Runtime.rs");
-		var base = __v0.explode(__ctx, ch, basepath);
-		source = source.filter(__ctx, (__ctx, s) => 
+		var base = __v0.explode(ctx, ch, basepath);
+		source = source.filter(ctx, (ctx, s) => 
 		{
 			return s != "";
 		});
-		base = base.filter(__ctx, (__ctx, s) => 
+		base = base.filter(ctx, (ctx, s) => 
 		{
 			return s != "";
 		});
 		var i = 0;
-		while (source.count(__ctx) > 0 && base.count(__ctx) > 0 && source.item(__ctx, 0) == base.item(__ctx, 0))
+		while (source.count(ctx) > 0 && base.count(ctx) > 0 && source.item(ctx, 0) == base.item(ctx, 0))
 		{
-			source.shift(__ctx);
-			base.shift(__ctx);
+			source.shift(ctx);
+			base.shift(ctx);
 		}
-		base.each(__ctx, (__ctx, s) => 
+		base.each(ctx, (ctx, s) => 
 		{
-			source.unshift(__ctx, "..");
+			source.unshift(ctx, "..");
 		});
 		var __v0 = use("Runtime.rs");
-		return __v0.implode(__ctx, ch, source);
+		return __v0.implode(ctx, ch, source);
 	},
 	/**
 	 * Return normalize path
 	 * @param string filepath - File path
 	 * @return string
 	 */
-	normalize: function(__ctx, filepath)
+	normalize: function(ctx, filepath)
 	{
 		return filepath;
 	},
 	/**
 	 * New line to br
 	 */
-	nl2br: function(__ctx, s)
+	nl2br: function(ctx, s)
 	{
-		return this.replace(__ctx, "\n", "<br/>", s);
+		return this.replace(ctx, "\n", "<br/>", s);
 	},
 	/* =================== Deprecated =================== */
 	/**
@@ -451,7 +451,7 @@ Object.assign(Runtime.rs,
 	 * @param integer limit - ограничение 
 	 * @return Vector<string>
 	 */
-	explode: function(__ctx, delimiter, s, limit)
+	explode: function(ctx, delimiter, s, limit)
 	{
 		if (limit == undefined) limit = -1;
 		/*
@@ -475,7 +475,7 @@ Object.assign(Runtime.rs,
 	 * @param integer limit - ограничение 
 	 * @return Vector<string>
 	 */
-	implode: function(__ctx, ch, arr)
+	implode: function(ctx, ch, arr)
 	{
 		return arr.join(ch);
 	},
@@ -488,14 +488,14 @@ Object.assign(Runtime.rs,
 	 * @return {variable} Если строка найдена, то возвращает позицию вхождения, начиная с 0.
 	 *                    Если строка не найдена, то вернет -1
 	 */
-	strpos: function(__ctx, s, search, offset)
+	strpos: function(ctx, s, search, offset)
 	{
 		if (offset == undefined) offset = 0;
 		/*var _rtl; if (isBrowser()) _rtl = Runtime.rtl; else _rtl = rtl;*/
 		var _rtl = use("Runtime.rtl");
 		
 		if (!_rtl.exists(offset)) offset = 0;
-		var res = _rtl.toString(s).indexOf(search);
+		var res = _rtl.toStr(s).indexOf(search);
 		return res;
 	},
 	/* ======================= Class Init Functions ======================= */
@@ -511,12 +511,12 @@ Object.assign(Runtime.rs,
 	{
 		return "";
 	},
-	getClassInfo: function(__ctx)
+	getClassInfo: function(ctx)
 	{
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
 		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
-		return new IntrospectionInfo(__ctx, {
+		return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_CLASS,
 			"class_name": "Runtime.rs",
 			"name": "Runtime.rs",
@@ -524,23 +524,26 @@ Object.assign(Runtime.rs,
 			]),
 		});
 	},
-	getFieldsList: function(__ctx, f)
+	getFieldsList: function(ctx, f)
 	{
 		var a = [];
 		if (f==undefined) f=0;
 		return use("Runtime.Collection").from(a);
 	},
-	getFieldInfoByName: function(__ctx,field_name)
+	getFieldInfoByName: function(ctx,field_name)
 	{
+		var Collection = use("Runtime.Collection");
+		var Dict = use("Runtime.Dict");
+		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
 		return null;
 	},
-	getMethodsList: function(__ctx)
+	getMethodsList: function(ctx)
 	{
 		var a = [
 		];
 		return use("Runtime.Collection").from(a);
 	},
-	getMethodInfoByName: function(__ctx,field_name)
+	getMethodInfoByName: function(ctx,field_name)
 	{
 		return null;
 	},

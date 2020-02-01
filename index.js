@@ -26,7 +26,7 @@ function ObjectAssign(res, obj){
 }
 
 module.exports = {
-	VERSION: '0.8.0-alpha.9',
+	VERSION: '0.8.0',
 };
 
 }
@@ -42,7 +42,7 @@ function ObjectAssign(res, obj){
 }
 
 module.exports = {
-	VERSION: '0.8.0-alpha.9',
+	VERSION: '0.8.0',
 	'rs': require(__dirname + "/rs.js"),
 	'rtl': require(__dirname + "/rtl.js"),
 	'lib': require(__dirname + "/lib.js"),
@@ -55,7 +55,6 @@ module.exports = {
 	'FakeStruct': require(__dirname + "/FakeStruct.js"),
 	'BusResult': require(__dirname + "/BusResult.js"),
 	'Context': require(__dirname + "/Context.js"),
-	'ContextObject': require(__dirname + "/ContextObject.js"),
 	'CoreDriver': require(__dirname + "/CoreDriver.js"),
 	'CoreEvent': require(__dirname + "/CoreEvent.js"),
 	'CoreProvider': require(__dirname + "/CoreProvider.js"),
@@ -98,7 +97,7 @@ ObjectAssign(module.exports, {
 	},
 	'Interfaces': {
 		'AssetsInterface': require(__dirname + "/Interfaces/AssetsInterface.js"),
-		'LocalBusInterface': require(__dirname + "/Interfaces/LocalBusInterface.js"),
+		'BusInterface': require(__dirname + "/Interfaces/BusInterface.js"),
 		'ModuleDescriptionInterface': require(__dirname + "/Interfaces/ModuleDescriptionInterface.js"),
 		'SerializeInterface': require(__dirname + "/Interfaces/SerializeInterface.js"),
 		'StringInterface': require(__dirname + "/Interfaces/StringInterface.js"),

@@ -3,7 +3,7 @@ var use = require('bayrell').use;
 /*!
  *  Bayrell Runtime Library
  *
- *  (c) Copyright 2016-2019 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,25 +19,25 @@ var use = require('bayrell').use;
  */
 if (typeof Runtime == 'undefined') Runtime = {};
 /* Lambda Functions */
-Runtime.lib = function(__ctx)
+Runtime.lib = function(ctx)
 {
 };
 Object.assign(Runtime.lib.prototype,
 {
-	assignObject: function(__ctx,o)
+	assignObject: function(ctx,o)
 	{
 		if (o instanceof use("Runtime.lib"))
 		{
 		}
 	},
-	assignValue: function(__ctx,k,v)
+	assignValue: function(ctx,k,v)
 	{
 	},
-	takeValue: function(__ctx,k,d)
+	takeValue: function(ctx,k,d)
 	{
 		if (d == undefined) d = null;
 	},
-	getClassName: function(__ctx)
+	getClassName: function(ctx)
 	{
 		return "Runtime.lib";
 	},
@@ -47,53 +47,53 @@ Object.assign(Runtime.lib,
 	/**
 	 * Check object is istance
 	 */
-	isInstance: function(__ctx, class_name)
+	isInstance: function(ctx, class_name)
 	{
-		return (__ctx, item) => 
+		return (ctx, item) => 
 		{
 			var __v0 = use("Runtime.rtl");
-			return __v0.is_instanceof(__ctx, item, class_name);
+			return __v0.is_instanceof(ctx, item, class_name);
 		};
 	},
 	/**
 	 * Check object is implements interface
 	 */
-	isImplements: function(__ctx, class_name)
+	isImplements: function(ctx, class_name)
 	{
-		return (__ctx, item) => 
+		return (ctx, item) => 
 		{
 			var __v0 = use("Runtime.rtl");
-			return __v0.is_implements(__ctx, item, class_name);
+			return __v0.is_implements(ctx, item, class_name);
 		};
 	},
 	/**
 	 * Check class is implements interface
 	 */
-	classImplements: function(__ctx, class_name)
+	classImplements: function(ctx, class_name)
 	{
-		return (__ctx, item) => 
+		return (ctx, item) => 
 		{
 			var __v0 = use("Runtime.rtl");
-			return __v0.class_implements(__ctx, item, class_name);
+			return __v0.class_implements(ctx, item, class_name);
 		};
 	},
 	/**
 	 * Create struct
 	 */
-	createStruct: function(__ctx, class_name)
+	createStruct: function(ctx, class_name)
 	{
-		return (__ctx, data) => 
+		return (ctx, data) => 
 		{
 			var __v0 = use("Runtime.rtl");
-			return __v0.newInstance(__ctx, class_name, use("Runtime.Collection").from([data]));
+			return __v0.newInstance(ctx, class_name, use("Runtime.Collection").from([data]));
 		};
 	},
 	/**
 	 * Equal two struct by key
 	 */
-	equal: function(__ctx, value)
+	equal: function(ctx, value)
 	{
-		return (__ctx, item) => 
+		return (ctx, item) => 
 		{
 			return item == value;
 		};
@@ -101,9 +101,9 @@ Object.assign(Runtime.lib,
 	/**
 	 * Equal two struct by key
 	 */
-	equalNot: function(__ctx, value)
+	equalNot: function(ctx, value)
 	{
-		return (__ctx, item) => 
+		return (ctx, item) => 
 		{
 			return item != value;
 		};
@@ -111,39 +111,39 @@ Object.assign(Runtime.lib,
 	/**
 	 * Returns attr of item
 	 */
-	attr: function(__ctx, key, def_value)
+	attr: function(ctx, key, def_value)
 	{
-		return (__ctx, item1) => 
+		return (ctx, item1) => 
 		{
-			return (item1 != null) ? item1.takeValue(__ctx, key, def_value) : def_value;
+			return (item1 != null) ? item1.takeValue(ctx, key, def_value) : def_value;
 		};
 	},
 	/**
 	 * Equal two struct by key
 	 */
-	equalAttr: function(__ctx, key, value)
+	equalAttr: function(ctx, key, value)
 	{
-		return (__ctx, item1) => 
+		return (ctx, item1) => 
 		{
-			return (item1 != null) ? item1.takeValue(__ctx, key) == value : false;
+			return (item1 != null) ? item1.takeValue(ctx, key) == value : false;
 		};
 	},
 	/**
 	 * Equal two struct by key
 	 */
-	equalNotAttr: function(__ctx, key, value)
+	equalNotAttr: function(ctx, key, value)
 	{
-		return (__ctx, item1) => 
+		return (ctx, item1) => 
 		{
-			return (item1 != null) ? item1.takeValue(__ctx, key) != value : false;
+			return (item1 != null) ? item1.takeValue(ctx, key) != value : false;
 		};
 	},
 	/**
 	 * Equal two struct by key
 	 */
-	equalMethod: function(__ctx, method_name, value)
+	equalMethod: function(ctx, method_name, value)
 	{
-		return (__ctx, item1) => 
+		return (ctx, item1) => 
 		{
 			if (item1 == null)
 			{
@@ -151,16 +151,16 @@ Object.assign(Runtime.lib,
 			}
 			var __v0 = use("Runtime.rtl");
 			var f = __v0.method(item1, method_name);
-			return f(__ctx) == value;
+			return f(ctx) == value;
 		};
 	},
 	/**
 	 * Returns max id from items
 	 */
-	getMaxIdFromItems: function(__ctx, items, start)
+	getMaxIdFromItems: function(ctx, items, start)
 	{
 		if (start == undefined) start = 0;
-		return items.reduce(__ctx, (__ctx, value, item) => 
+		return items.reduce(ctx, (ctx, value, item) => 
 		{
 			return (item.id > value) ? item.id : value;
 		}, start);
@@ -168,11 +168,11 @@ Object.assign(Runtime.lib,
 	/**
 	 * Take dict
 	 */
-	takeDict: function(__ctx, fields)
+	takeDict: function(ctx, fields)
 	{
-		return (__ctx, item) => 
+		return (ctx, item) => 
 		{
-			return item.takeDict(__ctx, fields);
+			return item.takeDict(ctx, fields);
 		};
 	},
 	/* ======================= Class Init Functions ======================= */
@@ -188,12 +188,12 @@ Object.assign(Runtime.lib,
 	{
 		return "";
 	},
-	getClassInfo: function(__ctx)
+	getClassInfo: function(ctx)
 	{
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
 		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
-		return new IntrospectionInfo(__ctx, {
+		return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_CLASS,
 			"class_name": "Runtime.lib",
 			"name": "Runtime.lib",
@@ -201,23 +201,26 @@ Object.assign(Runtime.lib,
 			]),
 		});
 	},
-	getFieldsList: function(__ctx, f)
+	getFieldsList: function(ctx, f)
 	{
 		var a = [];
 		if (f==undefined) f=0;
 		return use("Runtime.Collection").from(a);
 	},
-	getFieldInfoByName: function(__ctx,field_name)
+	getFieldInfoByName: function(ctx,field_name)
 	{
+		var Collection = use("Runtime.Collection");
+		var Dict = use("Runtime.Dict");
+		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
 		return null;
 	},
-	getMethodsList: function(__ctx)
+	getMethodsList: function(ctx)
 	{
 		var a = [
 		];
 		return use("Runtime.Collection").from(a);
 	},
-	getMethodInfoByName: function(__ctx,field_name)
+	getMethodInfoByName: function(ctx,field_name)
 	{
 		return null;
 	},

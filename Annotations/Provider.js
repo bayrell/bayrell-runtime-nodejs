@@ -3,7 +3,7 @@ var use = require('bayrell').use;
 /*!
  *  Bayrell Runtime Library
  *
- *  (c) Copyright 2016-2019 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ var use = require('bayrell').use;
  */
 if (typeof Runtime == 'undefined') Runtime = {};
 if (typeof Runtime.Annotations == 'undefined') Runtime.Annotations = {};
-Runtime.Annotations.Provider = function(__ctx)
+Runtime.Annotations.Provider = function(ctx)
 {
 	use("Runtime.Annotations.Entity").apply(this, arguments);
 };
@@ -27,23 +27,23 @@ Runtime.Annotations.Provider.prototype = Object.create(use("Runtime.Annotations.
 Runtime.Annotations.Provider.prototype.constructor = Runtime.Annotations.Provider;
 Object.assign(Runtime.Annotations.Provider.prototype,
 {
-	assignObject: function(__ctx,o)
+	assignObject: function(ctx,o)
 	{
 		if (o instanceof use("Runtime.Annotations.Provider"))
 		{
 		}
-		use("Runtime.Annotations.Entity").prototype.assignObject.call(this,__ctx,o);
+		use("Runtime.Annotations.Entity").prototype.assignObject.call(this,ctx,o);
 	},
-	assignValue: function(__ctx,k,v)
+	assignValue: function(ctx,k,v)
 	{
-		use("Runtime.Annotations.Entity").prototype.assignValue.call(this,__ctx,k,v);
+		use("Runtime.Annotations.Entity").prototype.assignValue.call(this,ctx,k,v);
 	},
-	takeValue: function(__ctx,k,d)
+	takeValue: function(ctx,k,d)
 	{
 		if (d == undefined) d = null;
-		return use("Runtime.Annotations.Entity").prototype.takeValue.call(this,__ctx,k,d);
+		return use("Runtime.Annotations.Entity").prototype.takeValue.call(this,ctx,k,d);
 	},
-	getClassName: function(__ctx)
+	getClassName: function(ctx)
 	{
 		return "Runtime.Annotations.Provider";
 	},
@@ -64,12 +64,12 @@ Object.assign(Runtime.Annotations.Provider,
 	{
 		return "Runtime.Annotations.Entity";
 	},
-	getClassInfo: function(__ctx)
+	getClassInfo: function(ctx)
 	{
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
 		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
-		return new IntrospectionInfo(__ctx, {
+		return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_CLASS,
 			"class_name": "Runtime.Annotations.Provider",
 			"name": "Runtime.Annotations.Provider",
@@ -77,23 +77,26 @@ Object.assign(Runtime.Annotations.Provider,
 			]),
 		});
 	},
-	getFieldsList: function(__ctx, f)
+	getFieldsList: function(ctx, f)
 	{
 		var a = [];
 		if (f==undefined) f=0;
 		return use("Runtime.Collection").from(a);
 	},
-	getFieldInfoByName: function(__ctx,field_name)
+	getFieldInfoByName: function(ctx,field_name)
 	{
+		var Collection = use("Runtime.Collection");
+		var Dict = use("Runtime.Dict");
+		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
 		return null;
 	},
-	getMethodsList: function(__ctx)
+	getMethodsList: function(ctx)
 	{
 		var a = [
 		];
 		return use("Runtime.Collection").from(a);
 	},
-	getMethodInfoByName: function(__ctx,field_name)
+	getMethodInfoByName: function(ctx,field_name)
 	{
 		return null;
 	},

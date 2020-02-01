@@ -3,7 +3,7 @@ var use = require('bayrell').use;
 /*!
  *  Bayrell Runtime Library
  *
- *  (c) Copyright 2016-2019 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,9 +18,9 @@ var use = require('bayrell').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-Runtime.Reference = function(__ctx, ref)
+Runtime.Reference = function(ctx, ref)
 {
-	use("Runtime.CoreObject").call(this, __ctx);
+	use("Runtime.CoreObject").call(this, ctx);
 	this.ref = ref;
 };
 Runtime.Reference.prototype = Object.create(use("Runtime.CoreObject").prototype);
@@ -31,7 +31,7 @@ Object.assign(Runtime.Reference.prototype,
 	 * Assign and clone data from other object
 	 * @param CoreObject obj
 	 */
-	assignObject: function(__ctx, obj)
+	assignObject: function(ctx, obj)
 	{
 		var __v0 = use("Runtime.Reference");
 		if (obj instanceof __v0)
@@ -39,38 +39,38 @@ Object.assign(Runtime.Reference.prototype,
 			this.uq = obj.uq;
 			this.ref = this.ref;
 		}
-		use("Runtime.CoreObject").prototype.assignObject.call(this, __ctx, obj);
+		use("Runtime.CoreObject").prototype.assignObject.call(this, ctx, obj);
 	},
-	_init: function(__ctx)
+	_init: function(ctx)
 	{
 		var __v0 = use("Runtime.rtl");
-		this.uq = __v0.unique(__ctx);
+		this.uq = __v0.unique(ctx);
 		this.ref = null;
-		use("Runtime.CoreObject").prototype._init.call(this,__ctx);
+		use("Runtime.CoreObject").prototype._init.call(this,ctx);
 	},
-	assignObject: function(__ctx,o)
+	assignObject: function(ctx,o)
 	{
 		if (o instanceof use("Runtime.Reference"))
 		{
 			this.uq = o.uq;
 			this.ref = o.ref;
 		}
-		use("Runtime.CoreObject").prototype.assignObject.call(this,__ctx,o);
+		use("Runtime.CoreObject").prototype.assignObject.call(this,ctx,o);
 	},
-	assignValue: function(__ctx,k,v)
+	assignValue: function(ctx,k,v)
 	{
 		if (k == "uq")this.uq = v;
 		else if (k == "ref")this.ref = v;
-		else use("Runtime.CoreObject").prototype.assignValue.call(this,__ctx,k,v);
+		else use("Runtime.CoreObject").prototype.assignValue.call(this,ctx,k,v);
 	},
-	takeValue: function(__ctx,k,d)
+	takeValue: function(ctx,k,d)
 	{
 		if (d == undefined) d = null;
 		if (k == "uq")return this.uq;
 		else if (k == "ref")return this.ref;
-		return use("Runtime.CoreObject").prototype.takeValue.call(this,__ctx,k,d);
+		return use("Runtime.CoreObject").prototype.takeValue.call(this,ctx,k,d);
 	},
-	getClassName: function(__ctx)
+	getClassName: function(ctx)
 	{
 		return "Runtime.Reference";
 	},
@@ -91,12 +91,12 @@ Object.assign(Runtime.Reference,
 	{
 		return "Runtime.CoreObject";
 	},
-	getClassInfo: function(__ctx)
+	getClassInfo: function(ctx)
 	{
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
 		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
-		return new IntrospectionInfo(__ctx, {
+		return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_CLASS,
 			"class_name": "Runtime.Reference",
 			"name": "Runtime.Reference",
@@ -104,7 +104,7 @@ Object.assign(Runtime.Reference,
 			]),
 		});
 	},
-	getFieldsList: function(__ctx, f)
+	getFieldsList: function(ctx, f)
 	{
 		var a = [];
 		if (f==undefined) f=0;
@@ -115,17 +115,34 @@ Object.assign(Runtime.Reference,
 		}
 		return use("Runtime.Collection").from(a);
 	},
-	getFieldInfoByName: function(__ctx,field_name)
+	getFieldInfoByName: function(ctx,field_name)
 	{
+		var Collection = use("Runtime.Collection");
+		var Dict = use("Runtime.Dict");
+		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
+		if (field_name == "uq") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Reference",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "ref") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Reference",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
 		return null;
 	},
-	getMethodsList: function(__ctx)
+	getMethodsList: function(ctx)
 	{
 		var a = [
 		];
 		return use("Runtime.Collection").from(a);
 	},
-	getMethodInfoByName: function(__ctx,field_name)
+	getMethodInfoByName: function(ctx,field_name)
 	{
 		return null;
 	},

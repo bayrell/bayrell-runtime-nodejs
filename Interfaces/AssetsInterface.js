@@ -19,12 +19,12 @@ var use = require('bayrell').use;
  */
 if (typeof Runtime == 'undefined') Runtime = {};
 if (typeof Runtime.Interfaces == 'undefined') Runtime.Interfaces = {};
-Runtime.Interfaces.AssetsInterface = function(__ctx)
+Runtime.Interfaces.AssetsInterface = function(ctx)
 {
 };
 Object.assign(Runtime.Interfaces.AssetsInterface.prototype,
 {
-	getClassName: function(__ctx)
+	getClassName: function(ctx)
 	{
 		return "Runtime.Interfaces.AssetsInterface";
 	},

@@ -3,7 +3,7 @@ var use = require('bayrell').use;
 /*!
  *  Bayrell Runtime Library
  *
- *  (c) Copyright 2016-2019 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ var use = require('bayrell').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-Runtime.Message = function(__ctx)
+Runtime.Message = function(ctx)
 {
 	use("Runtime.CoreStruct").apply(this, arguments);
 };
@@ -26,7 +26,7 @@ Runtime.Message.prototype = Object.create(use("Runtime.CoreStruct").prototype);
 Runtime.Message.prototype.constructor = Runtime.Message;
 Object.assign(Runtime.Message.prototype,
 {
-	_init: function(__ctx)
+	_init: function(ctx)
 	{
 		var defProp = use('Runtime.rtl').defProp;
 		var a = Object.getOwnPropertyNames(this);
@@ -34,31 +34,31 @@ Object.assign(Runtime.Message.prototype,
 		if (a.indexOf("is_external") == -1) defProp(this, "is_external");
 		this.__session = null;
 		if (a.indexOf("session") == -1) defProp(this, "session");
-		use("Runtime.CoreStruct").prototype._init.call(this,__ctx);
+		use("Runtime.CoreStruct").prototype._init.call(this,ctx);
 	},
-	assignObject: function(__ctx,o)
+	assignObject: function(ctx,o)
 	{
 		if (o instanceof use("Runtime.Message"))
 		{
 			this.__is_external = o.__is_external;
 			this.__session = o.__session;
 		}
-		use("Runtime.CoreStruct").prototype.assignObject.call(this,__ctx,o);
+		use("Runtime.CoreStruct").prototype.assignObject.call(this,ctx,o);
 	},
-	assignValue: function(__ctx,k,v)
+	assignValue: function(ctx,k,v)
 	{
 		if (k == "is_external")this.__is_external = v;
 		else if (k == "session")this.__session = v;
-		else use("Runtime.CoreStruct").prototype.assignValue.call(this,__ctx,k,v);
+		else use("Runtime.CoreStruct").prototype.assignValue.call(this,ctx,k,v);
 	},
-	takeValue: function(__ctx,k,d)
+	takeValue: function(ctx,k,d)
 	{
 		if (d == undefined) d = null;
 		if (k == "is_external")return this.__is_external;
 		else if (k == "session")return this.__session;
-		return use("Runtime.CoreStruct").prototype.takeValue.call(this,__ctx,k,d);
+		return use("Runtime.CoreStruct").prototype.takeValue.call(this,ctx,k,d);
 	},
-	getClassName: function(__ctx)
+	getClassName: function(ctx)
 	{
 		return "Runtime.Message";
 	},
@@ -66,11 +66,11 @@ Object.assign(Runtime.Message.prototype,
 Object.assign(Runtime.Message, use("Runtime.CoreStruct"));
 Object.assign(Runtime.Message,
 {
-	isExternal: function(__ctx, s)
+	isExternal: function(ctx, s)
 	{
 		return s.is_external == true;
 	},
-	isInternal: function(__ctx, s)
+	isInternal: function(ctx, s)
 	{
 		return s.is_external == false;
 	},
@@ -87,12 +87,12 @@ Object.assign(Runtime.Message,
 	{
 		return "Runtime.CoreStruct";
 	},
-	getClassInfo: function(__ctx)
+	getClassInfo: function(ctx)
 	{
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
 		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
-		return new IntrospectionInfo(__ctx, {
+		return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_CLASS,
 			"class_name": "Runtime.Message",
 			"name": "Runtime.Message",
@@ -100,7 +100,7 @@ Object.assign(Runtime.Message,
 			]),
 		});
 	},
-	getFieldsList: function(__ctx, f)
+	getFieldsList: function(ctx, f)
 	{
 		var a = [];
 		if (f==undefined) f=0;
@@ -111,17 +111,34 @@ Object.assign(Runtime.Message,
 		}
 		return use("Runtime.Collection").from(a);
 	},
-	getFieldInfoByName: function(__ctx,field_name)
+	getFieldInfoByName: function(ctx,field_name)
 	{
+		var Collection = use("Runtime.Collection");
+		var Dict = use("Runtime.Dict");
+		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
+		if (field_name == "is_external") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Message",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "session") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Message",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
 		return null;
 	},
-	getMethodsList: function(__ctx)
+	getMethodsList: function(ctx)
 	{
 		var a = [
 		];
 		return use("Runtime.Collection").from(a);
 	},
-	getMethodInfoByName: function(__ctx,field_name)
+	getMethodInfoByName: function(ctx,field_name)
 	{
 		return null;
 	},

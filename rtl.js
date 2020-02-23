@@ -893,24 +893,6 @@ Object.assign(Runtime.rtl,
 		return this.callStaticMethod("Runtime.RuntimeUtils", "json_encode", [data]);
 	},
 	/**
-	 * Normalize UIStruct
-	 * @param var data
-	 * @return var
-	 */
-	normalizeUI: function(ctx, data)
-	{
-		return this.callStaticMethod("Runtime.RuntimeUtils", "normalizeUI", [data]);
-	},
-	/**
-	 * Normalize UIStruct
-	 * @param var data
-	 * @return var
-	 */
-	normalizeUIVector: function(ctx, data)
-	{
-		return this.callStaticMethod("Runtime.RuntimeUtils", "normalizeUIVector", [data]);
-	},
-	/**
 	 * Call method
 	 * @return Object
 	 */

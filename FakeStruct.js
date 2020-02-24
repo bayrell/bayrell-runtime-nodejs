@@ -18,7 +18,7 @@ var use = require('bayrell').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-Runtime.FakeStruct = function(ctx, obj)
+Runtime.FakeStructOld = function(ctx, obj)
 {
 	use("Runtime.CoreObject").call(this, ctx);
 	if (obj != null)
@@ -38,9 +38,9 @@ Runtime.FakeStruct = function(ctx, obj)
 	}
 	if (this.__uq__ == undefined || this.__uq__ == null) this.__uq__ = Symbol();
 };
-Runtime.FakeStruct.prototype = Object.create(use("Runtime.CoreObject").prototype);
-Runtime.FakeStruct.prototype.constructor = Runtime.FakeStruct;
-Object.assign(Runtime.FakeStruct.prototype,
+Runtime.FakeStructOld.prototype = Object.create(use("Runtime.CoreObject").prototype);
+Runtime.FakeStructOld.prototype.constructor = Runtime.FakeStructOld;
+Object.assign(Runtime.FakeStructOld.prototype,
 {
 	/**
 	 * Init struct data
@@ -52,7 +52,7 @@ Object.assign(Runtime.FakeStruct.prototype,
 	/**
 	 * Copy this struct with new values
 	 * @param Map obj = null
-	 * @return FakeStruct
+	 * @return FakeStructOld
 	 */
 	copy: function(ctx, obj)
 	{
@@ -83,7 +83,7 @@ Object.assign(Runtime.FakeStruct.prototype,
 	/**
 	 * Clone this struct with same values
 	 * @param Map obj = null
-	 * @return FakeStruct
+	 * @return FakeStructOld
 	 */
 	clone: function(ctx, fields)
 	{
@@ -117,7 +117,7 @@ Object.assign(Runtime.FakeStruct.prototype,
 	 * Create new struct with new value
 	 * @param string field_name
 	 * @param fn f
-	 * @return FakeStruct
+	 * @return FakeStructOld
 	 */
 	map: function(ctx, field_name, f)
 	{
@@ -126,7 +126,7 @@ Object.assign(Runtime.FakeStruct.prototype,
 	},
 	assignObject: function(ctx,o)
 	{
-		if (o instanceof use("Runtime.FakeStruct"))
+		if (o instanceof use("Runtime.FakeStructOld"))
 		{
 		}
 		use("Runtime.CoreObject").prototype.assignObject.call(this,ctx,o);
@@ -142,11 +142,11 @@ Object.assign(Runtime.FakeStruct.prototype,
 	},
 	getClassName: function(ctx)
 	{
-		return "Runtime.FakeStruct";
+		return "Runtime.FakeStructOld";
 	},
 });
-Object.assign(Runtime.FakeStruct, use("Runtime.CoreObject"));
-Object.assign(Runtime.FakeStruct,
+Object.assign(Runtime.FakeStructOld, use("Runtime.CoreObject"));
+Object.assign(Runtime.FakeStructOld,
 {
 	/**
 	 * Returns new instance
@@ -162,7 +162,7 @@ Object.assign(Runtime.FakeStruct,
 	},
 	getCurrentClassName: function()
 	{
-		return "Runtime.FakeStruct";
+		return "Runtime.FakeStructOld";
 	},
 	getParentClassName: function()
 	{
@@ -175,8 +175,8 @@ Object.assign(Runtime.FakeStruct,
 		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
 		return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_CLASS,
-			"class_name": "Runtime.FakeStruct",
-			"name": "Runtime.FakeStruct",
+			"class_name": "Runtime.FakeStructOld",
+			"name": "Runtime.FakeStructOld",
 			"annotations": Collection.from([
 			]),
 		});
@@ -209,7 +209,7 @@ Object.assign(Runtime.FakeStruct,
 		use(""),
 		use("Runtime.Interfaces.SerializeInterface"),
 	],
-});use.add(Runtime.FakeStruct);
+});use.add(Runtime.FakeStructOld);
 if (module.exports == undefined) module.exports = {};
 if (module.exports.Runtime == undefined) module.exports.Runtime = {};
-module.exports.Runtime.FakeStruct = Runtime.FakeStruct;
+module.exports.Runtime.FakeStructOld = Runtime.FakeStructOld;

@@ -30,32 +30,30 @@ Object.assign(Runtime.Message.prototype,
 	{
 		var defProp = use('Runtime.rtl').defProp;
 		var a = Object.getOwnPropertyNames(this);
-		this.__is_external = false;
-		if (a.indexOf("is_external") == -1) defProp(this, "is_external");
-		this.__session = null;
-		if (a.indexOf("session") == -1) defProp(this, "session");
+		this.is_external = false;
+		this.session = null;
 		use("Runtime.CoreStruct").prototype._init.call(this,ctx);
 	},
 	assignObject: function(ctx,o)
 	{
 		if (o instanceof use("Runtime.Message"))
 		{
-			this.__is_external = o.__is_external;
-			this.__session = o.__session;
+			this.is_external = o.is_external;
+			this.session = o.session;
 		}
 		use("Runtime.CoreStruct").prototype.assignObject.call(this,ctx,o);
 	},
 	assignValue: function(ctx,k,v)
 	{
-		if (k == "is_external")this.__is_external = v;
-		else if (k == "session")this.__session = v;
+		if (k == "is_external")this.is_external = v;
+		else if (k == "session")this.session = v;
 		else use("Runtime.CoreStruct").prototype.assignValue.call(this,ctx,k,v);
 	},
 	takeValue: function(ctx,k,d)
 	{
 		if (d == undefined) d = null;
-		if (k == "is_external")return this.__is_external;
-		else if (k == "session")return this.__session;
+		if (k == "is_external")return this.is_external;
+		else if (k == "session")return this.session;
 		return use("Runtime.CoreStruct").prototype.takeValue.call(this,ctx,k,d);
 	},
 	getClassName: function(ctx)

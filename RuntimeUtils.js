@@ -416,9 +416,6 @@ Object.assign(Runtime.RuntimeUtils,
 			{
 				return null;
 			}
-			/* New instance */
-			var __v1 = use("Runtime.rtl");
-			var instance = __v1.newInstance(ctx, class_name, null);
 			/* Assign values */
 			var __v1 = use("Runtime.Map");
 			var obj = new __v1(ctx);
@@ -430,14 +427,11 @@ Object.assign(Runtime.RuntimeUtils,
 				{
 					var value = res.get(ctx, variable_name, null);
 					obj.set(ctx, variable_name, value);
-					instance.assignValue(ctx, variable_name, value);
 				}
 			}
-			var __v1 = use("Runtime.CoreStruct");
-			if (instance instanceof __v1)
-			{
-				instance.initData(ctx, null, obj);
-			}
+			/* New instance */
+			var __v1 = use("Runtime.rtl");
+			var instance = __v1.newInstance(ctx, class_name, use("Runtime.Collection").from([obj]));
 			return instance;
 		}
 		return null;

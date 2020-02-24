@@ -31,32 +31,30 @@ Object.assign(Runtime.Annotations.LambdaChainDeclare.prototype,
 	{
 		var defProp = use('Runtime.rtl').defProp;
 		var a = Object.getOwnPropertyNames(this);
-		this.__name = "";
-		if (a.indexOf("name") == -1) defProp(this, "name");
-		this.__is_await = false;
-		if (a.indexOf("is_await") == -1) defProp(this, "is_await");
+		this.name = "";
+		this.is_await = false;
 		use("Runtime.CoreStruct").prototype._init.call(this,ctx);
 	},
 	assignObject: function(ctx,o)
 	{
 		if (o instanceof use("Runtime.Annotations.LambdaChainDeclare"))
 		{
-			this.__name = o.__name;
-			this.__is_await = o.__is_await;
+			this.name = o.name;
+			this.is_await = o.is_await;
 		}
 		use("Runtime.CoreStruct").prototype.assignObject.call(this,ctx,o);
 	},
 	assignValue: function(ctx,k,v)
 	{
-		if (k == "name")this.__name = v;
-		else if (k == "is_await")this.__is_await = v;
+		if (k == "name")this.name = v;
+		else if (k == "is_await")this.is_await = v;
 		else use("Runtime.CoreStruct").prototype.assignValue.call(this,ctx,k,v);
 	},
 	takeValue: function(ctx,k,d)
 	{
 		if (d == undefined) d = null;
-		if (k == "name")return this.__name;
-		else if (k == "is_await")return this.__is_await;
+		if (k == "name")return this.name;
+		else if (k == "is_await")return this.is_await;
 		return use("Runtime.CoreStruct").prototype.takeValue.call(this,ctx,k,d);
 	},
 	getClassName: function(ctx)

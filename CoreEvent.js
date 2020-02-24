@@ -30,27 +30,26 @@ Object.assign(Runtime.CoreEvent.prototype,
 	{
 		var defProp = use('Runtime.rtl').defProp;
 		var a = Object.getOwnPropertyNames(this);
-		this.__sender = null;
-		if (a.indexOf("sender") == -1) defProp(this, "sender");
+		this.sender = null;
 		use("Runtime.CoreStruct").prototype._init.call(this,ctx);
 	},
 	assignObject: function(ctx,o)
 	{
 		if (o instanceof use("Runtime.CoreEvent"))
 		{
-			this.__sender = o.__sender;
+			this.sender = o.sender;
 		}
 		use("Runtime.CoreStruct").prototype.assignObject.call(this,ctx,o);
 	},
 	assignValue: function(ctx,k,v)
 	{
-		if (k == "sender")this.__sender = v;
+		if (k == "sender")this.sender = v;
 		else use("Runtime.CoreStruct").prototype.assignValue.call(this,ctx,k,v);
 	},
 	takeValue: function(ctx,k,d)
 	{
 		if (d == undefined) d = null;
-		if (k == "sender")return this.__sender;
+		if (k == "sender")return this.sender;
 		return use("Runtime.CoreStruct").prototype.takeValue.call(this,ctx,k,d);
 	},
 	getClassName: function(ctx)

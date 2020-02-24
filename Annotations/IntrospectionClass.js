@@ -31,47 +31,42 @@ Object.assign(Runtime.Annotations.IntrospectionClass.prototype,
 	{
 		var defProp = use('Runtime.rtl').defProp;
 		var a = Object.getOwnPropertyNames(this);
-		this.__class_name = "";
-		if (a.indexOf("class_name") == -1) defProp(this, "class_name");
-		this.__class_info = null;
-		if (a.indexOf("class_info") == -1) defProp(this, "class_info");
-		this.__fields = null;
-		if (a.indexOf("fields") == -1) defProp(this, "fields");
-		this.__methods = null;
-		if (a.indexOf("methods") == -1) defProp(this, "methods");
-		this.__interfaces = null;
-		if (a.indexOf("interfaces") == -1) defProp(this, "interfaces");
+		this.class_name = "";
+		this.class_info = null;
+		this.fields = null;
+		this.methods = null;
+		this.interfaces = null;
 		use("Runtime.CoreStruct").prototype._init.call(this,ctx);
 	},
 	assignObject: function(ctx,o)
 	{
 		if (o instanceof use("Runtime.Annotations.IntrospectionClass"))
 		{
-			this.__class_name = o.__class_name;
-			this.__class_info = o.__class_info;
-			this.__fields = o.__fields;
-			this.__methods = o.__methods;
-			this.__interfaces = o.__interfaces;
+			this.class_name = o.class_name;
+			this.class_info = o.class_info;
+			this.fields = o.fields;
+			this.methods = o.methods;
+			this.interfaces = o.interfaces;
 		}
 		use("Runtime.CoreStruct").prototype.assignObject.call(this,ctx,o);
 	},
 	assignValue: function(ctx,k,v)
 	{
-		if (k == "class_name")this.__class_name = v;
-		else if (k == "class_info")this.__class_info = v;
-		else if (k == "fields")this.__fields = v;
-		else if (k == "methods")this.__methods = v;
-		else if (k == "interfaces")this.__interfaces = v;
+		if (k == "class_name")this.class_name = v;
+		else if (k == "class_info")this.class_info = v;
+		else if (k == "fields")this.fields = v;
+		else if (k == "methods")this.methods = v;
+		else if (k == "interfaces")this.interfaces = v;
 		else use("Runtime.CoreStruct").prototype.assignValue.call(this,ctx,k,v);
 	},
 	takeValue: function(ctx,k,d)
 	{
 		if (d == undefined) d = null;
-		if (k == "class_name")return this.__class_name;
-		else if (k == "class_info")return this.__class_info;
-		else if (k == "fields")return this.__fields;
-		else if (k == "methods")return this.__methods;
-		else if (k == "interfaces")return this.__interfaces;
+		if (k == "class_name")return this.class_name;
+		else if (k == "class_info")return this.class_info;
+		else if (k == "fields")return this.fields;
+		else if (k == "methods")return this.methods;
+		else if (k == "interfaces")return this.interfaces;
 		return use("Runtime.CoreStruct").prototype.takeValue.call(this,ctx,k,d);
 	},
 	getClassName: function(ctx)

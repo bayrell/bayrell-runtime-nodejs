@@ -31,32 +31,30 @@ Object.assign(Runtime.Annotations.Entity.prototype,
 	{
 		var defProp = use('Runtime.rtl').defProp;
 		var a = Object.getOwnPropertyNames(this);
-		this.__name = "";
-		if (a.indexOf("name") == -1) defProp(this, "name");
-		this.__value = "";
-		if (a.indexOf("value") == -1) defProp(this, "value");
+		this.name = "";
+		this.value = "";
 		use("Runtime.CoreStruct").prototype._init.call(this,ctx);
 	},
 	assignObject: function(ctx,o)
 	{
 		if (o instanceof use("Runtime.Annotations.Entity"))
 		{
-			this.__name = o.__name;
-			this.__value = o.__value;
+			this.name = o.name;
+			this.value = o.value;
 		}
 		use("Runtime.CoreStruct").prototype.assignObject.call(this,ctx,o);
 	},
 	assignValue: function(ctx,k,v)
 	{
-		if (k == "name")this.__name = v;
-		else if (k == "value")this.__value = v;
+		if (k == "name")this.name = v;
+		else if (k == "value")this.value = v;
 		else use("Runtime.CoreStruct").prototype.assignValue.call(this,ctx,k,v);
 	},
 	takeValue: function(ctx,k,d)
 	{
 		if (d == undefined) d = null;
-		if (k == "name")return this.__name;
-		else if (k == "value")return this.__value;
+		if (k == "name")return this.name;
+		else if (k == "value")return this.value;
 		return use("Runtime.CoreStruct").prototype.takeValue.call(this,ctx,k,d);
 	},
 	getClassName: function(ctx)

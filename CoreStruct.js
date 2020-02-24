@@ -21,22 +21,9 @@ if (typeof Runtime == 'undefined') Runtime = {};
 Runtime.CoreStruct = function(ctx, obj)
 {
 	use("Runtime.CoreObject").call(this, ctx);
-	if (obj != null)
-	{
-		var __v0 = use("Runtime.Dict");
-		if (!(obj instanceof __v0))
-		{
-			var _Dict = use("Runtime.Dict");
-				if (typeof obj == "object") obj = _Dict.from(obj);
-		}
-		var rtl = use("Runtime.rtl");
-			for (var key in obj._map)
-			{
-				this.assignValue(ctx, key.substring(1), obj._map[key]);
-			}
-		this.initData(ctx, null, obj);
-	}
+	this.constructor._assign(ctx, this, null, obj);
 	if (this.__uq__ == undefined || this.__uq__ == null) this.__uq__ = Symbol();
+		Object.freeze(this);
 };
 Runtime.CoreStruct.prototype = Object.create(use("Runtime.CoreObject").prototype);
 Runtime.CoreStruct.prototype.constructor = Runtime.CoreStruct;
@@ -62,20 +49,12 @@ Object.assign(Runtime.CoreStruct.prototype,
 			return this;
 		}
 		var proto = Object.getPrototypeOf(this);
-		var item = Object.create(proto); item._init();
+		var item = Object.create(proto); /* item._init(); */
 		item = Object.assign(item, this);
 		
-		var _Dict = use("Runtime.Dict");
-		if (obj instanceof _Dict)
-		{
-			for (var key in obj._map) item["__" + key.substring(1)] = obj._map[key];
-		}
-		else
-		{
-			for (var key in obj) item["__" + key] = obj[key];
-		}
+		this.constructor._assign(ctx, item, this, obj);
 		
-		item.initData(this, obj);
+		Object.freeze(item);
 		
 		return item;
 		return this;
@@ -87,19 +66,17 @@ Object.assign(Runtime.CoreStruct.prototype,
 	 */
 	clone: function(ctx, fields)
 	{
-		var __v0 = use("Runtime.Map");
-		var obj = new __v0(ctx);
-		if (fields != null)
-		{
-			fields.each(ctx, (ctx, field_name) => 
-			{
-				obj.set(ctx, field_name, this.takeValue(ctx, field_name));
-			});
-		}
-		else
+		if (fields == undefined) fields = null;
+		if (fields == null)
 		{
 			return this;
 		}
+		var __v0 = use("Runtime.Map");
+		var obj = new __v0(ctx);
+		fields.each(ctx, (ctx, field_name) => 
+		{
+			obj.set(ctx, field_name, this.takeValue(ctx, field_name));
+		});
 		/* Return object */
 		var __v0 = use("Runtime.rtl");
 		var res = __v0.newInstance(ctx, this.getClassName(ctx), use("Runtime.Collection").from([obj.toDict(ctx)]));
@@ -140,6 +117,28 @@ Object.assign(Runtime.CoreStruct.prototype,
 Object.assign(Runtime.CoreStruct, use("Runtime.CoreObject"));
 Object.assign(Runtime.CoreStruct,
 {
+	/**
+	 * Assign
+	 */
+	_assign: function(ctx, item, old_item, obj)
+	{
+		if (obj == null)
+		{
+			item.initData(ctx, old_item, obj);
+			return ;
+		}
+		var _Dict = use("Runtime.Dict");
+		if (obj instanceof _Dict)
+		{
+			for (var key in obj._map) item[key.substring(1)] = obj._map[key];
+		}
+		else
+		{
+			for (var key in obj) item[key] = obj[key];
+		}
+		
+		item.initData(ctx, old_item, obj);
+	},
 	/**
 	 * Returns new instance
 	 */

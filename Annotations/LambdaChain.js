@@ -31,47 +31,42 @@ Object.assign(Runtime.Annotations.LambdaChain.prototype,
 	{
 		var defProp = use('Runtime.rtl').defProp;
 		var a = Object.getOwnPropertyNames(this);
-		this.__name = "";
-		if (a.indexOf("name") == -1) defProp(this, "name");
-		this.__value = "";
-		if (a.indexOf("value") == -1) defProp(this, "value");
-		this.__chain = "";
-		if (a.indexOf("chain") == -1) defProp(this, "chain");
-		this.__pos = 0;
-		if (a.indexOf("pos") == -1) defProp(this, "pos");
-		this.__is_await = false;
-		if (a.indexOf("is_await") == -1) defProp(this, "is_await");
+		this.name = "";
+		this.value = "";
+		this.chain = "";
+		this.pos = 0;
+		this.is_await = false;
 		use("Runtime.CoreStruct").prototype._init.call(this,ctx);
 	},
 	assignObject: function(ctx,o)
 	{
 		if (o instanceof use("Runtime.Annotations.LambdaChain"))
 		{
-			this.__name = o.__name;
-			this.__value = o.__value;
-			this.__chain = o.__chain;
-			this.__pos = o.__pos;
-			this.__is_await = o.__is_await;
+			this.name = o.name;
+			this.value = o.value;
+			this.chain = o.chain;
+			this.pos = o.pos;
+			this.is_await = o.is_await;
 		}
 		use("Runtime.CoreStruct").prototype.assignObject.call(this,ctx,o);
 	},
 	assignValue: function(ctx,k,v)
 	{
-		if (k == "name")this.__name = v;
-		else if (k == "value")this.__value = v;
-		else if (k == "chain")this.__chain = v;
-		else if (k == "pos")this.__pos = v;
-		else if (k == "is_await")this.__is_await = v;
+		if (k == "name")this.name = v;
+		else if (k == "value")this.value = v;
+		else if (k == "chain")this.chain = v;
+		else if (k == "pos")this.pos = v;
+		else if (k == "is_await")this.is_await = v;
 		else use("Runtime.CoreStruct").prototype.assignValue.call(this,ctx,k,v);
 	},
 	takeValue: function(ctx,k,d)
 	{
 		if (d == undefined) d = null;
-		if (k == "name")return this.__name;
-		else if (k == "value")return this.__value;
-		else if (k == "chain")return this.__chain;
-		else if (k == "pos")return this.__pos;
-		else if (k == "is_await")return this.__is_await;
+		if (k == "name")return this.name;
+		else if (k == "value")return this.value;
+		else if (k == "chain")return this.chain;
+		else if (k == "pos")return this.pos;
+		else if (k == "is_await")return this.is_await;
 		return use("Runtime.CoreStruct").prototype.takeValue.call(this,ctx,k,d);
 	},
 	getClassName: function(ctx)

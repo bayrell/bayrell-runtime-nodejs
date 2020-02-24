@@ -31,82 +31,70 @@ Object.assign(Runtime.Context.prototype,
 		var defProp = use('Runtime.rtl').defProp;
 		var a = Object.getOwnPropertyNames(this);
 		var __v0 = use("Runtime.Vector");
-		this.__base_path = null;
-		if (a.indexOf("base_path") == -1) defProp(this, "base_path");
-		this.__enviroments = null;
-		if (a.indexOf("enviroments") == -1) defProp(this, "enviroments");
-		this.__settings = null;
-		if (a.indexOf("settings") == -1) defProp(this, "settings");
-		this.__modules = null;
-		if (a.indexOf("modules") == -1) defProp(this, "modules");
-		this.__entities = null;
-		if (a.indexOf("entities") == -1) defProp(this, "entities");
-		this.__drivers = null;
-		if (a.indexOf("drivers") == -1) defProp(this, "drivers");
-		this.__providers = null;
-		if (a.indexOf("providers") == -1) defProp(this, "providers");
-		this.__tags = null;
-		if (a.indexOf("tags") == -1) defProp(this, "tags");
-		this.__initialized = false;
-		if (a.indexOf("initialized") == -1) defProp(this, "initialized");
-		this.__started = false;
-		if (a.indexOf("started") == -1) defProp(this, "started");
-		this.__start_time = 0;
-		if (a.indexOf("start_time") == -1) defProp(this, "start_time");
-		this.__logs = new __v0(ctx);
-		if (a.indexOf("logs") == -1) defProp(this, "logs");
+		this.base_path = null;
+		this.enviroments = null;
+		this.settings = null;
+		this.modules = null;
+		this.entities = null;
+		this.drivers = null;
+		this.providers = null;
+		this.tags = null;
+		this.initialized = false;
+		this.started = false;
+		this.start_time = 0;
+		this.logs = new __v0(ctx);
 		use("Runtime.CoreStruct").prototype._init.call(this,ctx);
 	},
 	assignObject: function(ctx,o)
 	{
 		if (o instanceof use("Runtime.Context"))
 		{
-			this.__base_path = o.__base_path;
-			this.__enviroments = o.__enviroments;
-			this.__settings = o.__settings;
-			this.__modules = o.__modules;
-			this.__entities = o.__entities;
-			this.__drivers = o.__drivers;
-			this.__providers = o.__providers;
-			this.__tags = o.__tags;
-			this.__initialized = o.__initialized;
-			this.__started = o.__started;
-			this.__start_time = o.__start_time;
-			this.__logs = o.__logs;
+			this.base_path = o.base_path;
+			this.enviroments = o.enviroments;
+			this.settings = o.settings;
+			this.modules = o.modules;
+			this.entities = o.entities;
+			this.drivers = o.drivers;
+			this.providers = o.providers;
+			this.tags = o.tags;
+			this.initialized = o.initialized;
+			this.started = o.started;
+			this.start_time = o.start_time;
+			this.logs = o.logs;
 		}
 		use("Runtime.CoreStruct").prototype.assignObject.call(this,ctx,o);
 	},
 	assignValue: function(ctx,k,v)
 	{
-		if (k == "base_path")this.__base_path = v;
-		else if (k == "enviroments")this.__enviroments = v;
-		else if (k == "settings")this.__settings = v;
-		else if (k == "modules")this.__modules = v;
-		else if (k == "entities")this.__entities = v;
-		else if (k == "drivers")this.__drivers = v;
-		else if (k == "providers")this.__providers = v;
-		else if (k == "tags")this.__tags = v;
-		else if (k == "initialized")this.__initialized = v;
-		else if (k == "started")this.__started = v;
-		else if (k == "start_time")this.__start_time = v;
-		else if (k == "logs")this.__logs = v;
+		if (k == "base_path")this.base_path = v;
+		else if (k == "enviroments")this.enviroments = v;
+		else if (k == "settings")this.settings = v;
+		else if (k == "modules")this.modules = v;
+		else if (k == "entities")this.entities = v;
+		else if (k == "drivers")this.drivers = v;
+		else if (k == "providers")this.providers = v;
+		else if (k == "tags")this.tags = v;
+		else if (k == "initialized")this.initialized = v;
+		else if (k == "started")this.started = v;
+		else if (k == "start_time")this.start_time = v;
+		else if (k == "logs")this.logs = v;
 		else use("Runtime.CoreStruct").prototype.assignValue.call(this,ctx,k,v);
 	},
 	takeValue: function(ctx,k,d)
 	{
 		if (d == undefined) d = null;
-		if (k == "base_path")return this.__base_path;
-		else if (k == "enviroments")return this.__enviroments;
-		else if (k == "settings")return this.__settings;
-		else if (k == "modules")return this.__modules;
-		else if (k == "entities")return this.__entities;
-		else if (k == "drivers")return this.__drivers;
-		else if (k == "providers")return this.__providers;
-		else if (k == "tags")return this.__tags;
-		else if (k == "initialized")return this.__initialized;
-		else if (k == "started")return this.__started;
-		else if (k == "start_time")return this.__start_time;
-		else if (k == "logs")return this.__logs;
+		if (k == "base_path")return this.base_path;
+		else if (k == "enviroments")return this.enviroments;
+		else if (k == "settings")return this.settings;
+		else if (k == "modules")return this.modules;
+		else if (k == "entities")return this.entities;
+		else if (k == "drivers")return this.drivers;
+		else if (k == "providers")return this.providers;
+		else if (k == "tags")return this.tags;
+		else if (k == "initialized")return this.initialized;
+		else if (k == "started")return this.started;
+		else if (k == "start_time")return this.start_time;
+		else if (k == "logs")return this.logs;
 		return use("Runtime.CoreStruct").prototype.takeValue.call(this,ctx,k,d);
 	},
 	getClassName: function(ctx)

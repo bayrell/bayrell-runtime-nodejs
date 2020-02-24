@@ -157,87 +157,74 @@ Object.assign(Runtime.UIStruct.prototype,
 	{
 		var defProp = use('Runtime.rtl').defProp;
 		var a = Object.getOwnPropertyNames(this);
-		this.__class_name = "";
-		if (a.indexOf("class_name") == -1) defProp(this, "class_name");
-		this.__key = "";
-		if (a.indexOf("key") == -1) defProp(this, "key");
-		this.__name = "";
-		if (a.indexOf("name") == -1) defProp(this, "name");
-		this.__bind = "";
-		if (a.indexOf("bind") == -1) defProp(this, "bind");
-		this.__kind = "element";
-		if (a.indexOf("kind") == -1) defProp(this, "kind");
-		this.__content = "";
-		if (a.indexOf("content") == -1) defProp(this, "content");
-		this.__reference = "";
-		if (a.indexOf("reference") == -1) defProp(this, "reference");
-		this.__value = null;
-		if (a.indexOf("value") == -1) defProp(this, "value");
-		this.__layout = null;
-		if (a.indexOf("layout") == -1) defProp(this, "layout");
-		this.__model = null;
-		if (a.indexOf("model") == -1) defProp(this, "model");
-		this.__props = null;
-		if (a.indexOf("props") == -1) defProp(this, "props");
-		this.__annotations = null;
-		if (a.indexOf("annotations") == -1) defProp(this, "annotations");
-		this.__children = null;
-		if (a.indexOf("children") == -1) defProp(this, "children");
+		this.class_name = "";
+		this.key = "";
+		this.name = "";
+		this.bind = "";
+		this.kind = "element";
+		this.content = "";
+		this.reference = "";
+		this.value = null;
+		this.layout = null;
+		this.model = null;
+		this.props = null;
+		this.annotations = null;
+		this.children = null;
 		use("Runtime.CoreStruct").prototype._init.call(this,ctx);
 	},
 	assignObject: function(ctx,o)
 	{
 		if (o instanceof use("Runtime.UIStruct"))
 		{
-			this.__class_name = o.__class_name;
-			this.__key = o.__key;
-			this.__name = o.__name;
-			this.__bind = o.__bind;
-			this.__kind = o.__kind;
-			this.__content = o.__content;
-			this.__reference = o.__reference;
-			this.__value = o.__value;
-			this.__layout = o.__layout;
-			this.__model = o.__model;
-			this.__props = o.__props;
-			this.__annotations = o.__annotations;
-			this.__children = o.__children;
+			this.class_name = o.class_name;
+			this.key = o.key;
+			this.name = o.name;
+			this.bind = o.bind;
+			this.kind = o.kind;
+			this.content = o.content;
+			this.reference = o.reference;
+			this.value = o.value;
+			this.layout = o.layout;
+			this.model = o.model;
+			this.props = o.props;
+			this.annotations = o.annotations;
+			this.children = o.children;
 		}
 		use("Runtime.CoreStruct").prototype.assignObject.call(this,ctx,o);
 	},
 	assignValue: function(ctx,k,v)
 	{
-		if (k == "class_name")this.__class_name = v;
-		else if (k == "key")this.__key = v;
-		else if (k == "name")this.__name = v;
-		else if (k == "bind")this.__bind = v;
-		else if (k == "kind")this.__kind = v;
-		else if (k == "content")this.__content = v;
-		else if (k == "reference")this.__reference = v;
-		else if (k == "value")this.__value = v;
-		else if (k == "layout")this.__layout = v;
-		else if (k == "model")this.__model = v;
-		else if (k == "props")this.__props = v;
-		else if (k == "annotations")this.__annotations = v;
-		else if (k == "children")this.__children = v;
+		if (k == "class_name")this.class_name = v;
+		else if (k == "key")this.key = v;
+		else if (k == "name")this.name = v;
+		else if (k == "bind")this.bind = v;
+		else if (k == "kind")this.kind = v;
+		else if (k == "content")this.content = v;
+		else if (k == "reference")this.reference = v;
+		else if (k == "value")this.value = v;
+		else if (k == "layout")this.layout = v;
+		else if (k == "model")this.model = v;
+		else if (k == "props")this.props = v;
+		else if (k == "annotations")this.annotations = v;
+		else if (k == "children")this.children = v;
 		else use("Runtime.CoreStruct").prototype.assignValue.call(this,ctx,k,v);
 	},
 	takeValue: function(ctx,k,d)
 	{
 		if (d == undefined) d = null;
-		if (k == "class_name")return this.__class_name;
-		else if (k == "key")return this.__key;
-		else if (k == "name")return this.__name;
-		else if (k == "bind")return this.__bind;
-		else if (k == "kind")return this.__kind;
-		else if (k == "content")return this.__content;
-		else if (k == "reference")return this.__reference;
-		else if (k == "value")return this.__value;
-		else if (k == "layout")return this.__layout;
-		else if (k == "model")return this.__model;
-		else if (k == "props")return this.__props;
-		else if (k == "annotations")return this.__annotations;
-		else if (k == "children")return this.__children;
+		if (k == "class_name")return this.class_name;
+		else if (k == "key")return this.key;
+		else if (k == "name")return this.name;
+		else if (k == "bind")return this.bind;
+		else if (k == "kind")return this.kind;
+		else if (k == "content")return this.content;
+		else if (k == "reference")return this.reference;
+		else if (k == "value")return this.value;
+		else if (k == "layout")return this.layout;
+		else if (k == "model")return this.model;
+		else if (k == "props")return this.props;
+		else if (k == "annotations")return this.annotations;
+		else if (k == "children")return this.children;
 		return use("Runtime.CoreStruct").prototype.takeValue.call(this,ctx,k,d);
 	},
 	getClassName: function(ctx)

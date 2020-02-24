@@ -30,72 +30,62 @@ Object.assign(Runtime.MessageRPC.prototype,
 	{
 		var defProp = use('Runtime.rtl').defProp;
 		var a = Object.getOwnPropertyNames(this);
-		this.__uri = "";
-		if (a.indexOf("uri") == -1) defProp(this, "uri");
-		this.__api_name = "";
-		if (a.indexOf("api_name") == -1) defProp(this, "api_name");
-		this.__space_name = "";
-		if (a.indexOf("space_name") == -1) defProp(this, "space_name");
-		this.__method_name = "";
-		if (a.indexOf("method_name") == -1) defProp(this, "method_name");
-		this.__data = null;
-		if (a.indexOf("data") == -1) defProp(this, "data");
-		this.__code = 0;
-		if (a.indexOf("code") == -1) defProp(this, "code");
-		this.__error = "";
-		if (a.indexOf("error") == -1) defProp(this, "error");
-		this.__response = null;
-		if (a.indexOf("response") == -1) defProp(this, "response");
-		this.__logs = null;
-		if (a.indexOf("logs") == -1) defProp(this, "logs");
-		this.__have_result = false;
-		if (a.indexOf("have_result") == -1) defProp(this, "have_result");
+		this.uri = "";
+		this.api_name = "";
+		this.space_name = "";
+		this.method_name = "";
+		this.data = null;
+		this.code = 0;
+		this.error = "";
+		this.response = null;
+		this.logs = null;
+		this.have_result = false;
 		use("Runtime.Message").prototype._init.call(this,ctx);
 	},
 	assignObject: function(ctx,o)
 	{
 		if (o instanceof use("Runtime.MessageRPC"))
 		{
-			this.__uri = o.__uri;
-			this.__api_name = o.__api_name;
-			this.__space_name = o.__space_name;
-			this.__method_name = o.__method_name;
-			this.__data = o.__data;
-			this.__code = o.__code;
-			this.__error = o.__error;
-			this.__response = o.__response;
-			this.__logs = o.__logs;
-			this.__have_result = o.__have_result;
+			this.uri = o.uri;
+			this.api_name = o.api_name;
+			this.space_name = o.space_name;
+			this.method_name = o.method_name;
+			this.data = o.data;
+			this.code = o.code;
+			this.error = o.error;
+			this.response = o.response;
+			this.logs = o.logs;
+			this.have_result = o.have_result;
 		}
 		use("Runtime.Message").prototype.assignObject.call(this,ctx,o);
 	},
 	assignValue: function(ctx,k,v)
 	{
-		if (k == "uri")this.__uri = v;
-		else if (k == "api_name")this.__api_name = v;
-		else if (k == "space_name")this.__space_name = v;
-		else if (k == "method_name")this.__method_name = v;
-		else if (k == "data")this.__data = v;
-		else if (k == "code")this.__code = v;
-		else if (k == "error")this.__error = v;
-		else if (k == "response")this.__response = v;
-		else if (k == "logs")this.__logs = v;
-		else if (k == "have_result")this.__have_result = v;
+		if (k == "uri")this.uri = v;
+		else if (k == "api_name")this.api_name = v;
+		else if (k == "space_name")this.space_name = v;
+		else if (k == "method_name")this.method_name = v;
+		else if (k == "data")this.data = v;
+		else if (k == "code")this.code = v;
+		else if (k == "error")this.error = v;
+		else if (k == "response")this.response = v;
+		else if (k == "logs")this.logs = v;
+		else if (k == "have_result")this.have_result = v;
 		else use("Runtime.Message").prototype.assignValue.call(this,ctx,k,v);
 	},
 	takeValue: function(ctx,k,d)
 	{
 		if (d == undefined) d = null;
-		if (k == "uri")return this.__uri;
-		else if (k == "api_name")return this.__api_name;
-		else if (k == "space_name")return this.__space_name;
-		else if (k == "method_name")return this.__method_name;
-		else if (k == "data")return this.__data;
-		else if (k == "code")return this.__code;
-		else if (k == "error")return this.__error;
-		else if (k == "response")return this.__response;
-		else if (k == "logs")return this.__logs;
-		else if (k == "have_result")return this.__have_result;
+		if (k == "uri")return this.uri;
+		else if (k == "api_name")return this.api_name;
+		else if (k == "space_name")return this.space_name;
+		else if (k == "method_name")return this.method_name;
+		else if (k == "data")return this.data;
+		else if (k == "code")return this.code;
+		else if (k == "error")return this.error;
+		else if (k == "response")return this.response;
+		else if (k == "logs")return this.logs;
+		else if (k == "have_result")return this.have_result;
 		return use("Runtime.Message").prototype.takeValue.call(this,ctx,k,d);
 	},
 	getClassName: function(ctx)

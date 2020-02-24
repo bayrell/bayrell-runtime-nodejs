@@ -45,42 +45,38 @@ Object.assign(Runtime.Annotations.IntrospectionInfo.prototype,
 	{
 		var defProp = use('Runtime.rtl').defProp;
 		var a = Object.getOwnPropertyNames(this);
-		this.__class_name = "";
-		if (a.indexOf("class_name") == -1) defProp(this, "class_name");
-		this.__kind = "";
-		if (a.indexOf("kind") == -1) defProp(this, "kind");
-		this.__name = "";
-		if (a.indexOf("name") == -1) defProp(this, "name");
-		this.__annotations = null;
-		if (a.indexOf("annotations") == -1) defProp(this, "annotations");
+		this.class_name = "";
+		this.kind = "";
+		this.name = "";
+		this.annotations = null;
 		use("Runtime.CoreStruct").prototype._init.call(this,ctx);
 	},
 	assignObject: function(ctx,o)
 	{
 		if (o instanceof use("Runtime.Annotations.IntrospectionInfo"))
 		{
-			this.__class_name = o.__class_name;
-			this.__kind = o.__kind;
-			this.__name = o.__name;
-			this.__annotations = o.__annotations;
+			this.class_name = o.class_name;
+			this.kind = o.kind;
+			this.name = o.name;
+			this.annotations = o.annotations;
 		}
 		use("Runtime.CoreStruct").prototype.assignObject.call(this,ctx,o);
 	},
 	assignValue: function(ctx,k,v)
 	{
-		if (k == "class_name")this.__class_name = v;
-		else if (k == "kind")this.__kind = v;
-		else if (k == "name")this.__name = v;
-		else if (k == "annotations")this.__annotations = v;
+		if (k == "class_name")this.class_name = v;
+		else if (k == "kind")this.kind = v;
+		else if (k == "name")this.name = v;
+		else if (k == "annotations")this.annotations = v;
 		else use("Runtime.CoreStruct").prototype.assignValue.call(this,ctx,k,v);
 	},
 	takeValue: function(ctx,k,d)
 	{
 		if (d == undefined) d = null;
-		if (k == "class_name")return this.__class_name;
-		else if (k == "kind")return this.__kind;
-		else if (k == "name")return this.__name;
-		else if (k == "annotations")return this.__annotations;
+		if (k == "class_name")return this.class_name;
+		else if (k == "kind")return this.kind;
+		else if (k == "name")return this.name;
+		else if (k == "annotations")return this.annotations;
 		return use("Runtime.CoreStruct").prototype.takeValue.call(this,ctx,k,d);
 	},
 	getClassName: function(ctx)

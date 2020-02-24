@@ -30,32 +30,30 @@ Object.assign(Runtime.Session.prototype,
 	{
 		var defProp = use('Runtime.rtl').defProp;
 		var a = Object.getOwnPropertyNames(this);
-		this.__user_id = 0;
-		if (a.indexOf("user_id") == -1) defProp(this, "user_id");
-		this.__session_key = "";
-		if (a.indexOf("session_key") == -1) defProp(this, "session_key");
+		this.user_id = 0;
+		this.session_key = "";
 		use("Runtime.CoreProvider").prototype._init.call(this,ctx);
 	},
 	assignObject: function(ctx,o)
 	{
 		if (o instanceof use("Runtime.Session"))
 		{
-			this.__user_id = o.__user_id;
-			this.__session_key = o.__session_key;
+			this.user_id = o.user_id;
+			this.session_key = o.session_key;
 		}
 		use("Runtime.CoreProvider").prototype.assignObject.call(this,ctx,o);
 	},
 	assignValue: function(ctx,k,v)
 	{
-		if (k == "user_id")this.__user_id = v;
-		else if (k == "session_key")this.__session_key = v;
+		if (k == "user_id")this.user_id = v;
+		else if (k == "session_key")this.session_key = v;
 		else use("Runtime.CoreProvider").prototype.assignValue.call(this,ctx,k,v);
 	},
 	takeValue: function(ctx,k,d)
 	{
 		if (d == undefined) d = null;
-		if (k == "user_id")return this.__user_id;
-		else if (k == "session_key")return this.__session_key;
+		if (k == "user_id")return this.user_id;
+		else if (k == "session_key")return this.session_key;
 		return use("Runtime.CoreProvider").prototype.takeValue.call(this,ctx,k,d);
 	},
 	getClassName: function(ctx)

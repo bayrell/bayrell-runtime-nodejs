@@ -166,62 +166,54 @@ Object.assign(Runtime.DateTime.prototype,
 	{
 		var defProp = use('Runtime.rtl').defProp;
 		var a = Object.getOwnPropertyNames(this);
-		this.__y = 0;
-		if (a.indexOf("y") == -1) defProp(this, "y");
-		this.__m = 0;
-		if (a.indexOf("m") == -1) defProp(this, "m");
-		this.__d = 0;
-		if (a.indexOf("d") == -1) defProp(this, "d");
-		this.__h = 0;
-		if (a.indexOf("h") == -1) defProp(this, "h");
-		this.__i = 0;
-		if (a.indexOf("i") == -1) defProp(this, "i");
-		this.__s = 0;
-		if (a.indexOf("s") == -1) defProp(this, "s");
-		this.__ms = 0;
-		if (a.indexOf("ms") == -1) defProp(this, "ms");
-		this.__tz = "UTC";
-		if (a.indexOf("tz") == -1) defProp(this, "tz");
+		this.y = 0;
+		this.m = 0;
+		this.d = 0;
+		this.h = 0;
+		this.i = 0;
+		this.s = 0;
+		this.ms = 0;
+		this.tz = "UTC";
 		use("Runtime.CoreStruct").prototype._init.call(this,ctx);
 	},
 	assignObject: function(ctx,o)
 	{
 		if (o instanceof use("Runtime.DateTime"))
 		{
-			this.__y = o.__y;
-			this.__m = o.__m;
-			this.__d = o.__d;
-			this.__h = o.__h;
-			this.__i = o.__i;
-			this.__s = o.__s;
-			this.__ms = o.__ms;
-			this.__tz = o.__tz;
+			this.y = o.y;
+			this.m = o.m;
+			this.d = o.d;
+			this.h = o.h;
+			this.i = o.i;
+			this.s = o.s;
+			this.ms = o.ms;
+			this.tz = o.tz;
 		}
 		use("Runtime.CoreStruct").prototype.assignObject.call(this,ctx,o);
 	},
 	assignValue: function(ctx,k,v)
 	{
-		if (k == "y")this.__y = v;
-		else if (k == "m")this.__m = v;
-		else if (k == "d")this.__d = v;
-		else if (k == "h")this.__h = v;
-		else if (k == "i")this.__i = v;
-		else if (k == "s")this.__s = v;
-		else if (k == "ms")this.__ms = v;
-		else if (k == "tz")this.__tz = v;
+		if (k == "y")this.y = v;
+		else if (k == "m")this.m = v;
+		else if (k == "d")this.d = v;
+		else if (k == "h")this.h = v;
+		else if (k == "i")this.i = v;
+		else if (k == "s")this.s = v;
+		else if (k == "ms")this.ms = v;
+		else if (k == "tz")this.tz = v;
 		else use("Runtime.CoreStruct").prototype.assignValue.call(this,ctx,k,v);
 	},
 	takeValue: function(ctx,k,d)
 	{
 		if (d == undefined) d = null;
-		if (k == "y")return this.__y;
-		else if (k == "m")return this.__m;
-		else if (k == "d")return this.__d;
-		else if (k == "h")return this.__h;
-		else if (k == "i")return this.__i;
-		else if (k == "s")return this.__s;
-		else if (k == "ms")return this.__ms;
-		else if (k == "tz")return this.__tz;
+		if (k == "y")return this.y;
+		else if (k == "m")return this.m;
+		else if (k == "d")return this.d;
+		else if (k == "h")return this.h;
+		else if (k == "i")return this.i;
+		else if (k == "s")return this.s;
+		else if (k == "ms")return this.ms;
+		else if (k == "tz")return this.tz;
 		return use("Runtime.CoreStruct").prototype.takeValue.call(this,ctx,k,d);
 	},
 	getClassName: function(ctx)

@@ -175,6 +175,28 @@ Object.assign(Runtime.lib,
 			return item.takeDict(ctx, fields);
 		};
 	},
+	/**
+	 * Filter
+	 */
+	filter: function(ctx, f)
+	{
+		return (ctx, m) => 
+		{
+			return m.filter(ctx, f);
+		};
+	},
+	/**
+	 * To
+	 */
+	to: function(ctx, type_value, def_value)
+	{
+		if (def_value == undefined) def_value = null;
+		return (ctx, m) => 
+		{
+			var __v0 = use("Runtime.rtl");
+			return __v0.convert(m.value(ctx), type_value, def_value);
+		};
+	},
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
 	{

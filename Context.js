@@ -131,32 +131,42 @@ Object.assign(Runtime.Context,
 	/**
 	 * Returns enviroment by eky
 	 */
-	env: function(ctx, c, key)
+	env: function(ctx, key, def_value)
 	{
-		return (c.enviroments != null) ? c.enviroments.get(ctx, key, "") : "";
+		if (def_value == undefined) def_value = "";
+		return (ctx, c) => 
+		{
+			return (c.enviroments != null) ? c.enviroments.get(ctx, key, def_value) : def_value;
+		};
 	},
 	/**
 	 * Returns settings
 	 * @return Dict<string>
 	 */
-	config: function(ctx, c, items, d)
+	config: function(ctx, items, d)
 	{
 		if (d == undefined) d = null;
-		if (c.settings == null)
+		return (ctx, c) => 
 		{
-			return null;
-		}
-		var config = c.settings.get(ctx, "config", null);
-		var __v0 = use("Runtime.rtl");
-		return (config != null) ? __v0.attr(ctx, config, items, d) : null;
+			if (c.settings == null)
+			{
+				return null;
+			}
+			var config = c.settings.get(ctx, "config", null);
+			var __v0 = use("Runtime.rtl");
+			return (config != null) ? __v0.attr(ctx, config, items, d) : null;
+		};
 	},
 	/**
 	 * Returns docker secret key
 	 */
-	secret: function(ctx, c, key)
+	secret: function(ctx, key)
 	{
-		var secrets = c.settings.get(ctx, "secrets", null);
-		return (secrets != null) ? secrets.get(ctx, "key", "") : "";
+		return (ctx, c) => 
+		{
+			var secrets = c.settings.get(ctx, "secrets", null);
+			return (secrets != null) ? secrets.get(ctx, "key", "") : "";
+		};
 	},
 	/**
 	 * Create context
@@ -200,7 +210,9 @@ Object.assign(Runtime.Context,
 		}
 		c = c.copy(ctx, { "entities": entities });
 		/* Extend entities */
-		entities = this.chain(ctx, c, "Runtime.Entities", use("Runtime.Collection").from([c,entities]));
+		var __v0 = new Runtime.Monad(ctx, c);
+		__v0 = __v0.callMethod(ctx, "chain", Runtime.Collection.from(["Runtime.Entities", use("Runtime.Collection").from([c,entities])]));
+		entities = __v0.value(ctx);
 		entities = this.extendEntities(ctx, c, entities);
 		entities = this.extendEntitiesFromAnnotations(ctx, entities);
 		/* Get providers */
@@ -269,13 +281,16 @@ Object.assign(Runtime.Context,
 	 * @params string driver_name
 	 * @return Runtime.anager
 	 */
-	getDriver: function(ctx, c, driver_name)
+	getDriver: function(ctx, driver_name)
 	{
-		if (c.drivers.has(ctx, driver_name))
+		return (ctx, c) => 
 		{
-			return c.drivers.item(ctx, driver_name);
-		}
-		return null;
+			if (c.drivers.has(ctx, driver_name))
+			{
+				return c.drivers.item(ctx, driver_name);
+			}
+			return null;
+		};
 	},
 	/* --------------------- Provider ------------------- */
 	/**
@@ -284,47 +299,50 @@ Object.assign(Runtime.Context,
 	 * @params string provider_name
 	 * @return CoreProvider
 	 */
-	createProvider: function(ctx, c, provider_name, params, settings_name)
+	createProvider: function(ctx, provider_name, params, settings_name)
 	{
 		if (settings_name == undefined) settings_name = "default";
-		var provider = null;
-		if (c.providers.has(ctx, provider_name))
+		return (ctx, c) => 
 		{
-			var info = c.providers.item(ctx, provider_name);
-			if (info.kind == "interface")
+			var provider = null;
+			if (c.providers.has(ctx, provider_name))
+			{
+				var info = c.providers.item(ctx, provider_name);
+				if (info.kind == "interface")
+				{
+					var __v0 = use("Runtime.Exceptions.RuntimeException");
+					throw new __v0(ctx, "Provider " + use("Runtime.rtl").toStr(provider_name) + use("Runtime.rtl").toStr(" does not declared"))
+				}
+				var class_name = info.value;
+				if (class_name == "")
+				{
+					class_name = info.name;
+				}
+				/* Set default params */
+				if (params == null)
+				{
+					var __v0 = use("Runtime.rtl");
+					params = __v0.attr(ctx, c.settings, use("Runtime.Collection").from(["providers",class_name,settings_name]));
+				}
+				if (params == null)
+				{
+					params = use("Runtime.Dict").from({});
+				}
+				var __v0 = use("Runtime.rtl");
+				provider = __v0.newInstance(ctx, class_name, use("Runtime.Collection").from([params]));
+				provider = this.chain(ctx, c, class_name, use("Runtime.Collection").from([provider]));
+				if (provider_name != class_name)
+				{
+					provider = this.chain(ctx, c, provider_name, use("Runtime.Collection").from([provider]));
+				}
+			}
+			else
 			{
 				var __v0 = use("Runtime.Exceptions.RuntimeException");
-				throw new __v0(ctx, "Provider " + use("Runtime.rtl").toStr(provider_name) + use("Runtime.rtl").toStr(" does not declared"))
+				throw new __v0(ctx, "Provider " + use("Runtime.rtl").toStr(provider_name) + use("Runtime.rtl").toStr(" not found"))
 			}
-			var class_name = info.value;
-			if (class_name == "")
-			{
-				class_name = info.name;
-			}
-			/* Set default params */
-			if (params == null)
-			{
-				var __v0 = use("Runtime.rtl");
-				params = __v0.attr(ctx, c.settings, use("Runtime.Collection").from(["providers",class_name,settings_name]));
-			}
-			if (params == null)
-			{
-				params = use("Runtime.Dict").from({});
-			}
-			var __v0 = use("Runtime.rtl");
-			provider = __v0.newInstance(ctx, class_name, use("Runtime.Collection").from([params]));
-			provider = this.chain(ctx, c, class_name, use("Runtime.Collection").from([provider]));
-			if (provider_name != class_name)
-			{
-				provider = this.chain(ctx, c, provider_name, use("Runtime.Collection").from([provider]));
-			}
-		}
-		else
-		{
-			var __v0 = use("Runtime.Exceptions.RuntimeException");
-			throw new __v0(ctx, "Provider " + use("Runtime.rtl").toStr(provider_name) + use("Runtime.rtl").toStr(" not found"))
-		}
-		return provider;
+			return provider;
+		};
 	},
 	/**
 	 * Returns provider
@@ -332,176 +350,112 @@ Object.assign(Runtime.Context,
 	 * @params string provider_name
 	 * @return CoreProvider
 	 */
-	getProvider: function(ctx, c, provider_name, settings_name)
+	getProvider: function(ctx, provider_name, settings_name)
 	{
 		if (settings_name == undefined) settings_name = "default";
-		var provider = this.createProvider(ctx, c, provider_name, null, settings_name);
-		return provider;
+		return (ctx, c) => 
+		{
+			var provider = this.createProvider(ctx, c, provider_name, null, settings_name);
+			return provider;
+		};
 	},
 	/* ---------------------- Chain --------------------- */
 	/**
 	 * Apply Lambda Chain
 	 */
-	chain: function(ctx, c, chain_name, args)
+	chain: function(ctx, chain_name, args)
 	{
-		var entities = c.entities.filter(ctx, (ctx, item) => 
+		return (ctx, c) => 
 		{
-			var __v0 = use("Runtime.Annotations.LambdaChain");
-			return item instanceof __v0 && item.name == chain_name && item.is_async == false;
-		});
-		entities = entities.sortIm(ctx, (a, b) => 
-		{
-			return a.pos > b.pos;
-		});
-		for (var i = 0;i < entities.count(ctx);i++)
-		{
-			var item = entities.item(ctx, i);
-			var item_chain_name = item.chain;
-			if (item_chain_name != "")
+			var entities = c.entities.filter(ctx, (ctx, item) => 
 			{
-				var res = c.chain(ctx, item_chain_name, args);
-				args = args.setIm(ctx, args.count(ctx) - 1, res);
-			}
-			else
+				var __v0 = use("Runtime.Annotations.LambdaChain");
+				return item instanceof __v0 && item.name == chain_name && item.is_async == false;
+			});
+			entities = entities.sortIm(ctx, (a, b) => 
 			{
-				var __v0 = use("Runtime.rs");
-				var arr = __v0.split(ctx, "::", item.value);
-				var class_name = arr.get(ctx, 0, "");
-				var method_name = arr.get(ctx, 1, "");
-				var __v0 = use("Runtime.rtl");
-				var f = __v0.method(ctx, class_name, method_name);
-				var __v0 = use("Runtime.rtl");
-				var res = __v0.apply(ctx, f, args);
-				args = args.setIm(ctx, args.count(ctx) - 1, res);
+				return a.pos > b.pos;
+			});
+			for (var i = 0;i < entities.count(ctx);i++)
+			{
+				var item = entities.item(ctx, i);
+				var item_chain_name = item.chain;
+				if (item_chain_name != "")
+				{
+					var res = c.chain(ctx, item_chain_name, args);
+					args = args.setIm(ctx, args.count(ctx) - 1, res);
+				}
+				else
+				{
+					var __v0 = use("Runtime.rs");
+					var arr = __v0.split(ctx, "::", item.value);
+					var class_name = arr.get(ctx, 0, "");
+					var method_name = arr.get(ctx, 1, "");
+					var __v0 = use("Runtime.rtl");
+					var f = __v0.method(ctx, class_name, method_name);
+					var __v0 = use("Runtime.rtl");
+					var res = __v0.apply(ctx, f, args);
+					args = args.setIm(ctx, args.count(ctx) - 1, res);
+				}
 			}
-		}
-		var res = args.last(ctx);
-		return res;
+			var res = args.last(ctx);
+			return res;
+		};
 	},
 	/**
 	 * Apply Lambda Chain Await
 	 */
-	chainAwait: function(ctx, c, chain_name, args)
+	chainAwait: function(ctx, chain_name, args)
 	{
-		var entities,i,item,item_chain_name,res,arr,class_name,method_name,f;
 		return (__async_t) =>
 		{
 			if (__async_t.pos(ctx) == "0")
 			{
-				entities = c.entities.filter(ctx, (ctx, item) => 
+				return __async_t.ret(ctx, (ctx, c) => 
 				{
-					var __v0 = use("Runtime.Annotations.LambdaChain");
-					return item instanceof __v0 && item.name == chain_name;
+					var entities = c.entities.filter(ctx, (ctx, item) => 
+					{
+						var __v0 = use("Runtime.Annotations.LambdaChain");
+						return item instanceof __v0 && item.name == chain_name;
+					});
+					entities = entities.sortIm(ctx, (a, b) => 
+					{
+						return a.pos > b.pos;
+					});
+					for (var i = 0;i < entities.count(ctx);i++)
+					{
+						var item = entities.item(ctx, i);
+						var item_chain_name = item.chain;
+						if (item_chain_name != "")
+						{
+							var res = this.chainAwait(ctx, item_chain_name, args);
+							args = args.setIm(ctx, args.count(ctx) - 1, res);
+						}
+						else
+						{
+							var __v0 = use("Runtime.rs");
+							var arr = __v0.split(ctx, "::", item.value);
+							var class_name = arr.get(ctx, 0, "");
+							var method_name = arr.get(ctx, 1, "");
+							var __v0 = use("Runtime.rtl");
+							var f = __v0.method(ctx, class_name, method_name);
+							if (item.is_async)
+							{
+								var __v0 = use("Runtime.rtl");
+								var res = __v0.apply(ctx, f, args);
+								args = args.setIm(ctx, args.count(ctx) - 1, res);
+							}
+							else
+							{
+								var __v0 = use("Runtime.rtl");
+								var res = __v0.apply(ctx, f, args);
+								args = args.setIm(ctx, args.count(ctx) - 1, res);
+							}
+						}
+					}
+					var res = args.last(ctx);
+					return res;
 				});
-				entities = entities.sortIm(ctx, (a, b) => 
-				{
-					return a.pos > b.pos;
-				});
-				return __async_t.jump(ctx, "1.0");
-			}
-			/* Start Loop */
-			else if (__async_t.pos(ctx) == "1.0")
-			{
-				i = 0;
-				return __async_t.jump(ctx, "1.1");
-			}
-			/* Loop Expression */
-			else if (__async_t.pos(ctx) == "1.1")
-			{
-				var __async_var = i < entities.count(ctx);
-				if (__async_var)
-				{
-					return __async_t.jump(ctx, "1.2");
-				}
-				return __async_t.jump(ctx, "2");
-			}
-			/* Loop */
-			else if (__async_t.pos(ctx) == "1.2")
-			{
-				i++;
-				item = entities.item(ctx, i);
-				item_chain_name = item.chain;
-				return __async_t.jump(ctx, "1.3.0");
-			}
-			/* Start if */
-			else if (__async_t.pos(ctx) == "1.3.0")
-			{
-				var __async_var = item_chain_name != "";
-				if (__async_var)
-				{
-					return __async_t.jump(ctx, "1.3.1");
-				}
-				return __async_t.jump(ctx, "1.3.2");
-			}
-			/* If true */
-			else if (__async_t.pos(ctx) == "1.3.1")
-			{
-				return __async_t.jump(ctx, "1.3.3").call(ctx, this.chainAwait(ctx, item_chain_name, args),"__v0");
-			}
-			else if (__async_t.pos(ctx) == "1.3.3")
-			{
-				res = __async_t.getVar(ctx, "__v0");
-				args = args.setIm(ctx, args.count(ctx) - 1, res);
-				return __async_t.jump(ctx, "1.4");
-			}
-			/* Next If */
-			else if (__async_t.pos(ctx) == "1.3.2")
-			{
-				/* If false */
-				var __v0 = use("Runtime.rs");
-				arr = __v0.split(ctx, "::", item.value);
-				class_name = arr.get(ctx, 0, "");
-				method_name = arr.get(ctx, 1, "");
-				var __v0 = use("Runtime.rtl");
-				f = __v0.method(ctx, class_name, method_name);
-				return __async_t.jump(ctx, "1.3.4.0");
-			}
-			/* Start if */
-			else if (__async_t.pos(ctx) == "1.3.4.0")
-			{
-				var __async_var = item.is_async;
-				if (__async_var)
-				{
-					return __async_t.jump(ctx, "1.3.4.1");
-				}
-				return __async_t.jump(ctx, "1.3.4.2");
-			}
-			/* If true */
-			else if (__async_t.pos(ctx) == "1.3.4.1")
-			{
-				var __v0 = use("Runtime.rtl");
-				return __async_t.jump(ctx, "1.3.4.3").call(ctx, __v0.apply(ctx, f, args),"__v1");
-			}
-			else if (__async_t.pos(ctx) == "1.3.4.3")
-			{
-				res = __async_t.getVar(ctx, "__v1");
-				args = args.setIm(ctx, args.count(ctx) - 1, res);
-				return __async_t.jump(ctx, "1.3.5");
-			}
-			/* Next If */
-			else if (__async_t.pos(ctx) == "1.3.4.2")
-			{
-				/* If false */
-				var __v0 = use("Runtime.rtl");
-				res = __v0.apply(ctx, f, args);
-				args = args.setIm(ctx, args.count(ctx) - 1, res);
-				return __async_t.jump(ctx, "1.3.5");
-			}
-			/* End if */
-			else if (__async_t.pos(ctx) == "1.3.5")
-			{
-				return __async_t.jump(ctx, "1.4");
-			}
-			/* End if */
-			else if (__async_t.pos(ctx) == "1.4")
-			{
-				return __async_t.jump(ctx, "1.1");
-			}
-			/* End Loop */
-			else if (__async_t.pos(ctx) == "2")
-			{
-				res = args.last(ctx);
-				return __async_t.ret(ctx, res);
 			}
 			return __async_t.ret_void(ctx);
 		};
@@ -514,11 +468,14 @@ Object.assign(Runtime.Context,
 	 * @params string locale - Different locale. Default "".
 	 * @return string - translated string
 	 */
-	translate: function(ctx, c, message, space, params, locale)
+	translate: function(ctx, message, space, params, locale)
 	{
 		if (params == undefined) params = null;
 		if (locale == undefined) locale = "";
-		return message;
+		return (ctx, c) => 
+		{
+			return message;
+		};
 	},
 	/* ----------------------- Bus ---------------------- */
 	/**
@@ -527,21 +484,19 @@ Object.assign(Runtime.Context,
 	 * @param Context ctx
 	 * @return Message
 	 */
-	sendMessage: function(ctx, c, msg)
+	sendMessage: function(ctx, msg)
 	{
-		var provider;
 		return (__async_t) =>
 		{
 			if (__async_t.pos(ctx) == "0")
 			{
-				var __v0 = use("Runtime.RuntimeConstant");
-				provider = this.getProvider(ctx, c, __v0.BUS_INTERFACE, "default");
-				return __async_t.jump(ctx, "1").call(ctx, provider.constructor.sendMessage(ctx, provider, msg),"__v0");
-			}
-			else if (__async_t.pos(ctx) == "1")
-			{
-				msg = __async_t.getVar(ctx, "__v0");
-				return __async_t.ret(ctx, msg);
+				return __async_t.ret(ctx, (ctx, c) => 
+				{
+					var __v0 = use("Runtime.RuntimeConstant");
+					var provider = this.getProvider(ctx, c, __v0.BUS_INTERFACE, "default");
+					msg = provider.constructor.sendMessage(ctx, provider, msg);
+					return msg;
+				});
 			}
 			return __async_t.ret_void(ctx);
 		};
@@ -552,76 +507,106 @@ Object.assign(Runtime.Context,
 	 * @param string message
 	 * @param int loglevel
 	 */
-	debug: function(ctx, c, message, loglevel)
+	debug: function(ctx, message, loglevel)
 	{
 		if (loglevel == undefined) loglevel = 0;
-		this.logs.push(ctx, message + use("Runtime.rtl").toStr("\n"));
+		return (ctx, c) => 
+		{
+			this.logs.push(ctx, message + use("Runtime.rtl").toStr("\n"));
+		};
 	},
 	/**
 	 * Timer message
 	 * @param string message
 	 * @param int loglevel
 	 */
-	log_timer: function(ctx, c, message, loglevel)
+	log_timer: function(ctx, message, loglevel)
 	{
 		if (loglevel == undefined) loglevel = 0;
-		var time = this.utime(ctx, c) - c.start_time;
-		var __v0 = use("Runtime.rtl");
-		var s = "[" + use("Runtime.rtl").toStr(__v0.round(ctx, time * 1000)) + use("Runtime.rtl").toStr("]ms ") + use("Runtime.rtl").toStr(message) + use("Runtime.rtl").toStr("\n");
-		c.logs.push(ctx, s);
+		return (ctx, c) => 
+		{
+			var __v0 = new Runtime.Monad(ctx, c);
+			__v0 = __v0.callMethod(ctx, "utime", Runtime.Collection.from([]));
+			var time = __v0.value(ctx);
+			time = time - c.start_time;
+			var __v0 = use("Runtime.rtl");
+			var s = "[" + use("Runtime.rtl").toStr(__v0.round(ctx, time * 1000)) + use("Runtime.rtl").toStr("]ms ") + use("Runtime.rtl").toStr(message) + use("Runtime.rtl").toStr("\n");
+			c.logs.push(ctx, s);
+		};
 	},
 	/**
 	 * Dump var to log
 	 * @param var v
 	 * @param int loglevel
 	 */
-	dump: function(ctx, c, v, loglevel)
+	dump: function(ctx, v, loglevel)
 	{
 		if (loglevel == undefined) loglevel = 0;
+		return (ctx, c) => 
+		{
+		};
 	},
 	/**
 	 * Append logs message
 	 * @param Collection<string> logs
 	 */
-	logAppend: function(ctx, c, logs)
+	logAppend: function(ctx, logs)
 	{
-		/*this.logs.appendVector(logs);*/
+		return (ctx, c) => 
+		{
+			/*this.logs.appendVector(logs);*/
+		};
 	},
 	/**
 	 * Return logs
 	 */
-	getLogs: function(ctx, c)
+	getLogs: function(ctx)
 	{
-		/*return this.logs.toCollection();*/
-		return use("Runtime.Collection").from([]);
+		return (ctx, c) => 
+		{
+			/*return this.logs.toCollection();*/
+			return use("Runtime.Collection").from([]);
+		};
 	},
 	/* ---------------------- Tags ---------------------- */
 	/**
 	 * Set tag
 	 */
-	setTagIm: function(ctx, c, tag_name, value)
+	setTagIm: function(ctx, tag_name, value)
 	{
-		return c.copy(ctx, use("Runtime.Dict").from({"tags":c.tags.setIm(ctx, c, tag_name, value)}));
+		return (ctx, c) => 
+		{
+			return c.copy(ctx, use("Runtime.Dict").from({"tags":c.tags.setIm(ctx, c, tag_name, value)}));
+		};
 	},
 	/**
 	 * Returns tag
 	 */
-	getTag: function(ctx, c, tag_name)
+	getTag: function(ctx, tag_name)
 	{
-		return c.tags.get(ctx, c, tag_name, null);
+		return (ctx, c) => 
+		{
+			return c.tags.get(ctx, c, tag_name, null);
+		};
 	},
 	/* ---------------------- Other --------------------- */
 	/**
 	 * Returns unix timestamp
 	 */
-	time: function(ctx, c)
+	time: function(ctx)
 	{
+		return (ctx, c) => 
+		{
+		};
 	},
 	/**
 	 * Returns unix timestamp
 	 */
-	utime: function(ctx, c)
+	utime: function(ctx)
 	{
+		return (ctx, c) => 
+		{
+		};
 	},
 	/* -------------------- Functions ------------------- */
 	/**

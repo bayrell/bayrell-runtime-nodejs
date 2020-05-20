@@ -256,9 +256,35 @@ Object.assign(Runtime.RuntimeUtils,
 		});
 		var __v0 = use("Runtime.Annotations.IntrospectionClass");
 		var __v1 = use("Runtime.rtl");
-		var __memorize_value = new __v0(ctx, use("Runtime.Dict").from({"class_name":class_name,"class_info":(class_info != null) ? class_info.toCollection(ctx) : null,"fields":fields.toDict(ctx),"methods":methods.toDict(ctx),"interfaces":__v1.getInterfaces(ctx, class_name)}));
+		var __memorize_value = new __v0(ctx, use("Runtime.Dict").from({"class_name":class_name,"class_info":(class_info != null) ? (class_info.toCollection(ctx)) : (null),"fields":fields.toDict(ctx),"methods":methods.toDict(ctx),"interfaces":__v1.getInterfaces(ctx, class_name)}));
 		use("Runtime.rtl")._memorizeSave("Runtime.RuntimeUtils.getClassIntrospection", arguments, __memorize_value);
 		return __memorize_value;
+	},
+	/**
+	 * Returns methods in class by annotation name
+	 */
+	getMethodsIntrospection: function(ctx, class_name, annotations)
+	{
+		var __v0 = use("Runtime.RuntimeUtils");
+		var class_info = __v0.getClassIntrospection(ctx, class_name);
+		var d = class_info.methods.filter(ctx, (ctx, arr, method_name) => 
+		{
+			arr = arr.filter(ctx, (ctx, item) => 
+			{
+				for (var i = 0;i < annotations.count(ctx);i++)
+				{
+					var annotation_name = annotations.item(ctx, i);
+					var __v0 = use("Runtime.rtl");
+					if (__v0.is_instanceof(ctx, item, annotation_name))
+					{
+						return true;
+					}
+				}
+				return false;
+			});
+			return arr.count(ctx) > 0;
+		});
+		return d.keys(ctx);
 	},
 	/* ============================= Serialization Functions ============================= */
 	ObjectToNative: function(ctx, value, force_class_name)
@@ -655,7 +681,7 @@ Object.assign(Runtime.RuntimeUtils,
 		{
 			var __v0 = use("Runtime.rtl");
 			var k = __v0.random(ctx, 0, c - 1);
-			res += use("Runtime.rtl").toStr(s[k]);
+			res += use("Runtime.rtl").toStr(Runtime.rtl.get(ctx, s, k));
 		}
 		return res;
 	},
@@ -745,40 +771,6 @@ Object.assign(Runtime.RuntimeUtils,
 			context.translate(ctx, message, params, locale);
 		}
 		return message;
-	},
-	/**
-	 * Retuns css hash 
-	 * @param string component class name
-	 * @return string hash
-	 */
-	getCssHash: function(ctx, s)
-	{
-		var __memorize_value = use("Runtime.rtl")._memorizeValue("Runtime.RuntimeUtils.getCssHash", arguments);
-		if (__memorize_value != use("Runtime.rtl")._memorize_not_found) return __memorize_value;
-		var r = "";
-		var a = "1234567890abcdef";
-		var __v0 = use("Runtime.rs");
-		var sz = __v0.strlen(ctx, s);
-		var h = 0;
-		for (var i = 0;i < sz;i++)
-		{
-			var __v0 = use("Runtime.rs");
-			var __v1 = use("Runtime.rs");
-			var c = __v0.ord(ctx, __v1.substr(ctx, s, i, 1));
-			h = (h << 2) + (h >> 14) + c & 65535;
-		}
-		var p = 0;
-		while (h != 0 || p < 4)
-		{
-			var c = h & 15;
-			h = h >> 4;
-			var __v0 = use("Runtime.rs");
-			r += use("Runtime.rtl").toStr(__v0.substr(ctx, a, c, 1));
-			p = p + 1;
-		}
-		var __memorize_value = r;
-		use("Runtime.rtl")._memorizeSave("Runtime.RuntimeUtils.getCssHash", arguments, __memorize_value);
-		return __memorize_value;
 	},
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()

@@ -42,6 +42,9 @@ Object.assign(Runtime.Exceptions.ClassException,
 use.add(Runtime.Exceptions.ClassException);
 Runtime.Exceptions.RuntimeException = function(ctx, message, code, prev)
 {
+	if (message == undefined) message = "";
+	if (code == undefined) code = -1;
+	if (prev == undefined) prev = null;
 	use("Runtime.Exceptions.ClassException").call(this, ctx, message, code, prev);
 	this._init(ctx);
 	this.error_str = message;

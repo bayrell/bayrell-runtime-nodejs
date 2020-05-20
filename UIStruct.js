@@ -94,7 +94,7 @@ Object.assign(Runtime.UIStruct.prototype,
 	 */
 	getKey: function(ctx, index)
 	{
-		return (this.key !== "") ? this.key : index;
+		return (this.key !== "") ? (this.key) : (index);
 	},
 	/**
 	 * Returns key path
@@ -102,7 +102,7 @@ Object.assign(Runtime.UIStruct.prototype,
 	 */
 	getKeyPath: function(ctx, key_path, index)
 	{
-		return (key_path !== "") ? key_path + use("Runtime.rtl").toStr(".") + use("Runtime.rtl").toStr(this.getKey(ctx, index)) : this.getKey(ctx, index);
+		return (key_path !== "") ? (key_path + use("Runtime.rtl").toStr(".") + use("Runtime.rtl").toStr(this.getKey(ctx, index))) : (this.getKey(ctx, index));
 	},
 	/**
 	 * Returns attrs

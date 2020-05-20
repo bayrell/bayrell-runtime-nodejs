@@ -89,13 +89,69 @@ Runtime.Dict.prototype.constructor = Runtime.Dict;
 Object.assign(Runtime.Dict.prototype,
 {
 	/**
-	 * Returns copy of Dict
-	 * @param int pos - position
+	 * Copy instance
 	 */
-	copy: function(ctx)
+	cp: function(ctx)
 	{
 		var new_obj = this.constructor.Instance(ctx);
 		new_obj._map = Object.assign({}, this._map);
+		return new_obj;
+	},
+	/**
+	 * Clone this struct with fields
+	 * @param Collection fields = null
+	 * @return Dict<T>
+	 */
+	clone: function(ctx, fields)
+	{
+		if (fields == undefined) fields = null;
+		if (fields == null)
+		{
+			return this;
+		}
+		var new_obj = this.constructor.Instance(ctx);
+		if (fields != null)
+		{
+			for (var key in fields)
+			{
+				if (typeof obj["|" + key] == undefined)
+					new_obj._map["|" + key] = this._map["|" + key];
+			}
+		}
+		return new_obj;
+	},
+	/**
+	 * Returns copy of Dict
+	 * @param int pos - position
+	 */
+	copy: function(ctx, obj)
+	{
+		if (obj == undefined) obj = null;
+		if (obj == null)
+		{
+			return this;
+		}
+		var new_obj = this.constructor.Instance(ctx);
+		new_obj._map = Object.assign({}, this._map);
+		if (obj != null)
+		{
+			var _Dict = use("Runtime.Dict");
+			if (obj instanceof _Dict) 
+			{
+				obj = obj._map;
+				for (var key in obj)
+				{
+					new_obj._map[key] = obj[key];
+				}
+			}
+			else
+			{
+				for (var key in obj)
+				{
+					new_obj._map["|" + key] = obj[key];
+				}
+			}
+		}
 		return new_obj;
 	},
 	/**
@@ -182,7 +238,7 @@ Object.assign(Runtime.Dict.prototype,
 	 */
 	setIm: function(ctx, key, value)
 	{
-		var res = this.copy(ctx);
+		var res = this.cp(ctx);
 		key = this.toStr(key);
 		res._map["|" + key] = value;
 		return res;
@@ -197,7 +253,7 @@ Object.assign(Runtime.Dict.prototype,
 		key = this.toStr(key);
 		if (typeof this._map["|" + key] != "undefined")
 		{
-			var res = this.copy();
+			var res = this.cp();
 			delete res._map["|" + key];
 			return res;
 		}
@@ -308,7 +364,7 @@ Object.assign(Runtime.Dict.prototype,
 	{
 		if (map == undefined) map = null;
 		if (map == null) return this;
-		var res = this.copy(ctx);
+		var res = this.cp(ctx);
 		for (var key in map._map)
 		{
 			res._map[key] = map._map[key];

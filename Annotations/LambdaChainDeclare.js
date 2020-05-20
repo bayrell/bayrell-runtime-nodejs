@@ -27,6 +27,10 @@ Runtime.Annotations.LambdaChainDeclare.prototype = Object.create(use("Runtime.Co
 Runtime.Annotations.LambdaChainDeclare.prototype.constructor = Runtime.Annotations.LambdaChainDeclare;
 Object.assign(Runtime.Annotations.LambdaChainDeclare.prototype,
 {
+	logName: function(ctx)
+	{
+		return this.getClassName(ctx) + use("Runtime.rtl").toStr(" -> ") + use("Runtime.rtl").toStr(this.name);
+	},
 	_init: function(ctx)
 	{
 		var defProp = use('Runtime.rtl').defProp;
@@ -133,6 +137,10 @@ Object.assign(Runtime.Annotations.LambdaChainDeclare,
 	{
 		return null;
 	},
+	__implements__:
+	[
+		use("Runtime.Interfaces.EntityInterface"),
+	],
 });use.add(Runtime.Annotations.LambdaChainDeclare);
 if (module.exports == undefined) module.exports = {};
 if (module.exports.Runtime == undefined) module.exports.Runtime = {};

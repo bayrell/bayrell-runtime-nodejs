@@ -20,8 +20,9 @@ var use = require('bayrell').use;
 if (typeof Runtime == 'undefined') Runtime = {};
 Runtime.Monad = function(ctx, value, err)
 {
+	if (err == undefined) err = null;
 	this.val = value;
-	this.err = null;
+	this.err = err;
 };
 Object.assign(Runtime.Monad.prototype,
 {
@@ -30,7 +31,7 @@ Object.assign(Runtime.Monad.prototype,
 	 */
 	attr: function(ctx, attr_name)
 	{
-		if (this.val == null || this.err != null)
+		if (this.val === null || this.err != null)
 		{
 			return this;
 		}
@@ -43,7 +44,7 @@ Object.assign(Runtime.Monad.prototype,
 	 */
 	call: function(ctx, f)
 	{
-		if (this.val == null || this.err != null)
+		if (this.val === null || this.err != null)
 		{
 			return this;
 		}
@@ -81,7 +82,7 @@ Object.assign(Runtime.Monad.prototype,
 		{
 			if (__async_t.pos(ctx) == "0")
 			{
-				if (this.val == null || this.err != null)
+				if (this.val === null || this.err != null)
 				{
 					return __async_t.ret(ctx, this);
 				}
@@ -93,21 +94,21 @@ Object.assign(Runtime.Monad.prototype,
 			/* Start Try */
 			else if (__async_t.pos(ctx) == "1")
 			{
-				__async_t = __async_t.catch_push("1.0");
+				__async_t = __async_t.catch_push(ctx, "1.0");
 				return __async_t.jump(ctx, "1.1").call(ctx, f(ctx, this.val),"__v0");
 			}
 			else if (__async_t.pos(ctx) == "1.1")
 			{
 				res = __async_t.getVar(ctx, "__v0");
-				return __async_t.catch_pop().jump(ctx, "2");
+				return __async_t.catch_pop(ctx).jump(ctx, "2");
 			}
 			/* Start Catch */
 			else if (__async_t.pos(ctx) == "1.0")
 			{
+				var _ex = __async_t.getErr(ctx);
 				if (_ex instanceof __v0)
 				{
 					var e = _ex;
-					
 					res = null;
 					err = e;
 				}
@@ -132,7 +133,7 @@ Object.assign(Runtime.Monad.prototype,
 	callMethod: function(ctx, method_name, args)
 	{
 		if (args == undefined) args = null;
-		if (this.val == null || this.err != null)
+		if (this.val === null || this.err != null)
 		{
 			return this;
 		}
@@ -177,7 +178,7 @@ Object.assign(Runtime.Monad.prototype,
 		{
 			if (__async_t.pos(ctx) == "0")
 			{
-				if (this.val == null || this.err != null)
+				if (this.val === null || this.err != null)
 				{
 					return __async_t.ret(ctx, this);
 				}
@@ -189,7 +190,7 @@ Object.assign(Runtime.Monad.prototype,
 			/* Start Try */
 			else if (__async_t.pos(ctx) == "1")
 			{
-				__async_t = __async_t.catch_push("1.0");
+				__async_t = __async_t.catch_push(ctx, "1.0");
 				var __v0 = use("Runtime.rtl");
 				f = __v0.method(ctx, this.val.getClassName(ctx), method_name);
 				if (args != null)
@@ -202,15 +203,15 @@ Object.assign(Runtime.Monad.prototype,
 			else if (__async_t.pos(ctx) == "1.1")
 			{
 				res = __async_t.getVar(ctx, "__v0");
-				return __async_t.catch_pop().jump(ctx, "2");
+				return __async_t.catch_pop(ctx).jump(ctx, "2");
 			}
 			/* Start Catch */
 			else if (__async_t.pos(ctx) == "1.0")
 			{
+				var _ex = __async_t.getErr(ctx);
 				if (_ex instanceof __v0)
 				{
 					var e = _ex;
-					
 					res = null;
 					err = e;
 				}
@@ -241,7 +242,11 @@ Object.assign(Runtime.Monad.prototype,
 	 */
 	value: function(ctx)
 	{
-		if (this.val == null || this.err != null)
+		if (this.err != null)
+		{
+			throw this.err
+		}
+		if (this.val === null || this.err != null)
 		{
 			return null;
 		}

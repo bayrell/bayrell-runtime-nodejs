@@ -243,6 +243,24 @@ Object.assign(Runtime.rtl,
 		Runtime.AsyncThread.run(ctx, t);
 	},
 	/**
+	 * Returns value
+	 */
+	get: function(ctx, item, key, def_val)
+	{
+		if (def_val == undefined) def_val = null;
+		if (item === null)
+		{
+			return def_val;
+		}
+		if (item == undefined) return def_val;
+		if (item instanceof Runtime.Dict || item instanceof Runtime.Collection)
+		{
+			return item.get(ctx, key, def_val);
+		}
+		return item[key];
+		return def_val;
+	},
+	/**
 	 * Returns callback
 	 * @return var
 	 */
@@ -250,7 +268,8 @@ Object.assign(Runtime.rtl,
 	{
 		if (def_val == undefined) def_val = null;
 		if (def_val == undefined) def_val = null;
-		if (item == null) return def_val;
+		if (item === null) return def_val;
+		if (typeof path == "string") path = Runtime.Collection.from([path]);
 		if (path.count() == 0)
 		{
 			return item;
@@ -286,7 +305,7 @@ Object.assign(Runtime.rtl,
 			}
 			if (data == null)
 			{
-				return null;
+				data = use("Runtime.Dict").from({});
 			}
 			var new_data = null;
 			var attr_name = attrs.first(ctx);
@@ -326,7 +345,7 @@ Object.assign(Runtime.rtl,
 	 */
 	to: function(v, o)
 	{
-		var e = o["e"];
+		var e = Runtime.rtl.get(ctx, o, "e");
 		if (e == "mixed" || e == "primitive" || e == "var" || e == "fn" || e == "callback")
 		{
 			return v;
@@ -501,7 +520,7 @@ Object.assign(Runtime.rtl,
 		/*if (isBrowser()) _StringInterface = Runtime.Interfaces.StringInterface; 
 		else _StringInterface = StringInterface;*/
 		
-		if (value == null) return "";
+		if (value === null) return "";
 		if (typeof value == 'string') return value;
 		if (value instanceof String) return ""+value;
 		if (this.is_implements(null, value, _StringInterface)) return value.toString();
@@ -726,6 +745,56 @@ Object.assign(Runtime.rtl,
 		}
 	},
 	/* ================ Dirty functions ================ */
+	/**
+	 * Sleep in ms
+	 */
+	sleep: function(ctx, time)
+	{
+		return (__async_t) =>
+		{
+			if (__async_t.pos(ctx) == "0")
+			{
+				setTimeout
+		(
+			(function (__async_t)
+			{
+				return function()
+				{
+					__async_t.resolve(ctx, null);
+				};
+			})(__async_t),
+			time
+		);
+		return;
+			}
+			return __async_t.ret_void(ctx);
+		};
+	},
+	/**
+	 * Sleep in microseconds
+	 */
+	usleep: function(ctx, time)
+	{
+		return (__async_t) =>
+		{
+			if (__async_t.pos(ctx) == "0")
+			{
+				setTimeout
+		(
+			(function (__async_t)
+			{
+				return function()
+				{
+					__async_t.resolve(ctx, null);
+				};
+			})(__async_t),
+			Math.round(time / 1000)
+		);
+		return;
+			}
+			return __async_t.ret_void(ctx);
+		};
+	},
 	/**
 	 * Returns unique value
 	 * @param bool flag If true returns as text. Default true
@@ -956,6 +1025,27 @@ Object.assign(Runtime.rtl,
 		return "";
 	},
 	/**
+	 * Save local file
+	 */
+	saveLocalFile: function(ctx, path, content, ch, chroot)
+	{
+		var filepath;
+		return (__async_t) =>
+		{
+			if (__async_t.pos(ctx) == "0")
+			{
+				var __v0 = use("Runtime.rs");
+				if (chroot != "" && __v0.substr(ctx, chroot, -1) != "/")
+				{
+					chroot += use("Runtime.rtl").toStr("/");
+				}
+				filepath = chroot + use("Runtime.rtl").toStr(path);
+				return __async_t.ret(ctx, "");
+			}
+			return __async_t.ret_void(ctx);
+		};
+	},
+	/**
 	 * Read local file
 	 */
 	readLocalFile: function(ctx, path, ch, chroot)
@@ -966,7 +1056,28 @@ Object.assign(Runtime.rtl,
 			if (__async_t.pos(ctx) == "0")
 			{
 				var __v0 = use("Runtime.rs");
-				if (__v0.substr(ctx, chroot, -1) != "/")
+				if (chroot != "" && __v0.substr(ctx, chroot, -1) != "/")
+				{
+					chroot += use("Runtime.rtl").toStr("/");
+				}
+				filepath = chroot + use("Runtime.rtl").toStr(path);
+				return __async_t.ret(ctx, "");
+			}
+			return __async_t.ret_void(ctx);
+		};
+	},
+	/**
+	 * Make dir
+	 */
+	mkdir: function(ctx, path, chroot, mode)
+	{
+		var filepath;
+		return (__async_t) =>
+		{
+			if (__async_t.pos(ctx) == "0")
+			{
+				var __v0 = use("Runtime.rs");
+				if (chroot != "" && __v0.substr(ctx, chroot, -1) != "/")
 				{
 					chroot += use("Runtime.rtl").toStr("/");
 				}
@@ -1040,7 +1151,9 @@ Object.assign(Runtime.rtl,
 	{
 		var a = [
 			"getModulePath",
+			"saveLocalFile",
 			"readLocalFile",
+			"mkdir",
 		];
 		return use("Runtime.Collection").from(a);
 	},

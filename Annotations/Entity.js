@@ -27,6 +27,14 @@ Runtime.Annotations.Entity.prototype = Object.create(use("Runtime.CoreStruct").p
 Runtime.Annotations.Entity.prototype.constructor = Runtime.Annotations.Entity;
 Object.assign(Runtime.Annotations.Entity.prototype,
 {
+	className: function(ctx)
+	{
+		return (this.value != "") ? (this.value) : (this.name);
+	},
+	logName: function(ctx)
+	{
+		return this.getClassName(ctx) + use("Runtime.rtl").toStr(" -> ") + use("Runtime.rtl").toStr(((this.value != "") ? (this.name + use("Runtime.rtl").toStr(" -> ") + use("Runtime.rtl").toStr(this.value)) : (this.name)));
+	},
 	_init: function(ctx)
 	{
 		var defProp = use('Runtime.rtl').defProp;
@@ -133,6 +141,10 @@ Object.assign(Runtime.Annotations.Entity,
 	{
 		return null;
 	},
+	__implements__:
+	[
+		use("Runtime.Interfaces.EntityInterface"),
+	],
 });use.add(Runtime.Annotations.Entity);
 if (module.exports == undefined) module.exports = {};
 if (module.exports.Runtime == undefined) module.exports.Runtime = {};

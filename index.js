@@ -26,7 +26,7 @@ function ObjectAssign(res, obj){
 }
 
 module.exports = {
-	VERSION: '0.8.2',
+	VERSION: '0.9.3',
 };
 
 }
@@ -42,7 +42,7 @@ function ObjectAssign(res, obj){
 }
 
 module.exports = {
-	VERSION: '0.8.2',
+	VERSION: '0.9.3',
 	'rs': require(__dirname + "/rs.js"),
 	'rtl': require(__dirname + "/rtl.js"),
 	'lib': require(__dirname + "/lib.js"),

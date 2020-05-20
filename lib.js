@@ -109,23 +109,13 @@ Object.assign(Runtime.lib,
 		};
 	},
 	/**
-	 * Returns attr of item
-	 */
-	attr: function(ctx, key, def_value)
-	{
-		return (ctx, item1) => 
-		{
-			return (item1 != null) ? item1.takeValue(ctx, key, def_value) : def_value;
-		};
-	},
-	/**
 	 * Equal two struct by key
 	 */
 	equalAttr: function(ctx, key, value)
 	{
 		return (ctx, item1) => 
 		{
-			return (item1 != null) ? item1.takeValue(ctx, key) == value : false;
+			return (item1 != null) ? (item1.takeValue(ctx, key) == value) : (false);
 		};
 	},
 	/**
@@ -135,7 +125,7 @@ Object.assign(Runtime.lib,
 	{
 		return (ctx, item1) => 
 		{
-			return (item1 != null) ? item1.takeValue(ctx, key) != value : false;
+			return (item1 != null) ? (item1.takeValue(ctx, key) != value) : (false);
 		};
 	},
 	/**
@@ -155,6 +145,51 @@ Object.assign(Runtime.lib,
 		};
 	},
 	/**
+	 * Returns key value of obj
+	 */
+	get: function(ctx, key, def_value)
+	{
+		return (ctx, obj) => 
+		{
+			var __v0 = use("Runtime.rtl");
+			return __v0.attr(ctx, obj, use("Runtime.Collection").from([key]), def_value);
+		};
+	},
+	/**
+	 * Set value
+	 */
+	set: function(ctx, key, value)
+	{
+		return (ctx, obj) => 
+		{
+			var __v0 = use("Runtime.rtl");
+			return __v0.setAttr(ctx, obj, use("Runtime.Collection").from([key]), value);
+		};
+	},
+	/**
+	 * Returns attr of item
+	 */
+	attr: function(ctx, path, def_value)
+	{
+		if (def_value == undefined) def_value = null;
+		return (ctx, obj) => 
+		{
+			var __v0 = use("Runtime.rtl");
+			return __v0.attr(ctx, obj, path, def_value);
+		};
+	},
+	/**
+	 * Set dict attr
+	 */
+	setAttr: function(ctx, path, value)
+	{
+		return (ctx, obj) => 
+		{
+			var __v0 = use("Runtime.rtl");
+			return __v0.setAttr(ctx, obj, path, value);
+		};
+	},
+	/**
 	 * Returns max id from items
 	 */
 	getMaxIdFromItems: function(ctx, items, start)
@@ -162,8 +197,18 @@ Object.assign(Runtime.lib,
 		if (start == undefined) start = 0;
 		return items.reduce(ctx, (ctx, value, item) => 
 		{
-			return (item.id > value) ? item.id : value;
+			return (item.id > value) ? (item.id) : (value);
 		}, start);
+	},
+	/**
+	 * Copy object
+	 */
+	copy: function(ctx, d)
+	{
+		return (ctx, item) => 
+		{
+			return item.copy(ctx, d);
+		};
 	},
 	/**
 	 * Take dict
@@ -186,16 +231,61 @@ Object.assign(Runtime.lib,
 		};
 	},
 	/**
-	 * To
+	 * Convert monad by type
 	 */
 	to: function(ctx, type_value, def_value)
 	{
 		if (def_value == undefined) def_value = null;
 		return (ctx, m) => 
 		{
-			var __v0 = use("Runtime.rtl");
-			return __v0.convert(m.value(ctx), type_value, def_value);
+			var __v0 = use("Runtime.Monad");
+			var __v1 = use("Runtime.rtl");
+			return new __v0(ctx, (m.err == null) ? (__v1.convert(m.value(ctx), type_value, def_value)) : (def_value));
 		};
+	},
+	/**
+	 * Convert monad by type
+	 */
+	default: function(ctx, def_value)
+	{
+		if (def_value == undefined) def_value = null;
+		return (ctx, m) => 
+		{
+			var __v0 = use("Runtime.Monad");
+			return (m.err != null || m.val === null) ? (new __v0(ctx, def_value)) : (m);
+		};
+	},
+	/**
+	 * Set monad new value
+	 */
+	newValue: function(ctx, value, clear_error)
+	{
+		if (value == undefined) value = null;
+		if (clear_error == undefined) clear_error = false;
+		return (ctx, m) => 
+		{
+			var __v0 = use("Runtime.Monad");
+			var __v1 = use("Runtime.Monad");
+			return (clear_error == true) ? (new __v0(ctx, value)) : ((m.err == null) ? (new __v1(ctx, value)) : (m));
+		};
+	},
+	/**
+	 * Clear error
+	 */
+	clearError: function(ctx)
+	{
+		return (ctx, m) => 
+		{
+			var __v0 = use("Runtime.Monad");
+			return new __v0(ctx, m.val);
+		};
+	},
+	/**
+	 * Returns monad
+	 */
+	monad: function(ctx, m)
+	{
+		return m;
 	},
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()

@@ -27,20 +27,30 @@ Runtime.Annotations.Provider.prototype = Object.create(use("Runtime.Annotations.
 Runtime.Annotations.Provider.prototype.constructor = Runtime.Annotations.Provider;
 Object.assign(Runtime.Annotations.Provider.prototype,
 {
+	_init: function(ctx)
+	{
+		var defProp = use('Runtime.rtl').defProp;
+		var a = Object.getOwnPropertyNames(this);
+		this.kind = "";
+		use("Runtime.Annotations.Entity").prototype._init.call(this,ctx);
+	},
 	assignObject: function(ctx,o)
 	{
 		if (o instanceof use("Runtime.Annotations.Provider"))
 		{
+			this.kind = o.kind;
 		}
 		use("Runtime.Annotations.Entity").prototype.assignObject.call(this,ctx,o);
 	},
 	assignValue: function(ctx,k,v)
 	{
-		use("Runtime.Annotations.Entity").prototype.assignValue.call(this,ctx,k,v);
+		if (k == "kind")this.kind = v;
+		else use("Runtime.Annotations.Entity").prototype.assignValue.call(this,ctx,k,v);
 	},
 	takeValue: function(ctx,k,d)
 	{
 		if (d == undefined) d = null;
+		if (k == "kind")return this.kind;
 		return use("Runtime.Annotations.Entity").prototype.takeValue.call(this,ctx,k,d);
 	},
 	getClassName: function(ctx)
@@ -51,6 +61,7 @@ Object.assign(Runtime.Annotations.Provider.prototype,
 Object.assign(Runtime.Annotations.Provider, use("Runtime.Annotations.Entity"));
 Object.assign(Runtime.Annotations.Provider,
 {
+	KIND_INTERFACE: "interface",
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
 	{
@@ -81,6 +92,10 @@ Object.assign(Runtime.Annotations.Provider,
 	{
 		var a = [];
 		if (f==undefined) f=0;
+		if ((f|3)==3)
+		{
+			a.push("kind");
+		}
 		return use("Runtime.Collection").from(a);
 	},
 	getFieldInfoByName: function(ctx,field_name)
@@ -88,6 +103,20 @@ Object.assign(Runtime.Annotations.Provider,
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
 		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
+		if (field_name == "KIND_INTERFACE") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Annotations.Provider",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "kind") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Annotations.Provider",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
 		return null;
 	},
 	getMethodsList: function(ctx)

@@ -32,10 +32,12 @@ Object.assign(Runtime.Context.prototype,
 		var a = Object.getOwnPropertyNames(this);
 		var __v0 = use("Runtime.Vector");
 		this.base_path = null;
+		this.entrypoint = "";
 		this.enviroments = null;
 		this.settings = null;
 		this.modules = null;
 		this.entities = null;
+		this.cli_args = null;
 		this.drivers = null;
 		this.providers = null;
 		this.tags = null;
@@ -43,6 +45,7 @@ Object.assign(Runtime.Context.prototype,
 		this.started = false;
 		this.start_time = 0;
 		this.logs = new __v0(ctx);
+		this.main_class = "";
 		use("Runtime.CoreStruct").prototype._init.call(this,ctx);
 	},
 	assignObject: function(ctx,o)
@@ -50,10 +53,12 @@ Object.assign(Runtime.Context.prototype,
 		if (o instanceof use("Runtime.Context"))
 		{
 			this.base_path = o.base_path;
+			this.entrypoint = o.entrypoint;
 			this.enviroments = o.enviroments;
 			this.settings = o.settings;
 			this.modules = o.modules;
 			this.entities = o.entities;
+			this.cli_args = o.cli_args;
 			this.drivers = o.drivers;
 			this.providers = o.providers;
 			this.tags = o.tags;
@@ -61,16 +66,19 @@ Object.assign(Runtime.Context.prototype,
 			this.started = o.started;
 			this.start_time = o.start_time;
 			this.logs = o.logs;
+			this.main_class = o.main_class;
 		}
 		use("Runtime.CoreStruct").prototype.assignObject.call(this,ctx,o);
 	},
 	assignValue: function(ctx,k,v)
 	{
 		if (k == "base_path")this.base_path = v;
+		else if (k == "entrypoint")this.entrypoint = v;
 		else if (k == "enviroments")this.enviroments = v;
 		else if (k == "settings")this.settings = v;
 		else if (k == "modules")this.modules = v;
 		else if (k == "entities")this.entities = v;
+		else if (k == "cli_args")this.cli_args = v;
 		else if (k == "drivers")this.drivers = v;
 		else if (k == "providers")this.providers = v;
 		else if (k == "tags")this.tags = v;
@@ -78,16 +86,19 @@ Object.assign(Runtime.Context.prototype,
 		else if (k == "started")this.started = v;
 		else if (k == "start_time")this.start_time = v;
 		else if (k == "logs")this.logs = v;
+		else if (k == "main_class")this.main_class = v;
 		else use("Runtime.CoreStruct").prototype.assignValue.call(this,ctx,k,v);
 	},
 	takeValue: function(ctx,k,d)
 	{
 		if (d == undefined) d = null;
 		if (k == "base_path")return this.base_path;
+		else if (k == "entrypoint")return this.entrypoint;
 		else if (k == "enviroments")return this.enviroments;
 		else if (k == "settings")return this.settings;
 		else if (k == "modules")return this.modules;
 		else if (k == "entities")return this.entities;
+		else if (k == "cli_args")return this.cli_args;
 		else if (k == "drivers")return this.drivers;
 		else if (k == "providers")return this.providers;
 		else if (k == "tags")return this.tags;
@@ -95,6 +106,7 @@ Object.assign(Runtime.Context.prototype,
 		else if (k == "started")return this.started;
 		else if (k == "start_time")return this.start_time;
 		else if (k == "logs")return this.logs;
+		else if (k == "main_class")return this.main_class;
 		return use("Runtime.CoreStruct").prototype.takeValue.call(this,ctx,k,d);
 	},
 	getClassName: function(ctx)
@@ -136,7 +148,11 @@ Object.assign(Runtime.Context,
 		if (def_value == undefined) def_value = "";
 		return (ctx, c) => 
 		{
-			return (c.enviroments != null) ? c.enviroments.get(ctx, key, def_value) : def_value;
+			var __v0 = new Runtime.Monad(ctx, c);
+			__v0 = __v0.attr(ctx, "enviroments");
+			var __v1 = use("Runtime.lib");
+			__v0 = __v0.call(ctx, __v1.get(ctx, key, def_value));
+			return __v0.value(ctx);
 		};
 	},
 	/**
@@ -148,13 +164,13 @@ Object.assign(Runtime.Context,
 		if (d == undefined) d = null;
 		return (ctx, c) => 
 		{
-			if (c.settings == null)
-			{
-				return null;
-			}
-			var config = c.settings.get(ctx, "config", null);
-			var __v0 = use("Runtime.rtl");
-			return (config != null) ? __v0.attr(ctx, config, items, d) : null;
+			var __v0 = new Runtime.Monad(ctx, c);
+			__v0 = __v0.attr(ctx, "settings");
+			var __v1 = use("Runtime.lib");
+			__v0 = __v0.call(ctx, __v1.get(ctx, "config", null));
+			var __v2 = use("Runtime.lib");
+			__v0 = __v0.call(ctx, __v2.attr(ctx, items, d));
+			return __v0.value(ctx);
 		};
 	},
 	/**
@@ -164,8 +180,11 @@ Object.assign(Runtime.Context,
 	{
 		return (ctx, c) => 
 		{
-			var secrets = c.settings.get(ctx, "secrets", null);
-			return (secrets != null) ? secrets.get(ctx, "key", "") : "";
+			var __v0 = new Runtime.Monad(ctx, c);
+			__v0 = __v0.attr(ctx, "settings");
+			var __v1 = use("Runtime.lib");
+			__v0 = __v0.call(ctx, __v1.get(ctx, key, ""));
+			return __v0.value(ctx);
 		};
 	},
 	/**
@@ -176,12 +195,26 @@ Object.assign(Runtime.Context,
 	 * @params Dict settings
 	 * @return Context
 	 */
-	create: function(ctx, env, entities)
+	create: function(ctx, main_module, env)
 	{
-		if (entities == undefined) entities = null;
-		var settings = this.getSettings(ctx, env);
+		if (env == undefined) env = null;
+		var main_module_class_name = "";
+		var settings = use("Runtime.Dict").from({});
+		/* Get settings */
+		if (main_module)
+		{
+			main_module_class_name = main_module + use("Runtime.rtl").toStr(".ModuleDescription");
+			var __v0 = use("Runtime.rtl");
+			var f = __v0.method(ctx, main_module_class_name, "appSettings");
+			settings = f(ctx, env);
+		}
 		/* Context data */
-		var obj = use("Runtime.Dict").from({"enviroments":env,"settings":settings,"modules":(settings != null) ? settings.get(ctx, "modules", null) : null,"entities":entities});
+		var obj = use("Runtime.Dict").from({"enviroments":env,"settings":settings,"main_class":main_module_class_name,"modules":use("Runtime.Collection").from([])});
+		/* Add main module */
+		if (main_module)
+		{
+			obj = Runtime.rtl.setAttr(ctx, obj, Runtime.Collection.from(["modules"]), obj.item(ctx, "modules").pushIm(ctx, main_module));
+		}
 		/* Create context */
 		var ctx = this.newInstance(ctx, obj);
 		return ctx;
@@ -202,23 +235,23 @@ Object.assign(Runtime.Context,
 		entities = entities.prependCollectionIm(ctx, this.getEntities(ctx, c.env));
 		/* Base path */
 		var __v0 = use("Runtime.rtl");
-		var base_path = (c.base_path != "") ? c.base_path : __v0.attr(ctx, c.env, use("Runtime.Collection").from(["BASE_PATH"]), "", "string");
+		var base_path = (c.base_path != "") ? (c.base_path) : (__v0.attr(ctx, c.env, use("Runtime.Collection").from(["BASE_PATH"]), "", "string"));
 		/* Add entities */
 		if (c.entities != null)
 		{
 			entities = entities.appendCollectionIm(ctx, c.entities);
 		}
-		c = c.copy(ctx, { "entities": entities });
+		c = Runtime.rtl.setAttr(ctx, c, Runtime.Collection.from(["entities"]), entities);
 		/* Extend entities */
 		var __v0 = new Runtime.Monad(ctx, c);
 		__v0 = __v0.callMethod(ctx, "chain", Runtime.Collection.from(["Runtime.Entities", use("Runtime.Collection").from([c,entities])]));
 		entities = __v0.value(ctx);
 		entities = this.extendEntities(ctx, c, entities);
-		entities = this.extendEntitiesFromAnnotations(ctx, entities);
+		entities = this.getRequiredEntities(ctx, entities);
 		/* Get providers */
-		var providers = this.getProvidersFromEntities(ctx, entities);
+		var providers = this.getProvidersFromEntities(ctx, c, entities);
 		/* Register drivers */
-		var drivers = this.getDriversFromEntities(ctx, entities);
+		var drivers = this.getDriversFromEntities(ctx, c, entities);
 		return c.copy(ctx, use("Runtime.Dict").from({"modules":modules,"entities":entities,"providers":providers,"drivers":drivers,"base_path":base_path,"initialized":true}));
 	},
 	/**
@@ -301,6 +334,7 @@ Object.assign(Runtime.Context,
 	 */
 	createProvider: function(ctx, provider_name, params, settings_name)
 	{
+		if (params == undefined) params = null;
 		if (settings_name == undefined) settings_name = "default";
 		return (ctx, c) => 
 		{
@@ -308,16 +342,13 @@ Object.assign(Runtime.Context,
 			if (c.providers.has(ctx, provider_name))
 			{
 				var info = c.providers.item(ctx, provider_name);
-				if (info.kind == "interface")
+				var __v0 = use("Runtime.Annotations.Provider");
+				if (info.kind == __v0.KIND_INTERFACE)
 				{
-					var __v0 = use("Runtime.Exceptions.RuntimeException");
-					throw new __v0(ctx, "Provider " + use("Runtime.rtl").toStr(provider_name) + use("Runtime.rtl").toStr(" does not declared"))
+					var __v1 = use("Runtime.Exceptions.RuntimeException");
+					throw new __v1(ctx, "Provider " + use("Runtime.rtl").toStr(provider_name) + use("Runtime.rtl").toStr(" does not declared"))
 				}
-				var class_name = info.value;
-				if (class_name == "")
-				{
-					class_name = info.name;
-				}
+				var class_name = info.className(ctx);
 				/* Set default params */
 				if (params == null)
 				{
@@ -330,10 +361,14 @@ Object.assign(Runtime.Context,
 				}
 				var __v0 = use("Runtime.rtl");
 				provider = __v0.newInstance(ctx, class_name, use("Runtime.Collection").from([params]));
-				provider = this.chain(ctx, c, class_name, use("Runtime.Collection").from([provider]));
+				var __v0 = new Runtime.Monad(ctx, c);
+				__v0 = __v0.callMethod(ctx, "chain", Runtime.Collection.from([class_name, use("Runtime.Collection").from([provider])]));
+				provider = __v0.value(ctx);
 				if (provider_name != class_name)
 				{
-					provider = this.chain(ctx, c, provider_name, use("Runtime.Collection").from([provider]));
+					var __v0 = new Runtime.Monad(ctx, c);
+					__v0 = __v0.callMethod(ctx, "chain", Runtime.Collection.from([provider_name, use("Runtime.Collection").from([provider])]));
+					provider = __v0.value(ctx);
 				}
 			}
 			else
@@ -353,11 +388,7 @@ Object.assign(Runtime.Context,
 	getProvider: function(ctx, provider_name, settings_name)
 	{
 		if (settings_name == undefined) settings_name = "default";
-		return (ctx, c) => 
-		{
-			var provider = this.createProvider(ctx, c, provider_name, null, settings_name);
-			return provider;
-		};
+		return this.createProvider(ctx, provider_name, null, settings_name);
 	},
 	/* ---------------------- Chain --------------------- */
 	/**
@@ -462,43 +493,81 @@ Object.assign(Runtime.Context,
 	},
 	/**
 	 * Translate message
-	 * @params string message - message need to be translated
 	 * @params string space - message space
+	 * @params string message - message need to be translated
 	 * @params Map params - Messages params. Default null.
 	 * @params string locale - Different locale. Default "".
 	 * @return string - translated string
 	 */
-	translate: function(ctx, message, space, params, locale)
+	translate: function(ctx, c, space, message, params, locale)
 	{
 		if (params == undefined) params = null;
 		if (locale == undefined) locale = "";
-		return (ctx, c) => 
+		message = (params == null) ? (message) : (params.reduce(ctx, (ctx, message, value, key) => 
 		{
-			return message;
-		};
+			var __v0 = use("Runtime.rs");
+			return __v0.replace(ctx, "%" + use("Runtime.rtl").toStr(key) + use("Runtime.rtl").toStr("%"), value, message);
+		}, message));
+		return message;
 	},
 	/* ----------------------- Bus ---------------------- */
 	/**
 	 * Send message
 	 * @param Message msg
-	 * @param Context ctx
 	 * @return Message
 	 */
-	sendMessage: function(ctx, msg)
+	send: function(ctx, msg)
 	{
-		return (__async_t) =>
+		return (ctx, c) => 
 		{
-			if (__async_t.pos(ctx) == "0")
+			return (__async_t) =>
 			{
-				return __async_t.ret(ctx, (ctx, c) => 
+				if (__async_t.pos(ctx) == "0")
 				{
-					var __v0 = use("Runtime.RuntimeConstant");
-					var provider = this.getProvider(ctx, c, __v0.BUS_INTERFACE, "default");
-					msg = provider.constructor.sendMessage(ctx, provider, msg);
-					return msg;
-				});
-			}
-			return __async_t.ret_void(ctx);
+					var __v0 = new Runtime.Monad(ctx, c);
+					var __v1 = use("Runtime.RuntimeConstant");
+					__v0 = __v0.callMethod(ctx, "getProvider", Runtime.Collection.from([__v1.BUS_INTERFACE, "default"]));
+					return __async_t.jump(ctx, "1").call(ctx, __v0.callMethodAsync(ctx, "sendMessage", Runtime.Collection.from([msg])),"__v0");
+				}
+				else if (__async_t.pos(ctx) == "1")
+				{
+					var __v0 = __async_t.getVar(ctx, "__v0");
+					var __v2 = use("Runtime.MessageRPC");
+					__v0 = __v0.monad(ctx, __v2.end);
+					return __async_t.ret(ctx, __v0.value(ctx));
+				}
+				return __async_t.ret_void(ctx);
+			};
+		};
+	},
+	/**
+	 * Send rpc message
+	 * @param Dict items
+	 * @return Message
+	 */
+	sendMessage: function(ctx, items)
+	{
+		return (ctx, c) => 
+		{
+			return (__async_t) =>
+			{
+				if (__async_t.pos(ctx) == "0")
+				{
+					var __v0 = new Runtime.Monad(ctx, c);
+					var __v1 = use("Runtime.RuntimeConstant");
+					__v0 = __v0.callMethod(ctx, "getProvider", Runtime.Collection.from([__v1.BUS_INTERFACE, "default"]));
+					var __v2 = use("Runtime.MessageRPC");
+					return __async_t.jump(ctx, "1").call(ctx, __v0.callMethodAsync(ctx, "sendMessage", Runtime.Collection.from([__v2.create(ctx, items)])),"__v0");
+				}
+				else if (__async_t.pos(ctx) == "1")
+				{
+					var __v0 = __async_t.getVar(ctx, "__v0");
+					var __v3 = use("Runtime.MessageRPC");
+					__v0 = __v0.monad(ctx, __v3.end);
+					return __async_t.ret(ctx, __v0.value(ctx));
+				}
+				return __async_t.ret_void(ctx);
+			};
 		};
 	},
 	/* ---------------------- Logs ---------------------- */
@@ -526,7 +595,7 @@ Object.assign(Runtime.Context,
 		return (ctx, c) => 
 		{
 			var __v0 = new Runtime.Monad(ctx, c);
-			__v0 = __v0.callMethod(ctx, "utime", Runtime.Collection.from([]));
+			__v0 = __v0.callMethod(ctx, "utime", null);
 			var time = __v0.value(ctx);
 			time = time - c.start_time;
 			var __v0 = use("Runtime.rtl");
@@ -595,18 +664,12 @@ Object.assign(Runtime.Context,
 	 */
 	time: function(ctx)
 	{
-		return (ctx, c) => 
-		{
-		};
 	},
 	/**
 	 * Returns unix timestamp
 	 */
 	utime: function(ctx)
 	{
-		return (ctx, c) => 
-		{
-		};
 	},
 	/* -------------------- Functions ------------------- */
 	/**
@@ -678,7 +741,7 @@ Object.assign(Runtime.Context,
 	/**
 	 * Extend entities
 	 */
-	extendEntitiesFromAnnotations: function(ctx, entities)
+	getRequiredEntities: function(ctx, entities)
 	{
 		var e = entities.toVector(ctx);
 		for (var i = 0;i < entities.count(ctx);i++)
@@ -687,7 +750,7 @@ Object.assign(Runtime.Context,
 			var item1_class_name = item1.getClassName(ctx);
 			if (item1_class_name == "Runtime.Annotations.Entity")
 			{
-				var class_name = (item1.value != "") ? item1.value : item1.name;
+				var class_name = (item1.value != "") ? (item1.value) : (item1.name);
 				var __v0 = use("Runtime.RuntimeUtils");
 				var info = __v0.getClassIntrospection(ctx, class_name);
 				if (info != null && info.class_info)
@@ -711,7 +774,7 @@ Object.assign(Runtime.Context,
 	/**
 	 * Returns providers from entities
 	 */
-	getProvidersFromEntities: function(ctx, entities)
+	getProvidersFromEntities: function(ctx, c, entities)
 	{
 		var arr = entities.filter(ctx, (ctx, item) => 
 		{
@@ -730,7 +793,7 @@ Object.assign(Runtime.Context,
 	/**
 	 * Register drivers
 	 */
-	getDriversFromEntities: function(ctx, entities)
+	getDriversFromEntities: function(ctx, c, entities)
 	{
 		var arr = entities.filter(ctx, (ctx, item) => 
 		{
@@ -750,10 +813,14 @@ Object.assign(Runtime.Context,
 			}
 			var __v0 = use("Runtime.rtl");
 			var driver = __v0.newInstance(ctx, class_name, use("Runtime.Collection").from([]));
-			driver = this.chain(ctx, class_name, use("Runtime.Collection").from([driver]));
+			var __v0 = new Runtime.Monad(ctx, c);
+			__v0 = __v0.callMethod(ctx, "chain", Runtime.Collection.from([class_name, use("Runtime.Collection").from([driver])]));
+			driver = __v0.value(ctx);
 			if (class_name != driver_name)
 			{
-				driver = this.chain(ctx, driver_name, use("Runtime.Collection").from([driver]));
+				var __v0 = new Runtime.Monad(ctx, c);
+				__v0 = __v0.callMethod(ctx, "chain", Runtime.Collection.from([driver_name, use("Runtime.Collection").from([driver])]));
+				driver = __v0.value(ctx);
 			}
 			drivers.set(ctx, item.name, driver);
 		}
@@ -799,10 +866,12 @@ Object.assign(Runtime.Context,
 		if ((f|3)==3)
 		{
 			a.push("base_path");
+			a.push("entrypoint");
 			a.push("enviroments");
 			a.push("settings");
 			a.push("modules");
 			a.push("entities");
+			a.push("cli_args");
 			a.push("drivers");
 			a.push("providers");
 			a.push("tags");
@@ -810,6 +879,7 @@ Object.assign(Runtime.Context,
 			a.push("started");
 			a.push("start_time");
 			a.push("logs");
+			a.push("main_class");
 		}
 		return use("Runtime.Collection").from(a);
 	},
@@ -819,6 +889,13 @@ Object.assign(Runtime.Context,
 		var Dict = use("Runtime.Dict");
 		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
 		if (field_name == "base_path") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Context",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "entrypoint") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Context",
 			"name": field_name,
@@ -847,6 +924,13 @@ Object.assign(Runtime.Context,
 			]),
 		});
 		if (field_name == "entities") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Context",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "cli_args") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Context",
 			"name": field_name,
@@ -896,6 +980,13 @@ Object.assign(Runtime.Context,
 			]),
 		});
 		if (field_name == "logs") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Context",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "main_class") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Context",
 			"name": field_name,

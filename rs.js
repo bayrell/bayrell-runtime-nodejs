@@ -73,6 +73,13 @@ Object.assign(Runtime.rs,
 		return res;
 	},
 	/**
+	 * Is start
+	 */
+	start: function(ctx, s, search)
+	{
+		return this.search(ctx, s, search) == 0;
+	},
+	/**
 	 * Returns substring
 	 * @param string s The string
 	 * @param int start

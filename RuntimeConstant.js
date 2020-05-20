@@ -65,6 +65,7 @@ Object.assign(Runtime.RuntimeConstant,
 	ERROR_KEY_NOT_FOUND: -3,
 	ERROR_STOP_ITERATION: -4,
 	ERROR_FILE_NOT_FOUND: -5,
+	ERROR_ITEM_NOT_FOUND: -5,
 	ERROR_OBJECT_DOES_NOT_EXISTS: -5,
 	ERROR_OBJECT_ALLREADY_EXISTS: -6,
 	ERROR_ASSERT: -7,
@@ -269,6 +270,13 @@ Object.assign(Runtime.RuntimeConstant,
 			]),
 		});
 		if (field_name == "ERROR_FILE_NOT_FOUND") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.RuntimeConstant",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "ERROR_ITEM_NOT_FOUND") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.RuntimeConstant",
 			"name": field_name,

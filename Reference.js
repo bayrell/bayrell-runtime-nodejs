@@ -20,6 +20,7 @@ var use = require('bayrell').use;
 if (typeof Runtime == 'undefined') Runtime = {};
 Runtime.Reference = function(ctx, ref)
 {
+	if (ref == undefined) ref = null;
 	use("Runtime.CoreObject").call(this, ctx);
 	this.ref = ref;
 };

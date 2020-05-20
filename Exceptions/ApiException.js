@@ -19,28 +19,41 @@ var use = require('bayrell').use;
  */
 if (typeof Runtime == 'undefined') Runtime = {};
 if (typeof Runtime.Exceptions == 'undefined') Runtime.Exceptions = {};
-Runtime.Exceptions.ApiException = function(ctx, message, code, context, prev)
+Runtime.Exceptions.ApiException = function(ctx, message, code, response, prev)
 {
-	use("Runtime.Exceptions.RuntimeException").call(this, ctx, message, code, context, prev);
+	if (message == undefined) message = "";
+	if (code == undefined) code = -1;
+	if (response == undefined) response = null;
+	if (prev == undefined) prev = null;
+	use("Runtime.Exceptions.RuntimeException").call(this, ctx, message, code, prev);
+	this.response = response;
 };
 Runtime.Exceptions.ApiException.prototype = Object.create(use("Runtime.Exceptions.RuntimeException").prototype);
 Runtime.Exceptions.ApiException.prototype.constructor = Runtime.Exceptions.ApiException;
 Object.assign(Runtime.Exceptions.ApiException.prototype,
 {
+	_init: function(ctx)
+	{
+		this.response = null;
+		use("Runtime.Exceptions.RuntimeException").prototype._init.call(this,ctx);
+	},
 	assignObject: function(ctx,o)
 	{
 		if (o instanceof use("Runtime.Exceptions.ApiException"))
 		{
+			this.response = o.response;
 		}
 		use("Runtime.Exceptions.RuntimeException").prototype.assignObject.call(this,ctx,o);
 	},
 	assignValue: function(ctx,k,v)
 	{
-		use("Runtime.Exceptions.RuntimeException").prototype.assignValue.call(this,ctx,k,v);
+		if (k == "response")this.response = v;
+		else use("Runtime.Exceptions.RuntimeException").prototype.assignValue.call(this,ctx,k,v);
 	},
 	takeValue: function(ctx,k,d)
 	{
 		if (d == undefined) d = null;
+		if (k == "response")return this.response;
 		return use("Runtime.Exceptions.RuntimeException").prototype.takeValue.call(this,ctx,k,d);
 	},
 	getClassName: function(ctx)
@@ -81,6 +94,10 @@ Object.assign(Runtime.Exceptions.ApiException,
 	{
 		var a = [];
 		if (f==undefined) f=0;
+		if ((f|2)==2)
+		{
+			a.push("response");
+		}
 		return use("Runtime.Collection").from(a);
 	},
 	getFieldInfoByName: function(ctx,field_name)
@@ -88,6 +105,13 @@ Object.assign(Runtime.Exceptions.ApiException,
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
 		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
+		if (field_name == "response") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.Exceptions.ApiException",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
 		return null;
 	},
 	getMethodsList: function(ctx)

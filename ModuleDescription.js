@@ -57,7 +57,7 @@ Object.assign(Runtime.ModuleDescription,
 	 */
 	getModuleVersion: function(ctx)
 	{
-		return "0.9.0";
+		return "0.9.3";
 	},
 	/**
 	 * Returns required modules

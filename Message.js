@@ -30,30 +30,30 @@ Object.assign(Runtime.Message.prototype,
 	{
 		var defProp = use('Runtime.rtl').defProp;
 		var a = Object.getOwnPropertyNames(this);
+		this.message_id = "";
 		this.is_external = false;
-		this.session = null;
 		use("Runtime.CoreStruct").prototype._init.call(this,ctx);
 	},
 	assignObject: function(ctx,o)
 	{
 		if (o instanceof use("Runtime.Message"))
 		{
+			this.message_id = o.message_id;
 			this.is_external = o.is_external;
-			this.session = o.session;
 		}
 		use("Runtime.CoreStruct").prototype.assignObject.call(this,ctx,o);
 	},
 	assignValue: function(ctx,k,v)
 	{
-		if (k == "is_external")this.is_external = v;
-		else if (k == "session")this.session = v;
+		if (k == "message_id")this.message_id = v;
+		else if (k == "is_external")this.is_external = v;
 		else use("Runtime.CoreStruct").prototype.assignValue.call(this,ctx,k,v);
 	},
 	takeValue: function(ctx,k,d)
 	{
 		if (d == undefined) d = null;
-		if (k == "is_external")return this.is_external;
-		else if (k == "session")return this.session;
+		if (k == "message_id")return this.message_id;
+		else if (k == "is_external")return this.is_external;
 		return use("Runtime.CoreStruct").prototype.takeValue.call(this,ctx,k,d);
 	},
 	getClassName: function(ctx)
@@ -64,13 +64,27 @@ Object.assign(Runtime.Message.prototype,
 Object.assign(Runtime.Message, use("Runtime.CoreStruct"));
 Object.assign(Runtime.Message,
 {
-	isExternal: function(ctx, s)
+	/**
+	 * Set message id
+	 */
+	setMessageId: function(ctx, msg)
 	{
-		return s.is_external == true;
+		if (msg.message_id == "")
+		{
+			var __v0 = use("Runtime.rtl");
+			msg = Runtime.rtl.setAttr(ctx, msg, Runtime.Collection.from(["message_id"]), __v0.unique(ctx));
+		}
+		return msg;
 	},
-	isInternal: function(ctx, s)
+	/**
+	 * Create message
+	 */
+	create: function(ctx, items)
 	{
-		return s.is_external == false;
+		var __v0 = new Runtime.Monad(ctx, this.newInstance(ctx, items));
+		var __v1 = use("Runtime.Message");
+		__v0 = __v0.call(ctx, __v1.setMessageId);
+		return __v0.value(ctx);
 	},
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
@@ -104,8 +118,8 @@ Object.assign(Runtime.Message,
 		if (f==undefined) f=0;
 		if ((f|3)==3)
 		{
+			a.push("message_id");
 			a.push("is_external");
-			a.push("session");
 		}
 		return use("Runtime.Collection").from(a);
 	},
@@ -114,14 +128,14 @@ Object.assign(Runtime.Message,
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
 		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
-		if (field_name == "is_external") return new IntrospectionInfo(ctx, {
+		if (field_name == "message_id") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Message",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
 		});
-		if (field_name == "session") return new IntrospectionInfo(ctx, {
+		if (field_name == "is_external") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Message",
 			"name": field_name,

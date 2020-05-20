@@ -20,6 +20,7 @@ var use = require('bayrell').use;
 if (typeof Runtime == 'undefined') Runtime = {};
 Runtime.CoreStruct = function(ctx, obj)
 {
+	if (obj == undefined) obj = null;
 	use("Runtime.CoreObject").call(this, ctx);
 	this.constructor._assign(ctx, this, null, obj);
 	if (this.__uq__ == undefined || this.__uq__ == null) this.__uq__ = Symbol();
@@ -60,8 +61,8 @@ Object.assign(Runtime.CoreStruct.prototype,
 		return this;
 	},
 	/**
-	 * Copy this struct with new values
-	 * @param Map obj = null
+	 * Clone this struct with fields
+	 * @param Collection fields = null
 	 * @return CoreStruct
 	 */
 	clone: function(ctx, fields)

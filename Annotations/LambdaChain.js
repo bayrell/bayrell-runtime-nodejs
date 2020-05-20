@@ -27,6 +27,10 @@ Runtime.Annotations.LambdaChain.prototype = Object.create(use("Runtime.CoreStruc
 Runtime.Annotations.LambdaChain.prototype.constructor = Runtime.Annotations.LambdaChain;
 Object.assign(Runtime.Annotations.LambdaChain.prototype,
 {
+	logName: function(ctx)
+	{
+		return this.getClassName(ctx) + use("Runtime.rtl").toStr(" -> ") + use("Runtime.rtl").toStr(this.name) + use("Runtime.rtl").toStr(" -> [") + use("Runtime.rtl").toStr(this.pos) + use("Runtime.rtl").toStr("] ") + use("Runtime.rtl").toStr(this.value);
+	},
 	_init: function(ctx)
 	{
 		var defProp = use('Runtime.rtl').defProp;
@@ -169,6 +173,10 @@ Object.assign(Runtime.Annotations.LambdaChain,
 	{
 		return null;
 	},
+	__implements__:
+	[
+		use("Runtime.Interfaces.EntityInterface"),
+	],
 });use.add(Runtime.Annotations.LambdaChain);
 if (module.exports == undefined) module.exports = {};
 if (module.exports.Runtime == undefined) module.exports.Runtime = {};

@@ -21,6 +21,8 @@ if (typeof Runtime == 'undefined') Runtime = {};
 if (typeof Runtime.Exceptions == 'undefined') Runtime.Exceptions = {};
 Runtime.Exceptions.UnknownError = function(ctx, context, prev)
 {
+	if (context == undefined) context = null;
+	if (prev == undefined) prev = null;
 	var __v0 = use("Runtime.rtl");
 	var __v1 = use("Runtime.RuntimeConstant");
 	use("Runtime.Exceptions.RuntimeException").call(this, ctx, __v0.translate(ctx, "Unknown error", null, "", context), __v1.ERROR_UNKNOWN, context, prev);

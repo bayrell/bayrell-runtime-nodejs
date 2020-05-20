@@ -36,10 +36,13 @@ Object.assign(Runtime.MessageRPC.prototype,
 		this.method_name = "";
 		this.data = null;
 		this.code = 0;
+		this.success_message = "";
 		this.error = "";
+		this.error_name = "";
+		this.error_trace = "";
 		this.response = null;
 		this.logs = null;
-		this.have_result = false;
+		this.have_answer = false;
 		use("Runtime.Message").prototype._init.call(this,ctx);
 	},
 	assignObject: function(ctx,o)
@@ -52,10 +55,13 @@ Object.assign(Runtime.MessageRPC.prototype,
 			this.method_name = o.method_name;
 			this.data = o.data;
 			this.code = o.code;
+			this.success_message = o.success_message;
 			this.error = o.error;
+			this.error_name = o.error_name;
+			this.error_trace = o.error_trace;
 			this.response = o.response;
 			this.logs = o.logs;
-			this.have_result = o.have_result;
+			this.have_answer = o.have_answer;
 		}
 		use("Runtime.Message").prototype.assignObject.call(this,ctx,o);
 	},
@@ -67,10 +73,13 @@ Object.assign(Runtime.MessageRPC.prototype,
 		else if (k == "method_name")this.method_name = v;
 		else if (k == "data")this.data = v;
 		else if (k == "code")this.code = v;
+		else if (k == "success_message")this.success_message = v;
 		else if (k == "error")this.error = v;
+		else if (k == "error_name")this.error_name = v;
+		else if (k == "error_trace")this.error_trace = v;
 		else if (k == "response")this.response = v;
 		else if (k == "logs")this.logs = v;
-		else if (k == "have_result")this.have_result = v;
+		else if (k == "have_answer")this.have_answer = v;
 		else use("Runtime.Message").prototype.assignValue.call(this,ctx,k,v);
 	},
 	takeValue: function(ctx,k,d)
@@ -82,10 +91,13 @@ Object.assign(Runtime.MessageRPC.prototype,
 		else if (k == "method_name")return this.method_name;
 		else if (k == "data")return this.data;
 		else if (k == "code")return this.code;
+		else if (k == "success_message")return this.success_message;
 		else if (k == "error")return this.error;
+		else if (k == "error_name")return this.error_name;
+		else if (k == "error_trace")return this.error_trace;
 		else if (k == "response")return this.response;
 		else if (k == "logs")return this.logs;
-		else if (k == "have_result")return this.have_result;
+		else if (k == "have_answer")return this.have_answer;
 		return use("Runtime.Message").prototype.takeValue.call(this,ctx,k,d);
 	},
 	getClassName: function(ctx)
@@ -103,28 +115,67 @@ Object.assign(Runtime.MessageRPC,
 	isSuccess: function(ctx, msg)
 	{
 		var __v0 = use("Runtime.RuntimeConstant");
-		return msg.have_result && msg.code >= __v0.ERROR_OK;
+		return msg.have_answer && msg.code >= __v0.ERROR_OK;
 	},
 	/**
 	 * Set success result
 	 * @param primitive res
 	 * @return Message
 	 */
-	success: function(ctx, msg, response)
+	success: function(ctx, response, message, code)
 	{
-		var __v0 = use("Runtime.RuntimeConstant");
-		return msg.copy(ctx, use("Runtime.Dict").from({"code":__v0.ERROR_OK,"error":"","response":response,"have_result":true}));
+		if (message == undefined) message = "";
+		if (code == undefined) code = 1;
+		return (ctx, msg) => 
+		{
+			return msg.copy(ctx, use("Runtime.Dict").from({"code":code,"error":"","success_message":message,"response":response}));
+		};
 	},
 	/**
 	 * Set fail result
 	 * @param primitive res
 	 * @return Message
 	 */
-	fail: function(ctx, msg, response, error, code)
+	fail: function(ctx, response, error, code, error_name)
 	{
 		if (error == undefined) error = "";
 		if (code == undefined) code = -1;
-		return msg.copy(ctx, use("Runtime.Dict").from({"code":code,"error":error,"response":response,"have_result":true}));
+		if (error_name == undefined) error_name = "";
+		return (ctx, msg) => 
+		{
+			return msg.copy(ctx, use("Runtime.Dict").from({"code":code,"error":error,"error_name":error_name,"response":response}));
+		};
+	},
+	/**
+	 * Set exception
+	 * @param primitive res
+	 * @return Message
+	 */
+	exception: function(ctx, e)
+	{
+		return (ctx, msg) => 
+		{
+			msg = msg.copy(ctx, use("Runtime.Dict").from({"code":e.getErrorCode(ctx),"error":e.getErrorMessage(ctx),"error_name":e.getClassName(ctx),"response":null}));
+			var __v0 = use("Runtime.Exceptions.ApiException");
+			if (e instanceof __v0)
+			{
+				msg = Runtime.rtl.setAttr(ctx, msg, Runtime.Collection.from(["response"]), e.response);
+			}
+			return msg;
+		};
+	},
+	/**
+	 * End pipe
+	 */
+	end: function(ctx, m)
+	{
+		if (m.err == null)
+		{
+			return m;
+		}
+		var __v0 = use("Runtime.Monad");
+		var __v1 = use("Runtime.MessageRPC");
+		return new __v0(ctx, new __v1(ctx, use("Runtime.Dict").from({"error":m.err.getErrorMessage(ctx),"error_name":m.err.getClassName(ctx),"code":m.err.getErrorCode(ctx),"response":m.err})));
 	},
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
@@ -164,10 +215,13 @@ Object.assign(Runtime.MessageRPC,
 			a.push("method_name");
 			a.push("data");
 			a.push("code");
+			a.push("success_message");
 			a.push("error");
+			a.push("error_name");
+			a.push("error_trace");
 			a.push("response");
 			a.push("logs");
-			a.push("have_result");
+			a.push("have_answer");
 		}
 		return use("Runtime.Collection").from(a);
 	},
@@ -218,7 +272,28 @@ Object.assign(Runtime.MessageRPC,
 			"annotations": Collection.from([
 			]),
 		});
+		if (field_name == "success_message") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.MessageRPC",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
 		if (field_name == "error") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.MessageRPC",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "error_name") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.MessageRPC",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "error_trace") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.MessageRPC",
 			"name": field_name,
@@ -239,7 +314,7 @@ Object.assign(Runtime.MessageRPC,
 			"annotations": Collection.from([
 			]),
 		});
-		if (field_name == "have_result") return new IntrospectionInfo(ctx, {
+		if (field_name == "have_answer") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.MessageRPC",
 			"name": field_name,

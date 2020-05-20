@@ -88,7 +88,7 @@ Object.assign(Runtime.Collection.prototype,
 	 * Returns copy of Collectiom
 	 * @param int pos - position
 	 */
-	copy: function(ctx)
+	cp: function(ctx)
 	{
 		var arr = Array.prototype.slice.call(this);
 		Object.setPrototypeOf(arr, this.constructor.prototype);
@@ -206,7 +206,7 @@ Object.assign(Runtime.Collection.prototype,
 	 */
 	pushIm: function(ctx, value)
 	{
-		var arr = this.copy();
+		var arr = this.cp();
 		Array.prototype.push.call(arr, value);
 		return arr;
 	},
@@ -216,7 +216,7 @@ Object.assign(Runtime.Collection.prototype,
 	 */
 	unshiftIm: function(ctx, value)
 	{
-		var arr = this.copy();
+		var arr = this.cp();
 		Array.prototype.unshift.call(arr, value);
 		return arr;
 	},
@@ -247,7 +247,7 @@ Object.assign(Runtime.Collection.prototype,
 	 */
 	insertIm: function(ctx, pos, value)
 	{
-		var arr = this.copy(ctx);
+		var arr = this.cp(ctx);
 		arr.splice(pos, 0, value);
 		return arr;
 	},
@@ -260,7 +260,7 @@ Object.assign(Runtime.Collection.prototype,
 	{
 		if (count == undefined) count = 1;
 		if (count == undefined) count = 1;
-		var arr = this.copy(ctx);
+		var arr = this.cp(ctx);
 		arr.splice(pos, count);
 		return arr;
 	},
@@ -271,7 +271,7 @@ Object.assign(Runtime.Collection.prototype,
 	 */
 	removeRangeIm: function(ctx, pos_begin, pos_end)
 	{
-		var arr = this.copy(ctx);
+		var arr = this.cp(ctx);
 		arr.splice(pos_begin, pos_end - pos_begin + 1);
 		return arr;
 	},
@@ -287,7 +287,7 @@ Object.assign(Runtime.Collection.prototype,
 			var _IndexOutOfRange = use("Runtime.Exceptions.IndexOutOfRange");
 			throw new _IndexOutOfRange(ctx);
 		}
-		var arr = this.copy(ctx);
+		var arr = this.cp(ctx);
 		arr[pos] = value;
 		return arr;
 	},
@@ -315,7 +315,7 @@ Object.assign(Runtime.Collection.prototype,
 	{
 		if (arr == null) return this;
 		if (arr.length == 0) return this;
-		var res = this.copy(ctx);
+		var res = this.cp(ctx);
 		for (var i=0; i<arr.length; i++)
 		{
 			Array.prototype.push.call(res, arr[i]);
@@ -330,7 +330,7 @@ Object.assign(Runtime.Collection.prototype,
 	{
 		if (arr == null) return this;
 		if (arr.length == 0) return this;
-		var res = this.copy(ctx);
+		var res = this.cp(ctx);
 		for (var i=arr.length-1; i>=0; i--)
 		{
 			Array.prototype.unshift.call(res, arr[i]);
@@ -375,7 +375,7 @@ Object.assign(Runtime.Collection.prototype,
 	 */
 	map: function(ctx, f)
 	{
-		var arr = this.copy(ctx);
+		var arr = this.cp(ctx);
 		for (var i=0; i<arr.length; i++)
 		{
 			arr[i] = f(ctx, arr[i], i);
@@ -504,7 +504,7 @@ Object.assign(Runtime.Collection.prototype,
 	 */
 	reverseIm: function(ctx)
 	{
-		var arr = this.copy(ctx);
+		var arr = this.cp(ctx);
 		Array.prototype.reverse.call(arr);
 		return arr;
 	},
@@ -515,7 +515,7 @@ Object.assign(Runtime.Collection.prototype,
 	sortIm: function(ctx, f)
 	{
 		if (f == undefined) f = null;
-		var arr = this.copy(ctx);
+		var arr = this.cp(ctx);
 		if (f == undefined) Array.prototype.sort.call(arr);
 		Array.prototype.sort.call(arr, f);
 		return arr;

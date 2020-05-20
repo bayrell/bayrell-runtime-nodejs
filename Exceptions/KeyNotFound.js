@@ -21,6 +21,8 @@ if (typeof Runtime == 'undefined') Runtime = {};
 if (typeof Runtime.Exceptions == 'undefined') Runtime.Exceptions = {};
 Runtime.Exceptions.KeyNotFound = function(ctx, key, context, prev)
 {
+	if (context == undefined) context = null;
+	if (prev == undefined) prev = null;
 	/* RuntimeUtils::translate("ERROR_KEY_NOT_FOUND", null, "", context),  */
 	var __v0 = use("Runtime.RuntimeConstant");
 	use("Runtime.Exceptions.RuntimeException").call(this, ctx, "Key '" + use("Runtime.rtl").toStr(key) + use("Runtime.rtl").toStr("' not found"), __v0.ERROR_KEY_NOT_FOUND, context, prev);

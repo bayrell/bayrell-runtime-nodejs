@@ -21,6 +21,8 @@ if (typeof Runtime == 'undefined') Runtime = {};
 if (typeof Runtime.Exceptions == 'undefined') Runtime.Exceptions = {};
 Runtime.Exceptions.AssignStructValueError = function(ctx, name, context, prev)
 {
+	if (context == undefined) context = null;
+	if (prev == undefined) prev = null;
 	var __v0 = use("Runtime.rtl");
 	var __v1 = use("Runtime.RuntimeConstant");
 	use("Runtime.Exceptions.RuntimeException").call(this, ctx, __v0.translate(ctx, "Can not set key '" + use("Runtime.rtl").toStr(name) + use("Runtime.rtl").toStr("' in immutable struct"), null, "", context), __v1.ERROR_INDEX_OUT_OF_RANGE, context, prev);

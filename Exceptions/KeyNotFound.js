@@ -19,13 +19,11 @@ var use = require('bayrell').use;
  */
 if (typeof Runtime == 'undefined') Runtime = {};
 if (typeof Runtime.Exceptions == 'undefined') Runtime.Exceptions = {};
-Runtime.Exceptions.KeyNotFound = function(ctx, key, context, prev)
+Runtime.Exceptions.KeyNotFound = function(ctx, key, prev)
 {
-	if (context == undefined) context = null;
 	if (prev == undefined) prev = null;
-	/* RuntimeUtils::translate("ERROR_KEY_NOT_FOUND", null, "", context),  */
-	var __v0 = use("Runtime.RuntimeConstant");
-	use("Runtime.Exceptions.RuntimeException").call(this, ctx, "Key '" + use("Runtime.rtl").toStr(key) + use("Runtime.rtl").toStr("' not found"), __v0.ERROR_KEY_NOT_FOUND, context, prev);
+	var __v0 = use("Runtime.rtl");
+	use("Runtime.Exceptions.RuntimeException").call(this, ctx, ctx.constructor.translate(ctx, ctx, "Runtime", "Key '" + use("Runtime.rtl").toStr(key) + use("Runtime.rtl").toStr("' not found")), __v0.ERROR_KEY_NOT_FOUND, prev);
 };
 Runtime.Exceptions.KeyNotFound.prototype = Object.create(use("Runtime.Exceptions.RuntimeException").prototype);
 Runtime.Exceptions.KeyNotFound.prototype.constructor = Runtime.Exceptions.KeyNotFound;
@@ -105,7 +103,4 @@ Object.assign(Runtime.Exceptions.KeyNotFound,
 		return null;
 	},
 });use.add(Runtime.Exceptions.KeyNotFound);
-if (module.exports == undefined) module.exports = {};
-if (module.exports.Runtime == undefined) module.exports.Runtime = {};
-if (module.exports.Runtime.Exceptions == undefined) module.exports.Runtime.Exceptions = {};
-module.exports.Runtime.Exceptions.KeyNotFound = Runtime.Exceptions.KeyNotFound;
+module.exports = Runtime.Exceptions.KeyNotFound;

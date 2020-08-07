@@ -40,7 +40,4 @@ Object.assign(Runtime.Interfaces.ModuleDescriptionInterface,
 		return "Runtime.Interfaces.ModuleDescriptionInterface";
 	},
 });use.add(Runtime.Interfaces.ModuleDescriptionInterface);
-if (module.exports == undefined) module.exports = {};
-if (module.exports.Runtime == undefined) module.exports.Runtime = {};
-if (module.exports.Runtime.Interfaces == undefined) module.exports.Runtime.Interfaces = {};
-module.exports.Runtime.Interfaces.ModuleDescriptionInterface = Runtime.Interfaces.ModuleDescriptionInterface;
+module.exports = Runtime.Interfaces.ModuleDescriptionInterface;

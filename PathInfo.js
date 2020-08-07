@@ -20,7 +20,10 @@ var use = require('bayrell').use;
 if (typeof Runtime == 'undefined') Runtime = {};
 Runtime.PathInfo = function(ctx)
 {
+	use("Runtime.CoreStruct").apply(this, arguments);
 };
+Runtime.PathInfo.prototype = Object.create(use("Runtime.CoreStruct").prototype);
+Runtime.PathInfo.prototype.constructor = Runtime.PathInfo;
 Object.assign(Runtime.PathInfo.prototype,
 {
 	/**
@@ -32,11 +35,14 @@ Object.assign(Runtime.PathInfo.prototype,
 	},
 	_init: function(ctx)
 	{
+		var defProp = use('Runtime.rtl').defProp;
+		var a = Object.getOwnPropertyNames(this);
 		this.filepath = "";
 		this.dirname = "";
 		this.basename = "";
 		this.extension = "";
 		this.filename = "";
+		use("Runtime.CoreStruct").prototype._init.call(this,ctx);
 	},
 	assignObject: function(ctx,o)
 	{
@@ -48,6 +54,7 @@ Object.assign(Runtime.PathInfo.prototype,
 			this.extension = o.extension;
 			this.filename = o.filename;
 		}
+		use("Runtime.CoreStruct").prototype.assignObject.call(this,ctx,o);
 	},
 	assignValue: function(ctx,k,v)
 	{
@@ -56,6 +63,7 @@ Object.assign(Runtime.PathInfo.prototype,
 		else if (k == "basename")this.basename = v;
 		else if (k == "extension")this.extension = v;
 		else if (k == "filename")this.filename = v;
+		else use("Runtime.CoreStruct").prototype.assignValue.call(this,ctx,k,v);
 	},
 	takeValue: function(ctx,k,d)
 	{
@@ -65,12 +73,14 @@ Object.assign(Runtime.PathInfo.prototype,
 		else if (k == "basename")return this.basename;
 		else if (k == "extension")return this.extension;
 		else if (k == "filename")return this.filename;
+		return use("Runtime.CoreStruct").prototype.takeValue.call(this,ctx,k,d);
 	},
 	getClassName: function(ctx)
 	{
 		return "Runtime.PathInfo";
 	},
 });
+Object.assign(Runtime.PathInfo, use("Runtime.CoreStruct"));
 Object.assign(Runtime.PathInfo,
 {
 	/* ======================= Class Init Functions ======================= */
@@ -84,7 +94,7 @@ Object.assign(Runtime.PathInfo,
 	},
 	getParentClassName: function()
 	{
-		return "";
+		return "Runtime.CoreStruct";
 	},
 	getClassInfo: function(ctx)
 	{
@@ -103,7 +113,7 @@ Object.assign(Runtime.PathInfo,
 	{
 		var a = [];
 		if (f==undefined) f=0;
-		if ((f|2)==2)
+		if ((f|3)==3)
 		{
 			a.push("filepath");
 			a.push("dirname");
@@ -170,6 +180,4 @@ Object.assign(Runtime.PathInfo,
 		use("Runtime.Interfaces.StringInterface"),
 	],
 });use.add(Runtime.PathInfo);
-if (module.exports == undefined) module.exports = {};
-if (module.exports.Runtime == undefined) module.exports.Runtime = {};
-module.exports.Runtime.PathInfo = Runtime.PathInfo;
+module.exports = Runtime.PathInfo;

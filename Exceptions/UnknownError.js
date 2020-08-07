@@ -19,13 +19,11 @@ var use = require('bayrell').use;
  */
 if (typeof Runtime == 'undefined') Runtime = {};
 if (typeof Runtime.Exceptions == 'undefined') Runtime.Exceptions = {};
-Runtime.Exceptions.UnknownError = function(ctx, context, prev)
+Runtime.Exceptions.UnknownError = function(ctx, prev)
 {
-	if (context == undefined) context = null;
 	if (prev == undefined) prev = null;
 	var __v0 = use("Runtime.rtl");
-	var __v1 = use("Runtime.RuntimeConstant");
-	use("Runtime.Exceptions.RuntimeException").call(this, ctx, __v0.translate(ctx, "Unknown error", null, "", context), __v1.ERROR_UNKNOWN, context, prev);
+	use("Runtime.Exceptions.RuntimeException").call(this, ctx, ctx.constructor.translate(ctx, ctx, "Runtime", "Unknown error"), __v0.ERROR_UNKNOWN, prev);
 };
 Runtime.Exceptions.UnknownError.prototype = Object.create(use("Runtime.Exceptions.RuntimeException").prototype);
 Runtime.Exceptions.UnknownError.prototype.constructor = Runtime.Exceptions.UnknownError;
@@ -105,7 +103,4 @@ Object.assign(Runtime.Exceptions.UnknownError,
 		return null;
 	},
 });use.add(Runtime.Exceptions.UnknownError);
-if (module.exports == undefined) module.exports = {};
-if (module.exports.Runtime == undefined) module.exports.Runtime = {};
-if (module.exports.Runtime.Exceptions == undefined) module.exports.Runtime.Exceptions = {};
-module.exports.Runtime.Exceptions.UnknownError = Runtime.Exceptions.UnknownError;
+module.exports = Runtime.Exceptions.UnknownError;

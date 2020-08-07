@@ -19,17 +19,17 @@ var use = require('bayrell').use;
  */
 if (typeof Runtime == 'undefined') Runtime = {};
 if (typeof Runtime.Interfaces == 'undefined') Runtime.Interfaces = {};
-Runtime.Interfaces.BusInterface = function(ctx)
+Runtime.Interfaces.ContextInterface = function(ctx)
 {
 };
-Object.assign(Runtime.Interfaces.BusInterface.prototype,
+Object.assign(Runtime.Interfaces.ContextInterface.prototype,
 {
 	getClassName: function(ctx)
 	{
-		return "Runtime.Interfaces.BusInterface";
+		return "Runtime.Interfaces.ContextInterface";
 	},
 });
-Object.assign(Runtime.Interfaces.BusInterface,
+Object.assign(Runtime.Interfaces.ContextInterface,
 {
 	getCurrentNamespace: function()
 	{
@@ -37,10 +37,7 @@ Object.assign(Runtime.Interfaces.BusInterface,
 	},
 	getCurrentClassName: function()
 	{
-		return "Runtime.Interfaces.BusInterface";
+		return "Runtime.Interfaces.ContextInterface";
 	},
-});use.add(Runtime.Interfaces.BusInterface);
-if (module.exports == undefined) module.exports = {};
-if (module.exports.Runtime == undefined) module.exports.Runtime = {};
-if (module.exports.Runtime.Interfaces == undefined) module.exports.Runtime.Interfaces = {};
-module.exports.Runtime.Interfaces.BusInterface = Runtime.Interfaces.BusInterface;
+});use.add(Runtime.Interfaces.ContextInterface);
+module.exports = Runtime.Interfaces.ContextInterface;

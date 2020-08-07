@@ -374,6 +374,4 @@ Object.assign(Runtime.DateTime,
 		return null;
 	},
 });use.add(Runtime.DateTime);
-if (module.exports == undefined) module.exports = {};
-if (module.exports.Runtime == undefined) module.exports.Runtime = {};
-module.exports.Runtime.DateTime = Runtime.DateTime;
+module.exports = Runtime.DateTime;

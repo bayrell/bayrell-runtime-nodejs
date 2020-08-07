@@ -196,7 +196,4 @@ Object.assign(Runtime.Annotations.IntrospectionInfo,
 		return null;
 	},
 });use.add(Runtime.Annotations.IntrospectionInfo);
-if (module.exports == undefined) module.exports = {};
-if (module.exports.Runtime == undefined) module.exports.Runtime = {};
-if (module.exports.Runtime.Annotations == undefined) module.exports.Runtime.Annotations = {};
-module.exports.Runtime.Annotations.IntrospectionInfo = Runtime.Annotations.IntrospectionInfo;
+module.exports = Runtime.Annotations.IntrospectionInfo;

@@ -125,7 +125,4 @@ Object.assign(Runtime.Exceptions.ApiException,
 		return null;
 	},
 });use.add(Runtime.Exceptions.ApiException);
-if (module.exports == undefined) module.exports = {};
-if (module.exports.Runtime == undefined) module.exports.Runtime = {};
-if (module.exports.Runtime.Exceptions == undefined) module.exports.Runtime.Exceptions = {};
-module.exports.Runtime.Exceptions.ApiException = Runtime.Exceptions.ApiException;
+module.exports = Runtime.Exceptions.ApiException;

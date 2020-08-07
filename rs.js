@@ -326,26 +326,20 @@ Object.assign(Runtime.rs,
 	 */
 	pathinfo: function(ctx, filepath)
 	{
-		var __v0 = use("Runtime.rs");
-		var arr1 = __v0.explode(ctx, ".", filepath).toVector(ctx);
-		var __v0 = use("Runtime.rs");
-		var arr2 = __v0.explode(ctx, "/", filepath).toVector(ctx);
-		var __v0 = use("Runtime.PathInfo");
-		var ret = new __v0(ctx);
-		ret.filepath = filepath;
-		ret.extension = arr1.pop(ctx);
-		ret.basename = arr2.pop(ctx);
-		var __v0 = use("Runtime.rs");
-		ret.dirname = __v0.implode(ctx, "/", arr2);
-		var __v0 = use("Runtime.rs");
-		var ext_length = __v0.strlen(ctx, ret.extension);
+		var arr1 = this.explode(ctx, ".", filepath).toVector(ctx);
+		var arr2 = this.explode(ctx, "/", filepath).toVector(ctx);
+		var filepath = filepath;
+		var extension = arr1.pop(ctx);
+		var basename = arr2.pop(ctx);
+		var dirname = this.join(ctx, "/", arr2);
+		var ext_length = this.strlen(ctx, extension);
 		if (ext_length > 0)
 		{
 			ext_length++;
 		}
-		var __v0 = use("Runtime.rs");
-		ret.filename = __v0.substr(ctx, ret.basename, 0, -1 * ext_length);
-		return ret;
+		var filename = this.substr(ctx, basename, 0, -1 * ext_length);
+		var __v0 = use("Runtime.PathInfo");
+		return new __v0(ctx, use("Runtime.Dict").from({"filepath":filepath,"extension":extension,"basename":basename,"dirname":dirname,"filename":filename}));
 	},
 	/**
 	 * Возвращает имя файла без расширения
@@ -361,8 +355,8 @@ Object.assign(Runtime.rs,
 		{
 			var __v0 = use("Runtime.rs");
 			var sz = 0 - __v0.strlen(ctx, ext) - 1;
-			var __v0 = use("Runtime.rs");
-			res = __v0.substr(ctx, res, 0, sz);
+			var __v1 = use("Runtime.rs");
+			res = __v1.substr(ctx, res, 0, sz);
 		}
 		return res;
 	},
@@ -411,8 +405,8 @@ Object.assign(Runtime.rs,
 		if (ch == undefined) ch = "/";
 		var __v0 = use("Runtime.rs");
 		var source = __v0.explode(ctx, ch, filepath);
-		var __v0 = use("Runtime.rs");
-		var base = __v0.explode(ctx, ch, basepath);
+		var __v1 = use("Runtime.rs");
+		var base = __v1.explode(ctx, ch, basepath);
 		source = source.filter(ctx, (ctx, s) => 
 		{
 			return s != "";
@@ -431,8 +425,8 @@ Object.assign(Runtime.rs,
 		{
 			source.unshift(ctx, "..");
 		});
-		var __v0 = use("Runtime.rs");
-		return __v0.implode(ctx, ch, source);
+		var __v2 = use("Runtime.rs");
+		return __v2.implode(ctx, ch, source);
 	},
 	/**
 	 * Return normalize path
@@ -484,7 +478,7 @@ Object.assign(Runtime.rs,
 	 */
 	implode: function(ctx, ch, arr)
 	{
-		return arr.join(ch);
+		return arr.join(ctx, ch);
 	},
 	/**
 	 * Ищет позицию первого вхождения подстроки search в строке s.
@@ -504,6 +498,51 @@ Object.assign(Runtime.rs,
 		if (!_rtl.exists(offset)) offset = 0;
 		var res = _rtl.toStr(s).indexOf(search);
 		return res;
+	},
+	/**
+	 * URL encode
+	 * @param string s
+	 * @return string
+	 */
+	url_encode: function(ctx, s)
+	{
+		return encodeURIComponent(s);
+	},
+	/**
+	 * Base64 encode
+	 * @param string s
+	 * @return string
+	 */
+	base64_encode: function(ctx, s)
+	{
+		return Buffer.from(s).toString('base64');
+	},
+	/**
+	 * Base64 decode
+	 * @param string s
+	 * @return string
+	 */
+	base64_decode: function(ctx, s)
+	{
+		return Buffer.from(s, 'base64').toString('ascii');
+	},
+	/**
+	 * Base64 encode
+	 * @param string s
+	 * @return string
+	 */
+	base64_encode_url: function(ctx, s)
+	{
+		return Buffer.from(s).toString('base64');
+	},
+	/**
+	 * Base64 decode
+	 * @param string s
+	 * @return string
+	 */
+	base64_decode_url: function(ctx, s)
+	{
+		return Buffer.from(s, 'base64').toString('ascii');
 	},
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
@@ -555,6 +594,4 @@ Object.assign(Runtime.rs,
 		return null;
 	},
 });use.add(Runtime.rs);
-if (module.exports == undefined) module.exports = {};
-if (module.exports.Runtime == undefined) module.exports.Runtime = {};
-module.exports.Runtime.rs = Runtime.rs;
+module.exports = Runtime.rs;

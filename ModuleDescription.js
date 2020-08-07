@@ -57,7 +57,7 @@ Object.assign(Runtime.ModuleDescription,
 	 */
 	getModuleVersion: function(ctx)
 	{
-		return "0.9.3";
+		return "0.10.0";
 	},
 	/**
 	 * Returns required modules
@@ -68,27 +68,19 @@ Object.assign(Runtime.ModuleDescription,
 		return null;
 	},
 	/**
-	 * Compatibility with older versions
-	 */
-	getRequiredModules: function(ctx)
-	{
-		return this.requiredModules(ctx);
-	},
-	/**
 	 * Returns module files load order
 	 * @return Collection<string>
 	 */
 	assets: function(ctx)
 	{
-		return use("Runtime.Collection").from(["Runtime/rtl","Runtime/rs","Runtime/re","Runtime/lib","Runtime/Collection","Runtime/CoreObject","Runtime/Dict","Runtime/RuntimeConstant","Runtime/RuntimeUtils","Runtime/Exceptions/RuntimeException","Runtime/Interfaces/AssetsInterface","Runtime/Interfaces/BusInterface","Runtime/Interfaces/ModuleDescriptionInterface","Runtime/Interfaces/SerializeInterface","Runtime/Interfaces/StringInterface","Runtime/CoreStruct","Runtime/CoreProvider","Runtime/CoreEvent","Runtime/Map","Runtime/Message","Runtime/MessageRPC","Runtime/PathInfo","Runtime/ModuleDescription","Runtime/Monad","Runtime/Reference","Runtime/Vector","Runtime/Exceptions/ApiException","Runtime/Exceptions/IndexOutOfRange","Runtime/Exceptions/KeyNotFound","Runtime/Exceptions/UnknownError","Runtime/DateTime","Runtime/Annotations/Entity","Runtime/Annotations/IntrospectionClass","Runtime/Annotations/IntrospectionInfo","Runtime/Annotations/LambdaChain","Runtime/Annotations/LambdaChainDeclare","Runtime/Annotations/Driver","Runtime/Annotations/Provider","Runtime/UIStruct","Runtime/Context","Runtime/AsyncAwait"]);
+		return use("Runtime.Collection").from(["Runtime/rtl","Runtime/rs","Runtime/re","Runtime/lib","Runtime/AsyncAwait","Runtime/Collection","Runtime/Dict","Runtime/Map","Runtime/Vector","Runtime/Monad","Runtime/CoreObject","Runtime/CoreStruct","Runtime/DateTime","Runtime/Exceptions/RuntimeException","Runtime/Interfaces/AssetsInterface","Runtime/Interfaces/ModuleDescriptionInterface","Runtime/ModuleDescription"]);
 	},
 	/**
 	 * Returns enities
 	 */
 	entities: function(ctx)
 	{
-		var __v0 = use("Runtime.Annotations.LambdaChainDeclare");
-		return use("Runtime.Collection").from([new __v0(ctx, use("Runtime.Dict").from({"name":"Runtime.Entities"}))]);
+		return use("Runtime.Collection").from([]);
 	},
 	/**
 	 * Returns enities
@@ -152,6 +144,4 @@ Object.assign(Runtime.ModuleDescription,
 		use("Runtime.Interfaces.AssetsInterface"),
 	],
 });use.add(Runtime.ModuleDescription);
-if (module.exports == undefined) module.exports = {};
-if (module.exports.Runtime == undefined) module.exports.Runtime = {};
-module.exports.Runtime.ModuleDescription = Runtime.ModuleDescription;
+module.exports = Runtime.ModuleDescription;

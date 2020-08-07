@@ -221,6 +221,16 @@ Object.assign(Runtime.lib,
 		};
 	},
 	/**
+	 * Map
+	 */
+	map: function(ctx, f)
+	{
+		return (ctx, m) => 
+		{
+			return m.map(ctx, f);
+		};
+	},
+	/**
 	 * Filter
 	 */
 	filter: function(ctx, f)
@@ -228,6 +238,26 @@ Object.assign(Runtime.lib,
 		return (ctx, m) => 
 		{
 			return m.filter(ctx, f);
+		};
+	},
+	/**
+	 * Sort
+	 */
+	sort: function(ctx, f)
+	{
+		return (ctx, m) => 
+		{
+			return m.sortIm(ctx, f);
+		};
+	},
+	/**
+	 * Transition
+	 */
+	transition: function(ctx, f)
+	{
+		return (ctx, m) => 
+		{
+			return m.transition(ctx, f);
 		};
 	},
 	/**
@@ -337,6 +367,4 @@ Object.assign(Runtime.lib,
 		return null;
 	},
 });use.add(Runtime.lib);
-if (module.exports == undefined) module.exports = {};
-if (module.exports.Runtime == undefined) module.exports.Runtime = {};
-module.exports.Runtime.lib = Runtime.lib;
+module.exports = Runtime.lib;

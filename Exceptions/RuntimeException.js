@@ -279,7 +279,4 @@ Object.assign(Runtime.Exceptions.RuntimeException,
 		return null;
 	},
 });use.add(Runtime.Exceptions.RuntimeException);
-if (module.exports == undefined) module.exports = {};
-if (module.exports.Runtime == undefined) module.exports.Runtime = {};
-if (module.exports.Runtime.Exceptions == undefined) module.exports.Runtime.Exceptions = {};
-module.exports.Runtime.Exceptions.RuntimeException = Runtime.Exceptions.RuntimeException;
+module.exports = Runtime.Exceptions.RuntimeException;

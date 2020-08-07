@@ -79,8 +79,8 @@ Object.assign(Runtime.CoreStruct.prototype,
 			obj.set(ctx, field_name, this.takeValue(ctx, field_name));
 		});
 		/* Return object */
-		var __v0 = use("Runtime.rtl");
-		var res = __v0.newInstance(ctx, this.getClassName(ctx), use("Runtime.Collection").from([obj.toDict(ctx)]));
+		var __v1 = use("Runtime.rtl");
+		var res = __v1.newInstance(ctx, this.getClassName(ctx), use("Runtime.Collection").from([obj.toDict(ctx)]));
 		return res;
 	},
 	/**
@@ -202,6 +202,5 @@ Object.assign(Runtime.CoreStruct,
 		use("Runtime.Interfaces.SerializeInterface"),
 	],
 });use.add(Runtime.CoreStruct);
-if (module.exports == undefined) module.exports = {};
-if (module.exports.Runtime == undefined) module.exports.Runtime = {};
-module.exports.Runtime.CoreStruct = Runtime.CoreStruct;
+module.exports = Runtime.CoreStruct;
+Runtime.CoreStruct.prototype.get = function(ctx, k, v){ return this[k] != undefined ? this[k] : v; };

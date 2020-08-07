@@ -148,6 +148,4 @@ Object.assign(Runtime.Reference,
 		return null;
 	},
 });use.add(Runtime.Reference);
-if (module.exports == undefined) module.exports = {};
-if (module.exports.Runtime == undefined) module.exports.Runtime = {};
-module.exports.Runtime.Reference = Runtime.Reference;
+module.exports = Runtime.Reference;

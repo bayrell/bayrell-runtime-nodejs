@@ -409,7 +409,7 @@ Object.assign(Runtime.Collection.prototype,
 	transition: function(ctx, f)
 	{
 		var Dict = use("Runtime.Dict");
-		var d = new Dict();
+		var d = new Dict(ctx);
 		for (var i=0; i<this.length; i++)
 		{
 			var value = this[i];
@@ -517,7 +517,11 @@ Object.assign(Runtime.Collection.prototype,
 		if (f == undefined) f = null;
 		var arr = this.cp(ctx);
 		if (f == undefined) Array.prototype.sort.call(arr);
-		Array.prototype.sort.call(arr, f);
+		else
+		{
+			var f1 = (a, b) => { return f(ctx, a, b); };
+			Array.prototype.sort.call(arr, f1);
+		}
 		return arr;
 	},
 	/**
@@ -666,6 +670,4 @@ Object.assign(Runtime.Collection,
 		return null;
 	},
 });use.add(Runtime.Collection);
-if (module.exports == undefined) module.exports = {};
-if (module.exports.Runtime == undefined) module.exports.Runtime = {};
-module.exports.Runtime.Collection = Runtime.Collection;
+module.exports = Runtime.Collection;

@@ -46,7 +46,4 @@ Object.assign(Runtime.Interfaces.StringInterface,
 		return "Runtime.Interfaces.StringInterface";
 	},
 });use.add(Runtime.Interfaces.StringInterface);
-if (module.exports == undefined) module.exports = {};
-if (module.exports.Runtime == undefined) module.exports.Runtime = {};
-if (module.exports.Runtime.Interfaces == undefined) module.exports.Runtime.Interfaces = {};
-module.exports.Runtime.Interfaces.StringInterface = Runtime.Interfaces.StringInterface;
+module.exports = Runtime.Interfaces.StringInterface;

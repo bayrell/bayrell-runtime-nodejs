@@ -170,7 +170,4 @@ Object.assign(Runtime.Annotations.IntrospectionClass,
 		return null;
 	},
 });use.add(Runtime.Annotations.IntrospectionClass);
-if (module.exports == undefined) module.exports = {};
-if (module.exports.Runtime == undefined) module.exports.Runtime = {};
-if (module.exports.Runtime.Annotations == undefined) module.exports.Runtime.Annotations = {};
-module.exports.Runtime.Annotations.IntrospectionClass = Runtime.Annotations.IntrospectionClass;
+module.exports = Runtime.Annotations.IntrospectionClass;

@@ -19,13 +19,11 @@ var use = require('bayrell').use;
  */
 if (typeof Runtime == 'undefined') Runtime = {};
 if (typeof Runtime.Exceptions == 'undefined') Runtime.Exceptions = {};
-Runtime.Exceptions.AssignStructValueError = function(ctx, name, context, prev)
+Runtime.Exceptions.AssignStructValueError = function(ctx, name, prev)
 {
-	if (context == undefined) context = null;
 	if (prev == undefined) prev = null;
 	var __v0 = use("Runtime.rtl");
-	var __v1 = use("Runtime.RuntimeConstant");
-	use("Runtime.Exceptions.RuntimeException").call(this, ctx, __v0.translate(ctx, "Can not set key '" + use("Runtime.rtl").toStr(name) + use("Runtime.rtl").toStr("' in immutable struct"), null, "", context), __v1.ERROR_INDEX_OUT_OF_RANGE, context, prev);
+	use("Runtime.Exceptions.RuntimeException").call(this, ctx, ctx.constructor.translate(ctx, ctx, "Runtime", "Can not set key '" + use("Runtime.rtl").toStr(name) + use("Runtime.rtl").toStr("' in immutable struct")), __v0.ERROR_INDEX_OUT_OF_RANGE, prev);
 };
 Runtime.Exceptions.AssignStructValueError.prototype = Object.create(use("Runtime.Exceptions.RuntimeException").prototype);
 Runtime.Exceptions.AssignStructValueError.prototype.constructor = Runtime.Exceptions.AssignStructValueError;
@@ -105,7 +103,4 @@ Object.assign(Runtime.Exceptions.AssignStructValueError,
 		return null;
 	},
 });use.add(Runtime.Exceptions.AssignStructValueError);
-if (module.exports == undefined) module.exports = {};
-if (module.exports.Runtime == undefined) module.exports.Runtime = {};
-if (module.exports.Runtime.Exceptions == undefined) module.exports.Runtime.Exceptions = {};
-module.exports.Runtime.Exceptions.AssignStructValueError = Runtime.Exceptions.AssignStructValueError;
+module.exports = Runtime.Exceptions.AssignStructValueError;

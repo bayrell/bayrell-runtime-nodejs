@@ -20,6 +20,7 @@ var use = require('bayrell').use;
 if (typeof Runtime == 'undefined') Runtime = {};
 Runtime.CoreObject = function(ctx)
 {
+	/* Init object */
 	this._init(ctx);
 };
 Object.assign(Runtime.CoreObject.prototype,
@@ -29,147 +30,6 @@ Object.assign(Runtime.CoreObject.prototype,
 	 */
 	_init: function(ctx)
 	{
-	},
-	/**
-	 * Returns instance of the value by variable name
-	 * @param string variable_name
-	 * @param string default_value
-	 * @return var
-	 */
-	get: function(ctx, variable_name, default_value)
-	{
-		if (default_value == undefined) default_value = null;
-		return this.takeValue(ctx, variable_name, default_value);
-	},
-	/**
-	 * Returns instance of the value by variable name
-	 * @param string variable_name
-	 * @param string default_value
-	 * @return var
-	 */
-	takeValue: function(ctx, variable_name, default_value)
-	{
-		if (default_value == undefined) default_value = null;
-		return this.takeVirtualValue(ctx, variable_name, default_value);
-	},
-	/**
-	 * Returns virtual values
-	 * @param string variable_name
-	 * @param string default_value
-	 * @return var
-	 */
-	takeVirtualValue: function(ctx, variable_name, default_value)
-	{
-		if (default_value == undefined) default_value = null;
-		return default_value;
-	},
-	/**
-	 * Set new value
-	 * @param string variable_name
-	 * @param var value
-	 */
-	assignValue: function(ctx, variable_name, value)
-	{
-		this.assignVirtualValue(ctx, variable_name, value);
-	},
-	/**
-	 * Assign virtual value
-	 * @param string variable_name
-	 * @param var value
-	 */
-	assignVirtualValue: function(ctx, variable_name, value)
-	{
-	},
-	/**
-	 * Assign and clone data from other object
-	 * @param CoreObject obj
-	 */
-	assignObject: function(ctx, obj)
-	{
-	},
-	/**
-	 * Set new values instance by Map
-	 * @param Map<var> map
-	 * @return CoreObject
-	 */
-	assignDict: function(ctx, values)
-	{
-		if (values == undefined) values = null;
-		if (values == null)
-		{
-			return null;
-		}
-		var __v0 = use("Runtime.rtl");
-		var f = __v0.method("Runtime.RuntimeUtils", "getVariablesNames");
-		var names = f(ctx, this.getClassName(ctx), 2);
-		for (var i = 0;i < names.count(ctx);i++)
-		{
-			var name = names.item(ctx, i);
-			this.assignValue(ctx, name, values.get(ctx, name, null));
-		}
-		return this;
-	},
-	/**
-	 * Set new values instance by Map
-	 * @param Dict<var> map
-	 * @return CoreObject
-	 */
-	setDict: function(ctx, values)
-	{
-		if (values == undefined) values = null;
-		if (values == null)
-		{
-			return null;
-		}
-		values.each(ctx, (ctx, v, k) => 
-		{
-			return this.assignValue(ctx, k, v);
-		});
-		return this;
-	},
-	/**
-	 * Dump serializable object to Map
-	 * @return Map<var>
-	 */
-	takeDict: function(ctx, fields, flag)
-	{
-		if (fields == undefined) fields = null;
-		if (flag == undefined) flag = 2;
-		var __v0 = use("Runtime.Map");
-		var values = new __v0(ctx);
-		if (fields == null)
-		{
-			var __v0 = use("Runtime.rtl");
-			var f = __v0.method(ctx, "Runtime.RuntimeUtils", "getVariablesNames");
-			var names = f(ctx, this.getClassName(ctx), flag);
-			for (var i = 0;i < names.count(ctx);i++)
-			{
-				var name = names.item(ctx, i);
-				values.set(ctx, name, this.takeValue(ctx, name, null));
-			}
-		}
-		else
-		{
-			for (var i = 0;i < fields.count(ctx);i++)
-			{
-				var name = fields.item(ctx, i);
-				values.set(ctx, name, this.takeValue(ctx, name, null));
-			}
-		}
-		return values.toDict(ctx);
-	},
-	staticMethod: function(method_name)
-	{
-		var __v0 = use("Runtime.rtl");
-		return __v0.method(null, this.getClassName(), method_name);
-	},
-	callStatic: function(ctx, method_name)
-	{
-		return null;
-	},
-	callStaticParent: function(ctx, method_name)
-	{
-		return null;
 	},
 	assignObject: function(ctx,o)
 	{
@@ -241,6 +101,4 @@ Object.assign(Runtime.CoreObject,
 		return null;
 	},
 });use.add(Runtime.CoreObject);
-if (module.exports == undefined) module.exports = {};
-if (module.exports.Runtime == undefined) module.exports.Runtime = {};
-module.exports.Runtime.CoreObject = Runtime.CoreObject;
+module.exports = Runtime.CoreObject;

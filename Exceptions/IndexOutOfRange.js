@@ -19,10 +19,11 @@ var use = require('bayrell').use;
  */
 if (typeof Runtime == 'undefined') Runtime = {};
 if (typeof Runtime.Exceptions == 'undefined') Runtime.Exceptions = {};
-Runtime.Exceptions.IndexOutOfRange = function(ctx)
+Runtime.Exceptions.IndexOutOfRange = function(ctx, prev)
 {
-	var __v0 = use("Runtime.RuntimeConstant");
-	use("Runtime.Exceptions.RuntimeException").call(this, ctx, ctx.translate(ctx, ctx, "Index out of range", null), __v0.ERROR_INDEX_OUT_OF_RANGE);
+	if (prev == undefined) prev = null;
+	var __v0 = use("Runtime.rtl");
+	use("Runtime.Exceptions.RuntimeException").call(this, ctx, ctx.constructor.translate(ctx, ctx, "Runtime", "Index out of range"), __v0.ERROR_INDEX_OUT_OF_RANGE, prev);
 };
 Runtime.Exceptions.IndexOutOfRange.prototype = Object.create(use("Runtime.Exceptions.RuntimeException").prototype);
 Runtime.Exceptions.IndexOutOfRange.prototype.constructor = Runtime.Exceptions.IndexOutOfRange;
@@ -102,7 +103,4 @@ Object.assign(Runtime.Exceptions.IndexOutOfRange,
 		return null;
 	},
 });use.add(Runtime.Exceptions.IndexOutOfRange);
-if (module.exports == undefined) module.exports = {};
-if (module.exports.Runtime == undefined) module.exports.Runtime = {};
-if (module.exports.Runtime.Exceptions == undefined) module.exports.Runtime.Exceptions = {};
-module.exports.Runtime.Exceptions.IndexOutOfRange = Runtime.Exceptions.IndexOutOfRange;
+module.exports = Runtime.Exceptions.IndexOutOfRange;

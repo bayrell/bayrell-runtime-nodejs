@@ -78,8 +78,8 @@ Object.assign(Runtime.RuntimeUtils,
 		res.push(ctx, class_name);
 		while (class_name != "")
 		{
-			var __v0 = use("Runtime.rtl");
-			var f = __v0.method(ctx, class_name, "getParentClassName");
+			var __v1 = use("Runtime.rtl");
+			var f = __v1.method(ctx, class_name, "getParentClassName");
 			class_name = f(ctx);
 			if (class_name != "")
 			{
@@ -143,11 +143,11 @@ Object.assign(Runtime.RuntimeUtils,
 		var class_info = null;
 		var __v0 = use("Runtime.Map");
 		var fields = new __v0(ctx);
-		var __v0 = use("Runtime.Map");
-		var methods = new __v0(ctx);
+		var __v1 = use("Runtime.Map");
+		var methods = new __v1(ctx);
 		var info = null;
-		var __v0 = use("Runtime.rtl");
-		if (!__v0.class_exists(ctx, class_name))
+		var __v2 = use("Runtime.rtl");
+		if (!__v2.class_exists(ctx, class_name))
 		{
 			var __memorize_value = null;
 			use("Runtime.rtl")._memorizeSave("Runtime.RuntimeUtils.getClassIntrospection", arguments, __memorize_value);
@@ -171,8 +171,8 @@ Object.assign(Runtime.RuntimeUtils,
 		/* Get Class Info */
 		try
 		{
-			var __v0 = use("Runtime.rtl");
-			info = __v0.method(ctx, class_name, "getClassInfo")(ctx);
+			var __v2 = use("Runtime.rtl");
+			info = __v2.method(ctx, class_name, "getClassInfo")(ctx);
 			if (info != null)
 			{
 				class_info = info.annotations;
@@ -198,8 +198,8 @@ Object.assign(Runtime.RuntimeUtils,
 			var item_fields = null;
 			try
 			{
-				var __v0 = use("Runtime.rtl");
-				item_fields = __v0.method(ctx, item_class_name, "getFieldsList")(ctx, 3);
+				var __v2 = use("Runtime.rtl");
+				item_fields = __v2.method(ctx, item_class_name, "getFieldsList")(ctx, 3);
 			}
 			catch (_ex)
 			{
@@ -215,16 +215,16 @@ Object.assign(Runtime.RuntimeUtils,
 			for (var j = 0;j < item_fields.count(ctx);j++)
 			{
 				var field_name = item_fields.item(ctx, j);
-				var __v0 = use("Runtime.rtl");
-				info = __v0.method(ctx, item_class_name, "getFieldInfoByName")(ctx, field_name);
+				var __v2 = use("Runtime.rtl");
+				info = __v2.method(ctx, item_class_name, "getFieldInfoByName")(ctx, field_name);
 				appendAnnotations(ctx, fields, field_name, info);
 			}
 			/* Get methods introspection */
 			var item_methods = null;
 			try
 			{
-				var __v0 = use("Runtime.rtl");
-				item_methods = __v0.method(ctx, item_class_name, "getMethodsList")(ctx);
+				var __v2 = use("Runtime.rtl");
+				item_methods = __v2.method(ctx, item_class_name, "getMethodsList")(ctx);
 			}
 			catch (_ex)
 			{
@@ -240,8 +240,8 @@ Object.assign(Runtime.RuntimeUtils,
 			for (var j = 0;j < item_methods.count(ctx);j++)
 			{
 				var method_name = item_methods.item(ctx, j);
-				var __v0 = use("Runtime.rtl");
-				info = __v0.method(ctx, item_class_name, "getMethodInfoByName")(ctx, method_name);
+				var __v2 = use("Runtime.rtl");
+				info = __v2.method(ctx, item_class_name, "getMethodInfoByName")(ctx, method_name);
 				appendAnnotations(ctx, methods, method_name, info);
 			}
 		}
@@ -254,9 +254,9 @@ Object.assign(Runtime.RuntimeUtils,
 		{
 			return item.toCollection(ctx);
 		});
-		var __v0 = use("Runtime.Annotations.IntrospectionClass");
-		var __v1 = use("Runtime.rtl");
-		var __memorize_value = new __v0(ctx, use("Runtime.Dict").from({"class_name":class_name,"class_info":(class_info != null) ? (class_info.toCollection(ctx)) : (null),"fields":fields.toDict(ctx),"methods":methods.toDict(ctx),"interfaces":__v1.getInterfaces(ctx, class_name)}));
+		var __v2 = use("Runtime.Annotations.IntrospectionClass");
+		var __v3 = use("Runtime.rtl");
+		var __memorize_value = new __v2(ctx, use("Runtime.Dict").from({"class_name":class_name,"class_info":(class_info != null) ? (class_info.toCollection(ctx)) : (null),"fields":fields.toDict(ctx),"methods":methods.toDict(ctx),"interfaces":__v3.getInterfaces(ctx, class_name)}));
 		use("Runtime.rtl")._memorizeSave("Runtime.RuntimeUtils.getClassIntrospection", arguments, __memorize_value);
 		return __memorize_value;
 	},
@@ -432,19 +432,19 @@ Object.assign(Runtime.RuntimeUtils,
 				return res.toDict(ctx);
 			}
 			var class_name = res.item(ctx, "__class_name__");
-			var __v1 = use("Runtime.rtl");
-			if (!__v1.class_exists(ctx, class_name))
+			var __v2 = use("Runtime.rtl");
+			if (!__v2.class_exists(ctx, class_name))
 			{
 				return null;
 			}
-			var __v1 = use("Runtime.rtl");
-			if (!__v1.class_implements(ctx, class_name, "Runtime.Interfaces.SerializeInterface"))
+			var __v2 = use("Runtime.rtl");
+			if (!__v2.class_implements(ctx, class_name, "Runtime.Interfaces.SerializeInterface"))
 			{
 				return null;
 			}
 			/* Assign values */
-			var __v1 = use("Runtime.Map");
-			var obj = new __v1(ctx);
+			var __v2 = use("Runtime.Map");
+			var obj = new __v2(ctx);
 			var names = this.getVariablesNames(ctx, class_name, 1);
 			for (var i = 0;i < names.count(ctx);i++)
 			{
@@ -456,8 +456,8 @@ Object.assign(Runtime.RuntimeUtils,
 				}
 			}
 			/* New instance */
-			var __v1 = use("Runtime.rtl");
-			var instance = __v1.newInstance(ctx, class_name, use("Runtime.Collection").from([obj]));
+			var __v3 = use("Runtime.rtl");
+			var instance = __v3.newInstance(ctx, class_name, use("Runtime.Collection").from([obj]));
 			return instance;
 		}
 		return null;
@@ -596,182 +596,6 @@ Object.assign(Runtime.RuntimeUtils,
 		}
 		return null;
 	},
-	/**
-	 * Base64 encode
-	 * @param string s
-	 * @return string 
-	 */
-	base64_encode: function(ctx, s)
-	{
-		return Buffer.from(s).toString('base64');
-	},
-	/**
-	 * Base64 decode
-	 * @param string s
-	 * @return string 
-	 */
-	base64_decode: function(ctx, s)
-	{
-		return Buffer.from(s, 'base64').toString('ascii');
-	},
-	/**
-	 * Base64 encode
-	 * @param string s
-	 * @return string 
-	 */
-	base64_encode_url: function(ctx, s)
-	{
-		return Buffer.from(s).toString('base64');
-	},
-	/**
-	 * Base64 decode
-	 * @param string s
-	 * @return string 
-	 */
-	base64_decode_url: function(ctx, s)
-	{
-		return Buffer.from(s, 'base64').toString('ascii');
-	},
-	/* ================================= Other Functions ================================= */
-	/*
-	 * Generate password
-	 *
-	 * @param int length The lenght of the password
-	 * @param string options What kinds of the char can be in password
-	 *   a - lower case chars
-	 *   b - upper case chars
-	 *   c - numbers
-	 *   d - special chars !@#$%^&?*_-+=~(){}[]<>|/,.:;\\
-	 *   e - quotes `"'
-	 */
-	randomString: function(ctx, length, options)
-	{
-		if (length == undefined) length = 16;
-		if (options == undefined) options = "abc";
-		var s = "";
-		var __v0 = use("Runtime.rs");
-		if (__v0.strpos(ctx, options, "a") >= 0)
-		{
-			s += use("Runtime.rtl").toStr("abcdefghjkmnpqrstuvwxyz");
-		}
-		var __v0 = use("Runtime.rs");
-		if (__v0.strpos(ctx, options, "b") >= 0)
-		{
-			s += use("Runtime.rtl").toStr("ABCDEFGHJKMNPQRSTUVWXYZ");
-		}
-		var __v0 = use("Runtime.rs");
-		if (__v0.strpos(ctx, options, "c") >= 0)
-		{
-			s += use("Runtime.rtl").toStr("1234567890");
-		}
-		var __v0 = use("Runtime.rs");
-		if (__v0.strpos(ctx, options, "d") >= 0)
-		{
-			s += use("Runtime.rtl").toStr("!@#$%^&?*_-+=~(){}[]<>|/,.:;\\");
-		}
-		var __v0 = use("Runtime.rs");
-		if (__v0.strpos(ctx, options, "e") >= 0)
-		{
-			s += use("Runtime.rtl").toStr("`\"'");
-		}
-		var res = "";
-		var __v0 = use("Runtime.rs");
-		var c = __v0.strlen(ctx, s);
-		for (var i = 0;i < length;i++)
-		{
-			var __v0 = use("Runtime.rtl");
-			var k = __v0.random(ctx, 0, c - 1);
-			res += use("Runtime.rtl").toStr(Runtime.rtl.get(ctx, s, k));
-		}
-		return res;
-	},
-	/**
-	 * Returns true if value is primitive value
-	 * @return boolean 
-	 */
-	isPrimitiveValue: function(ctx, value)
-	{
-		var __v0 = use("Runtime.rtl");
-		if (__v0.isScalarValue(ctx, value))
-		{
-			return true;
-		}
-		var __v0 = use("Runtime.Vector");
-		if (value instanceof __v0)
-		{
-			return true;
-		}
-		var __v0 = use("Runtime.Map");
-		if (value instanceof __v0)
-		{
-			return true;
-		}
-		return false;
-	},
-	/**
-	 * Convert bytes to string
-	 * @param Vector<byte> arr - vector of the bytes
-	 * @string charset - charset of the bytes vector. Default utf8
-	 * @return string
-	 */
-	bytesToString: function(ctx, arr, charset)
-	{
-		if (charset == undefined) charset = "utf8";
-	},
-	/**
-	 * Convert string to bytes
-	 * @param string s - incoming string
-	 * @param charset - Result bytes charset. Default utf8
-	 * @return Collection<byte> output collection
-	 */
-	toString: function(ctx, arr, charset)
-	{
-		if (charset == undefined) charset = "utf8";
-		return this.bytesToString(ctx, arr, charset);
-	},
-	/**
-	 * Convert string to bytes
-	 * @param string s - incoming string
-	 * @param Vector<byte> arr - output vector
-	 * @param charset - Result bytes charset. Default utf8
-	 */
-	stringToBytes: function(ctx, s, arr, charset)
-	{
-		if (charset == undefined) charset = "utf8";
-	},
-	/**
-	 * Convert string to bytes
-	 * @param string s - incoming string
-	 * @param charset - Result bytes charset. Default utf8
-	 * @return Collection<byte> output collection
-	 */
-	toBytes: function(ctx, s, charset)
-	{
-		if (charset == undefined) charset = "utf8";
-		return this.stringToBytes(ctx, s, charset);
-	},
-	/**
-	 * Translate message
-	 * @params string message - message need to be translated
-	 * @params Dict params - Messages params. Default null.
-	 * @params string locale - Different locale. Default "".
-	 * @return string - translated string
-	 */
-	translate: function(ctx, message, params, locale, context)
-	{
-		if (params == undefined) params = null;
-		if (locale == undefined) locale = "";
-		if (context == undefined) context = null;
-		if (context == null)
-		{
-			context = Runtime.RuntimeUtils.getContext(ctx);
-		}
-		if (context != null)
-		{
-			context.translate(ctx, message, params, locale);
-		}
-		return message;
-	},
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
 	{
@@ -843,6 +667,4 @@ Object.assign(Runtime.RuntimeUtils,
 		return null;
 	},
 });use.add(Runtime.RuntimeUtils);
-if (module.exports == undefined) module.exports = {};
-if (module.exports.Runtime == undefined) module.exports.Runtime = {};
-module.exports.Runtime.RuntimeUtils = Runtime.RuntimeUtils;
+module.exports = Runtime.RuntimeUtils;

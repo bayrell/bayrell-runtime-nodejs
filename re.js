@@ -124,6 +124,4 @@ Object.assign(Runtime.re,
 		return null;
 	},
 });use.add(Runtime.re);
-if (module.exports == undefined) module.exports = {};
-if (module.exports.Runtime == undefined) module.exports.Runtime = {};
-module.exports.Runtime.re = Runtime.re;
+module.exports = Runtime.re;

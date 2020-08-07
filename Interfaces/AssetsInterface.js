@@ -40,7 +40,4 @@ Object.assign(Runtime.Interfaces.AssetsInterface,
 		return "Runtime.Interfaces.AssetsInterface";
 	},
 });use.add(Runtime.Interfaces.AssetsInterface);
-if (module.exports == undefined) module.exports = {};
-if (module.exports.Runtime == undefined) module.exports.Runtime = {};
-if (module.exports.Runtime.Interfaces == undefined) module.exports.Runtime.Interfaces = {};
-module.exports.Runtime.Interfaces.AssetsInterface = Runtime.Interfaces.AssetsInterface;
+module.exports = Runtime.Interfaces.AssetsInterface;

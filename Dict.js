@@ -45,8 +45,8 @@ Runtime._Map = function(ctx, map)
 	this.__uq__ = Symbol();
 	return this;
 }
-Runtime._Map.prototype = Object.create(Map.prototype);
-Runtime._Map.prototype.constructor = Runtime._Map;
+/*Runtime._Map.prototype = Object.create(Map.prototype);
+Runtime._Map.prototype.constructor = Runtime._Map;*/
 Object.assign(Runtime._Map.prototype,
 {
 	toStr: function(value)
@@ -302,13 +302,13 @@ Object.assign(Runtime.Dict.prototype,
 	 */
 	filter: function(ctx, f)
 	{
-		var obj = this.contstructor.Instance(ctx);
+		var obj = this.constructor.Instance(ctx);
 		for (var key in this._map)
 		{
 			var new_key = key.substring(1);
 			var value = this._map[key];
 			var flag = f(ctx, value, new_key);
-			if (flag) obj._map[key] = new_val;
+			if (flag) obj._map[key] = value;
 		}
 		return obj;
 	},
@@ -462,6 +462,4 @@ Object.assign(Runtime.Dict,
 		return null;
 	},
 });use.add(Runtime.Dict);
-if (module.exports == undefined) module.exports = {};
-if (module.exports.Runtime == undefined) module.exports.Runtime = {};
-module.exports.Runtime.Dict = Runtime.Dict;
+module.exports = Runtime.Dict;

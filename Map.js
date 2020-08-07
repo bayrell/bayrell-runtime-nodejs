@@ -46,7 +46,7 @@ Object.assign(Runtime.Map.prototype,
 	remove: function(ctx, key)
 	{
 		key = this.toStr(key);
-		if (this.has("|" + key))
+		if (typeof this._map["|" + key] != "undefined")
 		{
 			delete this._map["|" + key];
 		}
@@ -144,6 +144,4 @@ Object.assign(Runtime.Map,
 		return null;
 	},
 });use.add(Runtime.Map);
-if (module.exports == undefined) module.exports = {};
-if (module.exports.Runtime == undefined) module.exports.Runtime = {};
-module.exports.Runtime.Map = Runtime.Map;
+module.exports = Runtime.Map;

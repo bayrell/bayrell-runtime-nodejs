@@ -16,96 +16,53 @@
  *  limitations under the License.
  */
 
-if (false){
 
-function ObjectAssign(res, obj){
-	for (var key in obj){
-		if (res[key] == undefined) res[key] = obj[key];
-		else if (res[key] instanceof Object) ObjectAssign(res[key], obj[key]);
-	}
+var exports = {
+	VERSION: '0.10.0',
+	MODULE_NAME: 'Runtime',
 }
 
-module.exports = {
-	VERSION: '0.9.3',
-};
-
-}
-else{
-
-var use = require('bayrell').use;
-
-function ObjectAssign(res, obj){
-	for (var key in obj){
-		if (res[key] == undefined) res[key] = obj[key];
-		else if (res[key] instanceof Object) ObjectAssign(res[key], obj[key]);
-	}
+function add(name)
+{
+	var module_name = exports.MODULE_NAME;
+	
+	name = name
+		.substr(module_name.length + 1)
+		.replace(".", "/")
+	;
+	
+	var path = __dirname + "/" + name + ".js";
+	var obj = require(path);
 }
 
-module.exports = {
-	VERSION: '0.9.3',
-	'rs': require(__dirname + "/rs.js"),
-	'rtl': require(__dirname + "/rtl.js"),
-	'lib': require(__dirname + "/lib.js"),
-	'Collection': require(__dirname + "/Collection.js"),
-	'Dict': require(__dirname + "/Dict.js"),
-	'Map': require(__dirname + "/Map.js"),
-	'Vector': require(__dirname + "/Vector.js"),
-	'CoreObject': require(__dirname + "/CoreObject.js"),
-	'CoreStruct': require(__dirname + "/CoreStruct.js"),
-	'FakeStruct': require(__dirname + "/FakeStruct.js"),
-	'BusResult': require(__dirname + "/BusResult.js"),
-	'Context': require(__dirname + "/Context.js"),
-	'CoreDriver': require(__dirname + "/CoreDriver.js"),
-	'CoreEvent': require(__dirname + "/CoreEvent.js"),
-	'CoreProvider': require(__dirname + "/CoreProvider.js"),
-	'DateTime': require(__dirname + "/DateTime.js"),
-	'lib': require(__dirname + "/lib.js"),
-	'ModuleDescription': require(__dirname + "/ModuleDescription.js"),
-	'PathInfo': require(__dirname + "/PathInfo.js"),
-	're': require(__dirname + "/re.js"),
-	'Reference': require(__dirname + "/Reference.js"),
-	'RuntimeConstant': require(__dirname + "/RuntimeConstant.js"),
-	'RuntimeUtils': require(__dirname + "/RuntimeUtils.js"),
-	'Session': require(__dirname + "/Session.js"),
-	'UIStruct': require(__dirname + "/UIStruct.js"),
-	'Annotations': {
-		'Entity': require(__dirname + "/Annotations/Entity.js"),
-	},
-	'Exceptions': {
-		'RuntimeException': require(__dirname + "/Exceptions/RuntimeException.js"),
-	},
-};
+add("Runtime.lib");
+add("Runtime.re");
+add("Runtime.rtl");
+add("Runtime.rs");
+add("Runtime.fs");
+add("Runtime.Collection");
+add("Runtime.Dict");
+add("Runtime.Map");
+add("Runtime.Monad");
+add("Runtime.Vector");
+add("Runtime.CoreObject");
+add("Runtime.CoreStruct");
+add("Runtime.DateTime");
+add("Runtime.PathInfo");
+add("Runtime.Reference");
+add("Runtime.RuntimeUtils");
+add("Runtime.Annotations.IntrospectionClass");
+add("Runtime.Annotations.IntrospectionInfo");
+add("Runtime.Exceptions.RuntimeException");
+add("Runtime.Exceptions.ApiException");
+add("Runtime.Exceptions.AssignStructValueError");
+add("Runtime.Exceptions.IndexOutOfRange");
+add("Runtime.Exceptions.KeyNotFound");
+add("Runtime.Exceptions.UnknownError");
+add("Runtime.Interfaces.AssetsInterface");
+add("Runtime.Interfaces.ContextInterface");
+add("Runtime.Interfaces.ModuleDescriptionInterface");
+add("Runtime.Interfaces.StringInterface");
+add("Runtime.ModuleDescription");
 
-//console.log( "Runtime.Exceptions.RuntimeException" );
-//console.log( use("Runtime.Exceptions.RuntimeException") );
-
-ObjectAssign(module.exports, {
-	'Annotations': {
-		'Driver': require(__dirname + "/Annotations/Driver.js"),
-		'IntrospectionClass': require(__dirname + "/Annotations/IntrospectionClass.js"),
-		'IntrospectionInfo': require(__dirname + "/Annotations/IntrospectionInfo.js"),
-		'LambdaChain': require(__dirname + "/Annotations/LambdaChain.js"),
-		'LambdaChainDeclare': require(__dirname + "/Annotations/LambdaChainDeclare.js"),
-		'Provider': require(__dirname + "/Annotations/Provider.js"),
-	},
-	'Exceptions': {
-		'ApiException': require(__dirname + "/Exceptions/ApiException.js"),
-		'AssignStructValueError': require(__dirname + "/Exceptions/AssignStructValueError.js"),
-		'IndexOutOfRange': require(__dirname + "/Exceptions/IndexOutOfRange.js"),
-		'KeyNotFound': require(__dirname + "/Exceptions/KeyNotFound.js"),
-		'UnknownError': require(__dirname + "/Exceptions/UnknownError.js"),
-	},
-	'Interfaces': {
-		'AssetsInterface': require(__dirname + "/Interfaces/AssetsInterface.js"),
-		'BusInterface': require(__dirname + "/Interfaces/BusInterface.js"),
-		'ModuleDescriptionInterface': require(__dirname + "/Interfaces/ModuleDescriptionInterface.js"),
-		'SerializeInterface': require(__dirname + "/Interfaces/SerializeInterface.js"),
-		'StringInterface': require(__dirname + "/Interfaces/StringInterface.js"),
-	},
-});
-
-
-
-require('bayrell').use.add_exports(module.exports);
-
-}
+module.exports = exports;

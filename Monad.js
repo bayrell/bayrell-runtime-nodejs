@@ -75,57 +75,35 @@ Object.assign(Runtime.Monad.prototype,
 	/**
 	 * Call async function on value
 	 */
-	callAsync: function(ctx, f)
+	callAsync: async function(ctx, f)
 	{
-		var res,err;
-		return (__async_t) =>
+		if (this.val === null || this.err != null)
 		{
-			if (__async_t.pos(ctx) == "0")
+			return Promise.resolve(this);
+		}
+		var res = null;
+		var err = null;
+		var __v0 = use("Runtime.Exceptions.RuntimeException");
+		try
+		{
+			res = await f(ctx, this.val);
+		}
+		catch (_ex)
+		{
+			if (_ex instanceof __v0)
 			{
-				if (this.val === null || this.err != null)
-				{
-					return __async_t.ret(ctx, this);
-				}
+				var e = _ex;
+				
 				res = null;
-				err = null;
-				var __v0 = use("Runtime.Exceptions.RuntimeException");
-				return __async_t.jump(ctx, "1");
+				err = e;
 			}
-			/* Start Try */
-			else if (__async_t.pos(ctx) == "1")
+			else
 			{
-				__async_t = __async_t.catch_push(ctx, "1.0");
-				return __async_t.jump(ctx, "1.1").call(ctx, f(ctx, this.val),"__v0");
+				throw _ex;
 			}
-			else if (__async_t.pos(ctx) == "1.1")
-			{
-				res = __async_t.getVar(ctx, "__v0");
-				return __async_t.catch_pop(ctx).jump(ctx, "2");
-			}
-			/* Start Catch */
-			else if (__async_t.pos(ctx) == "1.0")
-			{
-				var _ex = __async_t.getErr(ctx);
-				if (_ex instanceof __v0)
-				{
-					var e = _ex;
-					res = null;
-					err = e;
-				}
-				else
-				{
-					throw _ex;
-				}
-				return __async_t.jump(ctx, "2");
-			}
-			/* End Catch */
-			else if (__async_t.pos(ctx) == "2")
-			{
-				var __v0 = use("Runtime.Monad");
-				return __async_t.ret(ctx, new __v0(ctx, res, err));
-			}
-			return __async_t.ret_void(ctx);
-		};
+		}
+		var __v0 = use("Runtime.Monad");
+		return Promise.resolve(new __v0(ctx, res, err));
 	},
 	/**
 	 * Call method on value
@@ -139,21 +117,21 @@ Object.assign(Runtime.Monad.prototype,
 		}
 		var res = null;
 		var err = null;
-		var __v0 = use("Runtime.Exceptions.RuntimeException");
+		var __v1 = use("Runtime.Exceptions.RuntimeException");
 		try
 		{
 			var __v0 = use("Runtime.rtl");
 			var f = __v0.method(ctx, this.val.getClassName(ctx), method_name);
 			if (args != null)
 			{
-				var __v0 = use("Runtime.rtl");
-				f = __v0.apply(ctx, f, args);
+				var __v1 = use("Runtime.rtl");
+				f = __v1.apply(ctx, f, args);
 			}
 			res = f(ctx, this.val);
 		}
 		catch (_ex)
 		{
-			if (_ex instanceof __v0)
+			if (_ex instanceof __v1)
 			{
 				var e = _ex;
 				
@@ -171,64 +149,43 @@ Object.assign(Runtime.Monad.prototype,
 	/**
 	 * Call async method on value
 	 */
-	callMethodAsync: function(ctx, method_name, args)
+	callMethodAsync: async function(ctx, method_name, args)
 	{
-		var res,err,f;
-		return (__async_t) =>
+		if (args == undefined) args = null;
+		if (this.val === null || this.err != null)
 		{
-			if (__async_t.pos(ctx) == "0")
+			return Promise.resolve(this);
+		}
+		var res = null;
+		var err = null;
+		var __v1 = use("Runtime.Exceptions.RuntimeException");
+		try
+		{
+			var __v0 = use("Runtime.rtl");
+			var f = __v0.method(ctx, this.val.getClassName(ctx), method_name);
+			if (args != null)
 			{
-				if (this.val === null || this.err != null)
-				{
-					return __async_t.ret(ctx, this);
-				}
+				var __v1 = use("Runtime.rtl");
+				f = __v1.apply(ctx, f, args);
+			}
+			res = await f(ctx, this.val);
+		}
+		catch (_ex)
+		{
+			if (_ex instanceof __v1)
+			{
+				var e = _ex;
+				
 				res = null;
-				err = null;
-				var __v0 = use("Runtime.Exceptions.RuntimeException");
-				return __async_t.jump(ctx, "1");
+				err = e;
 			}
-			/* Start Try */
-			else if (__async_t.pos(ctx) == "1")
+			else
 			{
-				__async_t = __async_t.catch_push(ctx, "1.0");
-				var __v0 = use("Runtime.rtl");
-				f = __v0.method(ctx, this.val.getClassName(ctx), method_name);
-				if (args != null)
-				{
-					var __v0 = use("Runtime.rtl");
-					f = __v0.apply(ctx, f, args);
-				}
-				return __async_t.jump(ctx, "1.1").call(ctx, f(ctx, this.val),"__v0");
+				throw _ex;
 			}
-			else if (__async_t.pos(ctx) == "1.1")
-			{
-				res = __async_t.getVar(ctx, "__v0");
-				return __async_t.catch_pop(ctx).jump(ctx, "2");
-			}
-			/* Start Catch */
-			else if (__async_t.pos(ctx) == "1.0")
-			{
-				var _ex = __async_t.getErr(ctx);
-				if (_ex instanceof __v0)
-				{
-					var e = _ex;
-					res = null;
-					err = e;
-				}
-				else
-				{
-					throw _ex;
-				}
-				return __async_t.jump(ctx, "2");
-			}
-			/* End Catch */
-			else if (__async_t.pos(ctx) == "2")
-			{
-				var __v0 = use("Runtime.Monad");
-				return __async_t.ret(ctx, new __v0(ctx, res, err));
-			}
-			return __async_t.ret_void(ctx);
-		};
+		}
+		var __v0 = use("Runtime.Monad");
+		return Promise.resolve(new __v0(ctx, res, err));
 	},
 	/**
 	 * Call function on monad
@@ -352,6 +309,4 @@ Object.assign(Runtime.Monad,
 		return null;
 	},
 });use.add(Runtime.Monad);
-if (module.exports == undefined) module.exports = {};
-if (module.exports.Runtime == undefined) module.exports.Runtime = {};
-module.exports.Runtime.Monad = Runtime.Monad;
+module.exports = Runtime.Monad;

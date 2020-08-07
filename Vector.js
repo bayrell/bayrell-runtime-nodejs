@@ -28,6 +28,30 @@ Runtime.Vector.prototype.constructor = Runtime.Vector;
 Object.assign(Runtime.Vector.prototype,
 {
 	/**
+	 * Returns new Collection
+	 * @param int offset
+	 * @param int lenght
+	 * @return Collection<T>
+	 */
+	slice: function(ctx, offset, length)
+	{
+		if (length == undefined) length = null;
+		if (offset == undefined) offset = 0;
+		if (length == undefined)
+		{
+			var arr = Array.prototype.slice.call(this, offset);
+			Object.setPrototypeOf(arr, this.constructor.prototype);
+			return arr;
+		}
+		if (length >= 0)
+		{
+			length = offset + length;
+		}
+		var arr = Array.prototype.slice.call(this, offset, length);
+		Object.setPrototypeOf(arr, this.constructor.prototype);
+		return arr;
+	},
+	/**
 	 * Append value to the end of array
 	 * @param T value
 	 */
@@ -265,6 +289,4 @@ Object.assign(Runtime.Vector,
 		return null;
 	},
 });use.add(Runtime.Vector);
-if (module.exports == undefined) module.exports = {};
-if (module.exports.Runtime == undefined) module.exports.Runtime = {};
-module.exports.Runtime.Vector = Runtime.Vector;
+module.exports = Runtime.Vector;

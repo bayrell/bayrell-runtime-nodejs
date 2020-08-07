@@ -43,6 +43,46 @@ Object.assign(Runtime.rtl.prototype,
 });
 Object.assign(Runtime.rtl,
 {
+	LOG_FATAL: 0,
+	LOG_CRITICAL: 2,
+	LOG_ERROR: 4,
+	LOG_WARNING: 6,
+	LOG_INFO: 8,
+	LOG_DEBUG: 10,
+	LOG_DEBUG2: 12,
+	STATUS_PLAN: 0,
+	STATUS_DONE: 1,
+	STATUS_PROCESS: 100,
+	STATUS_FAIL: -1,
+	ERROR_NULL: 0,
+	ERROR_OK: 1,
+	ERROR_PROCCESS: 100,
+	ERROR_FALSE: -100,
+	ERROR_UNKNOWN: -1,
+	ERROR_INDEX_OUT_OF_RANGE: -2,
+	ERROR_KEY_NOT_FOUND: -3,
+	ERROR_STOP_ITERATION: -4,
+	ERROR_FILE_NOT_FOUND: -5,
+	ERROR_ITEM_NOT_FOUND: -5,
+	ERROR_OBJECT_DOES_NOT_EXISTS: -5,
+	ERROR_OBJECT_ALLREADY_EXISTS: -6,
+	ERROR_ASSERT: -7,
+	ERROR_REQUEST: -8,
+	ERROR_RESPONSE: -9,
+	ERROR_CSRF_TOKEN: -10,
+	ERROR_RUNTIME: -11,
+	ERROR_VALIDATION: -12,
+	ERROR_PARSE_SERIALIZATION_ERROR: -14,
+	ERROR_ASSIGN_DATA_STRUCT_VALUE: -15,
+	ERROR_AUTH: -16,
+	ERROR_DUPLICATE: -17,
+	ERROR_API_NOT_FOUND: -18,
+	ERROR_FATAL: -99,
+	ERROR_HTTP_CONTINUE: -100,
+	ERROR_HTTP_SWITCH: -101,
+	ERROR_HTTP_PROCESSING: -102,
+	ERROR_HTTP_OK: -200,
+	ERROR_HTTP_BAD_GATEWAY: -502,
 	_memorize_cache: null,
 	_memorize_not_found: null,
 	_memorize_hkey: null,
@@ -203,6 +243,7 @@ Object.assign(Runtime.rtl,
 			throw new Error("Method " + method_name + " not found in " + class_name);
 		}
 		
+		return obj[method_name].bind(obj);
 		return function(obj, method_name){ return function () {
 			return obj[method_name].apply(obj, arguments);
 		}}(obj, method_name);
@@ -213,7 +254,10 @@ Object.assign(Runtime.rtl,
 	 */
 	apply: function(ctx, f, args)
 	{
+		var res;
 		if (args == null) args = [];
+		else args = Array.prototype.slice.call(args);
+		
 		args.unshift(ctx);
 		if (this.isString(ctx, f))
 		{
@@ -221,9 +265,14 @@ Object.assign(Runtime.rtl,
 			var c = a[0]; var m = a[1];
 			c = this.find_class(c);
 			f = c[m];
-			return f.apply(c, args);
+			res = f.apply(c, args);
 		}
-		return f.apply(null, args);
+		else
+		{
+			res = f.apply(null, args);
+		}
+		
+		return res;
 	},
 	/**
 	 * Call await method
@@ -267,9 +316,13 @@ Object.assign(Runtime.rtl,
 	attr: function(ctx, item, path, def_val)
 	{
 		if (def_val == undefined) def_val = null;
+		var Collection = use("Runtime.Collection");
+		var Dict = use("Runtime.Dict");
+		var CoreStruct = use("Runtime.CoreStruct");
+		
 		if (def_val == undefined) def_val = null;
 		if (item === null) return def_val;
-		if (typeof path == "string") path = Runtime.Collection.from([path]);
+		if (typeof path == "string") path = Collection.from([path]);
 		if (path.count() == 0)
 		{
 			return item;
@@ -277,13 +330,13 @@ Object.assign(Runtime.rtl,
 		var key = path.first(ctx);
 		var path = path.removeFirstIm(ctx);
 		var val = def_val;
-		if (item instanceof Runtime.Dict || item instanceof Runtime.Collection)
+		if (item instanceof Dict || item instanceof Collection)
 		{
 			item = item.get(ctx, key, def_val);
 			val = this.attr(ctx, item, path, def_val);
 			return val;
 		}
-		else if (item instanceof Runtime.CoreStruct)
+		else if (item instanceof CoreStruct)
 		{
 			item = item.takeValue(ctx, key, def_val);
 			val = this.attr(ctx, item, path, def_val);
@@ -310,8 +363,8 @@ Object.assign(Runtime.rtl,
 			var new_data = null;
 			var attr_name = attrs.first(ctx);
 			var __v0 = use("Runtime.CoreStruct");
-			var __v1 = use("Runtime.Dict");
-			var __v2 = use("Runtime.Collection");
+			var __v2 = use("Runtime.Dict");
+			var __v3 = use("Runtime.Collection");
 			if (data instanceof __v0)
 			{
 				var attr_data = data.get(ctx, attr_name, null);
@@ -319,13 +372,13 @@ Object.assign(Runtime.rtl,
 				var __v1 = use("Runtime.Map");
 				new_data = data.copy(ctx, (new __v1(ctx)).set(ctx, attr_name, res));
 			}
-			else if (data instanceof __v1)
+			else if (data instanceof __v2)
 			{
 				var attr_data = data.get(ctx, attr_name, null);
 				var res = f(ctx, attrs.removeFirstIm(ctx), attr_data, new_value, f);
 				new_data = data.setIm(ctx, attr_name, res);
 			}
-			else if (data instanceof __v2)
+			else if (data instanceof __v3)
 			{
 				var attr_data = data.get(ctx, attr_name, null);
 				var res = f(ctx, attrs.removeFirstIm(ctx), attr_data, new_value, f);
@@ -372,6 +425,30 @@ Object.assign(Runtime.rtl,
 			return v;
 		}
 		return v;
+	},
+	/**
+	 * Convert monad by type
+	 */
+	m_to: function(ctx, type_value, def_value)
+	{
+		if (def_value == undefined) def_value = null;
+		return (ctx, m) => 
+		{
+			var __v0 = use("Runtime.Monad");
+			return new __v0(ctx, (m.err == null) ? (this.convert(m.value(ctx), type_value, def_value)) : (def_value));
+		};
+	},
+	/**
+	 * Convert monad to default value
+	 */
+	m_def: function(ctx, def_value)
+	{
+		if (def_value == undefined) def_value = null;
+		return (ctx, m) => 
+		{
+			var __v0 = use("Runtime.Monad");
+			return (m.err != null || m.val === null) ? (new __v0(ctx, def_value)) : (m);
+		};
 	},
 	/**
 	 * Returns value if value instanceof type_value, else returns def_value
@@ -517,12 +594,10 @@ Object.assign(Runtime.rtl,
 	toString: function(ctx, value)
 	{
 		var _StringInterface = use("Runtime.Interfaces.StringInterface");
-		/*if (isBrowser()) _StringInterface = Runtime.Interfaces.StringInterface; 
-		else _StringInterface = StringInterface;*/
 		
 		if (value === null) return "";
 		if (typeof value == 'string') return value;
-		if (value instanceof String) return ""+value;
+		if (value instanceof String) return "" + value;
 		if (this.is_implements(null, value, _StringInterface)) return value.toString();
 		return ""+value;
 	},
@@ -606,55 +681,39 @@ Object.assign(Runtime.rtl,
 	{
 		return Math.round(value);
 	},
+	/**
+	 * Json encode data
+	 * @param var data
+	 * @return string
+	 */
+	json_encode: function(ctx, data)
+	{
+		var f = this.method(ctx, "Runtime.RuntimeUtils", "json_encode");
+		return f(ctx, data);
+	},
+	/**
+	 * Json decode to primitive values
+	 * @param string s Encoded string
+	 * @return var
+	 */
+	json_decode: function(ctx, obj)
+	{
+		var f = this.method(ctx, "Runtime.RuntimeUtils", "json_decode");
+		return f(ctx, obj);
+	},
 	/* ====================== Chains ====================== */
 	/**
 	 * Apply async chain
 	 */
-	chainAwait: function(ctx, chain, args)
+	chainAwait: async function(ctx, chain, args)
 	{
-		var i,chain_name;
-		return (__async_t) =>
+		for (var i = 0;i < chain.count(ctx);i++)
 		{
-			if (__async_t.pos(ctx) == "0")
-			{
-				return __async_t.jump(ctx, "1.0");
-			}
-			/* Start Loop */
-			else if (__async_t.pos(ctx) == "1.0")
-			{
-				i = 0;
-				return __async_t.jump(ctx, "1.1");
-			}
-			/* Loop Expression */
-			else if (__async_t.pos(ctx) == "1.1")
-			{
-				var __async_var = i < chain.count(ctx);
-				if (__async_var)
-				{
-					return __async_t.jump(ctx, "1.2");
-				}
-				return __async_t.jump(ctx, "2");
-			}
-			/* Loop */
-			else if (__async_t.pos(ctx) == "1.2")
-			{
-				i++;
-				chain_name = chain.item(ctx, i);
-				var __v0 = use("Runtime.rtl");
-				return __async_t.jump(ctx, "1.3").call(ctx, __v0.apply(ctx, chain_name, args),"__v1");
-			}
-			else if (__async_t.pos(ctx) == "1.3")
-			{
-				args = __async_t.getVar(ctx, "__v1");
-				return __async_t.jump(ctx, "1.1");
-			}
-			/* End Loop */
-			else if (__async_t.pos(ctx) == "2")
-			{
-				return __async_t.ret(ctx, args);
-			}
-			return __async_t.ret_void(ctx);
-		};
+			var chain_name = chain.item(ctx, i);
+			var __v0 = use("Runtime.rtl");
+			args = await __v0.apply(ctx, chain_name, args);
+		}
+		return Promise.resolve(args);
 	},
 	/**
 	 * Apply chain
@@ -748,38 +807,16 @@ Object.assign(Runtime.rtl,
 	/**
 	 * Sleep in ms
 	 */
-	sleep: function(ctx, time)
+	sleep: async function(ctx, time)
 	{
-		return (__async_t) =>
-		{
-			if (__async_t.pos(ctx) == "0")
-			{
-				setTimeout
-		(
-			(function (__async_t)
-			{
-				return function()
-				{
-					__async_t.resolve(ctx, null);
-				};
-			})(__async_t),
-			time
-		);
-		return;
-			}
-			return __async_t.ret_void(ctx);
-		};
+		await new Promise((f, e) => setTimeout(f, time));
 	},
 	/**
 	 * Sleep in microseconds
 	 */
-	usleep: function(ctx, time)
+	usleep: async function(ctx, time)
 	{
-		return (__async_t) =>
-		{
-			if (__async_t.pos(ctx) == "0")
-			{
-				setTimeout
+		setTimeout
 		(
 			(function (__async_t)
 			{
@@ -791,9 +828,6 @@ Object.assign(Runtime.rtl,
 			Math.round(time / 1000)
 		);
 		return;
-			}
-			return __async_t.ret_void(ctx);
-		};
 	},
 	/**
 	 * Returns unique value
@@ -928,164 +962,11 @@ Object.assign(Runtime.rtl,
 		
 		return null;
 	},
-	/* =================== Deprecated =================== */
 	/**
-	 * Round down
-	 * @param double value
-	 * @return int
+	 * Convert to timestamp
 	 */
-	dump: function(ctx, value)
+	timestamp: function(ctx, s)
 	{
-		console.log(value);
-	},
-	/**
-	 * Translate message
-	 * @params string message - message need to be translated
-	 * @params MapInterface params - Messages params. Default null.
-	 * @params string locale - Different locale. Default "".
-	 * @return string - translated string
-	 */
-	translate: function(ctx, message, params, locale, context)
-	{
-		if (params == undefined) params = null;
-		if (locale == undefined) locale = "";
-		if (context == undefined) context = null;
-		return this.callStaticMethod("Runtime.RuntimeUtils", "translate", [message, params, locale, context]);
-	},
-	/**
-	 * Json encode data
-	 * @param var data
-	 * @return string
-	 */
-	json_encode: function(ctx, data)
-	{
-		return this.callStaticMethod("Runtime.RuntimeUtils", "json_encode", [data]);
-	},
-	/**
-	 * Call method
-	 * @return Object
-	 */
-	f: function(ctx, f)
-	{
-		return f;
-	},
-	/**
-	 * Returns value if value instanceof type_value, else returns def_value
-	 * @param var value
-	 * @param string type_value
-	 * @param var def_value
-	 * @param var type_template
-	 * @return var
-	 */
-	correct: function(ctx, value, def_value, type_value, type_template)
-	{
-		if (def_value == undefined) def_value = null;
-		if (type_template == undefined) type_template = "";
-		return this.convert(ctx, value, type_value, def_value, type_template);
-	},
-	/**
-	 * Convert module name to node js package
-	 */
-	convertNodeJSModuleName: function(ctx, name)
-	{
-		name = new String(name);
-		var arr1 = "qazwsxedcrfvtgbyhnujmikolp";
-		var arr2 = "01234567890";
-		var res = "";
-		var sz = name.length;
-		var previsbig = false;
-		for (var i = 0; i < sz; i++){
-			var ch = name[i];
-			var ch2 = ch.toUpperCase();
-			var ch3 = ch.toLowerCase();
-			var isAlpha = arr1.indexOf(ch3) != -1;
-			var isNum = arr2.indexOf(ch3) != -1;
-			if (i > 0 && ch == ch2 && !previsbig && isAlpha){
-				res += "-";
-			}
-			res += ch3;
-			if (ch == ch2 && isAlpha){
-				previsbig = true;
-			}
-			else {
-				previsbig = false;
-			}
-			if (!isAlpha && !isNum){
-				previsbig = true;
-			}
-		}
-		res += "-nodejs";
-		return res;
-	},
-	/**
-	 * Returns module path. For backend only
-	 */
-	getModulePath: function(ctx, module_name)
-	{
-		return "";
-	},
-	/**
-	 * Save local file
-	 */
-	saveLocalFile: function(ctx, path, content, ch, chroot)
-	{
-		var filepath;
-		return (__async_t) =>
-		{
-			if (__async_t.pos(ctx) == "0")
-			{
-				var __v0 = use("Runtime.rs");
-				if (chroot != "" && __v0.substr(ctx, chroot, -1) != "/")
-				{
-					chroot += use("Runtime.rtl").toStr("/");
-				}
-				filepath = chroot + use("Runtime.rtl").toStr(path);
-				return __async_t.ret(ctx, "");
-			}
-			return __async_t.ret_void(ctx);
-		};
-	},
-	/**
-	 * Read local file
-	 */
-	readLocalFile: function(ctx, path, ch, chroot)
-	{
-		var filepath;
-		return (__async_t) =>
-		{
-			if (__async_t.pos(ctx) == "0")
-			{
-				var __v0 = use("Runtime.rs");
-				if (chroot != "" && __v0.substr(ctx, chroot, -1) != "/")
-				{
-					chroot += use("Runtime.rtl").toStr("/");
-				}
-				filepath = chroot + use("Runtime.rtl").toStr(path);
-				return __async_t.ret(ctx, "");
-			}
-			return __async_t.ret_void(ctx);
-		};
-	},
-	/**
-	 * Make dir
-	 */
-	mkdir: function(ctx, path, chroot, mode)
-	{
-		var filepath;
-		return (__async_t) =>
-		{
-			if (__async_t.pos(ctx) == "0")
-			{
-				var __v0 = use("Runtime.rs");
-				if (chroot != "" && __v0.substr(ctx, chroot, -1) != "/")
-				{
-					chroot += use("Runtime.rtl").toStr("/");
-				}
-				filepath = chroot + use("Runtime.rtl").toStr(path);
-				return __async_t.ret(ctx, "");
-			}
-			return __async_t.ret_void(ctx);
-		};
 	},
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
@@ -1124,6 +1005,286 @@ Object.assign(Runtime.rtl,
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
 		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
+		if (field_name == "LOG_FATAL") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.rtl",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "LOG_CRITICAL") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.rtl",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "LOG_ERROR") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.rtl",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "LOG_WARNING") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.rtl",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "LOG_INFO") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.rtl",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "LOG_DEBUG") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.rtl",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "LOG_DEBUG2") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.rtl",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "STATUS_PLAN") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.rtl",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "STATUS_DONE") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.rtl",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "STATUS_PROCESS") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.rtl",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "STATUS_FAIL") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.rtl",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "ERROR_NULL") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.rtl",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "ERROR_OK") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.rtl",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "ERROR_PROCCESS") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.rtl",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "ERROR_FALSE") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.rtl",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "ERROR_UNKNOWN") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.rtl",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "ERROR_INDEX_OUT_OF_RANGE") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.rtl",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "ERROR_KEY_NOT_FOUND") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.rtl",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "ERROR_STOP_ITERATION") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.rtl",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "ERROR_FILE_NOT_FOUND") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.rtl",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "ERROR_ITEM_NOT_FOUND") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.rtl",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "ERROR_OBJECT_DOES_NOT_EXISTS") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.rtl",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "ERROR_OBJECT_ALLREADY_EXISTS") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.rtl",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "ERROR_ASSERT") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.rtl",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "ERROR_REQUEST") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.rtl",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "ERROR_RESPONSE") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.rtl",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "ERROR_CSRF_TOKEN") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.rtl",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "ERROR_RUNTIME") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.rtl",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "ERROR_VALIDATION") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.rtl",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "ERROR_PARSE_SERIALIZATION_ERROR") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.rtl",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "ERROR_ASSIGN_DATA_STRUCT_VALUE") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.rtl",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "ERROR_AUTH") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.rtl",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "ERROR_DUPLICATE") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.rtl",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "ERROR_API_NOT_FOUND") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.rtl",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "ERROR_FATAL") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.rtl",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "ERROR_HTTP_CONTINUE") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.rtl",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "ERROR_HTTP_SWITCH") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.rtl",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "ERROR_HTTP_PROCESSING") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.rtl",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "ERROR_HTTP_OK") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.rtl",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "ERROR_HTTP_BAD_GATEWAY") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.rtl",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
 		if (field_name == "_memorize_cache") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
@@ -1150,10 +1311,6 @@ Object.assign(Runtime.rtl,
 	getMethodsList: function(ctx)
 	{
 		var a = [
-			"getModulePath",
-			"saveLocalFile",
-			"readLocalFile",
-			"mkdir",
 		];
 		return use("Runtime.Collection").from(a);
 	},
@@ -1162,8 +1319,6 @@ Object.assign(Runtime.rtl,
 		return null;
 	},
 });use.add(Runtime.rtl);
-if (module.exports == undefined) module.exports = {};
-if (module.exports.Runtime == undefined) module.exports.Runtime = {};
-module.exports.Runtime.rtl = Runtime.rtl;
+module.exports = Runtime.rtl;
 if (typeof rtl != 'undefined') rtl._memorize_not_found = {'s':'memorize_key_not_found','id':Symbol()};
 if (typeof Runtime != 'undefined') Runtime.rtl._memorize_not_found = {'s':'memorize_key_not_found','id':Symbol()};

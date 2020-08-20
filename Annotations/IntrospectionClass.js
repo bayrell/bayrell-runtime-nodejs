@@ -21,9 +21,9 @@ if (typeof Runtime == 'undefined') Runtime = {};
 if (typeof Runtime.Annotations == 'undefined') Runtime.Annotations = {};
 Runtime.Annotations.IntrospectionClass = function(ctx)
 {
-	use("Runtime.CoreStruct").apply(this, arguments);
+	use("Runtime.BaseStruct").apply(this, arguments);
 };
-Runtime.Annotations.IntrospectionClass.prototype = Object.create(use("Runtime.CoreStruct").prototype);
+Runtime.Annotations.IntrospectionClass.prototype = Object.create(use("Runtime.BaseStruct").prototype);
 Runtime.Annotations.IntrospectionClass.prototype.constructor = Runtime.Annotations.IntrospectionClass;
 Object.assign(Runtime.Annotations.IntrospectionClass.prototype,
 {
@@ -36,7 +36,7 @@ Object.assign(Runtime.Annotations.IntrospectionClass.prototype,
 		this.fields = null;
 		this.methods = null;
 		this.interfaces = null;
-		use("Runtime.CoreStruct").prototype._init.call(this,ctx);
+		use("Runtime.BaseStruct").prototype._init.call(this,ctx);
 	},
 	assignObject: function(ctx,o)
 	{
@@ -48,7 +48,7 @@ Object.assign(Runtime.Annotations.IntrospectionClass.prototype,
 			this.methods = o.methods;
 			this.interfaces = o.interfaces;
 		}
-		use("Runtime.CoreStruct").prototype.assignObject.call(this,ctx,o);
+		use("Runtime.BaseStruct").prototype.assignObject.call(this,ctx,o);
 	},
 	assignValue: function(ctx,k,v)
 	{
@@ -57,7 +57,7 @@ Object.assign(Runtime.Annotations.IntrospectionClass.prototype,
 		else if (k == "fields")this.fields = v;
 		else if (k == "methods")this.methods = v;
 		else if (k == "interfaces")this.interfaces = v;
-		else use("Runtime.CoreStruct").prototype.assignValue.call(this,ctx,k,v);
+		else use("Runtime.BaseStruct").prototype.assignValue.call(this,ctx,k,v);
 	},
 	takeValue: function(ctx,k,d)
 	{
@@ -67,14 +67,14 @@ Object.assign(Runtime.Annotations.IntrospectionClass.prototype,
 		else if (k == "fields")return this.fields;
 		else if (k == "methods")return this.methods;
 		else if (k == "interfaces")return this.interfaces;
-		return use("Runtime.CoreStruct").prototype.takeValue.call(this,ctx,k,d);
+		return use("Runtime.BaseStruct").prototype.takeValue.call(this,ctx,k,d);
 	},
 	getClassName: function(ctx)
 	{
 		return "Runtime.Annotations.IntrospectionClass";
 	},
 });
-Object.assign(Runtime.Annotations.IntrospectionClass, use("Runtime.CoreStruct"));
+Object.assign(Runtime.Annotations.IntrospectionClass, use("Runtime.BaseStruct"));
 Object.assign(Runtime.Annotations.IntrospectionClass,
 {
 	/* ======================= Class Init Functions ======================= */
@@ -88,7 +88,7 @@ Object.assign(Runtime.Annotations.IntrospectionClass,
 	},
 	getParentClassName: function()
 	{
-		return "Runtime.CoreStruct";
+		return "Runtime.BaseStruct";
 	},
 	getClassInfo: function(ctx)
 	{

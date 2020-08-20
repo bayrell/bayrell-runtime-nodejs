@@ -18,17 +18,17 @@ var use = require('bayrell').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-Runtime.CoreStruct = function(ctx, obj)
+Runtime.BaseStruct = function(ctx, obj)
 {
 	if (obj == undefined) obj = null;
-	use("Runtime.CoreObject").call(this, ctx);
+	use("Runtime.BaseObject").call(this, ctx);
 	this.constructor._assign(ctx, this, null, obj);
 	if (this.__uq__ == undefined || this.__uq__ == null) this.__uq__ = Symbol();
 		Object.freeze(this);
 };
-Runtime.CoreStruct.prototype = Object.create(use("Runtime.CoreObject").prototype);
-Runtime.CoreStruct.prototype.constructor = Runtime.CoreStruct;
-Object.assign(Runtime.CoreStruct.prototype,
+Runtime.BaseStruct.prototype = Object.create(use("Runtime.BaseObject").prototype);
+Runtime.BaseStruct.prototype.constructor = Runtime.BaseStruct;
+Object.assign(Runtime.BaseStruct.prototype,
 {
 	/**
 	 * Init struct data
@@ -40,7 +40,7 @@ Object.assign(Runtime.CoreStruct.prototype,
 	/**
 	 * Copy this struct with new values
 	 * @param Map obj = null
-	 * @return CoreStruct
+	 * @return BaseStruct
 	 */
 	copy: function(ctx, obj)
 	{
@@ -63,7 +63,7 @@ Object.assign(Runtime.CoreStruct.prototype,
 	/**
 	 * Clone this struct with fields
 	 * @param Collection fields = null
-	 * @return CoreStruct
+	 * @return BaseStruct
 	 */
 	clone: function(ctx, fields)
 	{
@@ -87,7 +87,7 @@ Object.assign(Runtime.CoreStruct.prototype,
 	 * Create new struct with new value
 	 * @param string field_name
 	 * @param fn f
-	 * @return CoreStruct
+	 * @return BaseStruct
 	 */
 	map: function(ctx, field_name, f)
 	{
@@ -96,27 +96,27 @@ Object.assign(Runtime.CoreStruct.prototype,
 	},
 	assignObject: function(ctx,o)
 	{
-		if (o instanceof use("Runtime.CoreStruct"))
+		if (o instanceof use("Runtime.BaseStruct"))
 		{
 		}
-		use("Runtime.CoreObject").prototype.assignObject.call(this,ctx,o);
+		use("Runtime.BaseObject").prototype.assignObject.call(this,ctx,o);
 	},
 	assignValue: function(ctx,k,v)
 	{
-		use("Runtime.CoreObject").prototype.assignValue.call(this,ctx,k,v);
+		use("Runtime.BaseObject").prototype.assignValue.call(this,ctx,k,v);
 	},
 	takeValue: function(ctx,k,d)
 	{
 		if (d == undefined) d = null;
-		return use("Runtime.CoreObject").prototype.takeValue.call(this,ctx,k,d);
+		return use("Runtime.BaseObject").prototype.takeValue.call(this,ctx,k,d);
 	},
 	getClassName: function(ctx)
 	{
-		return "Runtime.CoreStruct";
+		return "Runtime.BaseStruct";
 	},
 });
-Object.assign(Runtime.CoreStruct, use("Runtime.CoreObject"));
-Object.assign(Runtime.CoreStruct,
+Object.assign(Runtime.BaseStruct, use("Runtime.BaseObject"));
+Object.assign(Runtime.BaseStruct,
 {
 	/**
 	 * Assign
@@ -154,11 +154,11 @@ Object.assign(Runtime.CoreStruct,
 	},
 	getCurrentClassName: function()
 	{
-		return "Runtime.CoreStruct";
+		return "Runtime.BaseStruct";
 	},
 	getParentClassName: function()
 	{
-		return "Runtime.CoreObject";
+		return "Runtime.BaseObject";
 	},
 	getClassInfo: function(ctx)
 	{
@@ -167,8 +167,8 @@ Object.assign(Runtime.CoreStruct,
 		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
 		return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_CLASS,
-			"class_name": "Runtime.CoreStruct",
-			"name": "Runtime.CoreStruct",
+			"class_name": "Runtime.BaseStruct",
+			"name": "Runtime.BaseStruct",
 			"annotations": Collection.from([
 			]),
 		});
@@ -201,6 +201,6 @@ Object.assign(Runtime.CoreStruct,
 		use(""),
 		use("Runtime.Interfaces.SerializeInterface"),
 	],
-});use.add(Runtime.CoreStruct);
-module.exports = Runtime.CoreStruct;
-Runtime.CoreStruct.prototype.get = function(ctx, k, v){ return this[k] != undefined ? this[k] : v; };
+});use.add(Runtime.BaseStruct);
+module.exports = Runtime.BaseStruct;
+Runtime.BaseStruct.prototype.get = function(ctx, k, v){ return this[k] != undefined ? this[k] : v; };

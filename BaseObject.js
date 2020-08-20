@@ -18,12 +18,12 @@ var use = require('bayrell').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-Runtime.CoreObject = function(ctx)
+Runtime.BaseObject = function(ctx)
 {
 	/* Init object */
 	this._init(ctx);
 };
-Object.assign(Runtime.CoreObject.prototype,
+Object.assign(Runtime.BaseObject.prototype,
 {
 	/**
 	 * Init function
@@ -33,7 +33,7 @@ Object.assign(Runtime.CoreObject.prototype,
 	},
 	assignObject: function(ctx,o)
 	{
-		if (o instanceof use("Runtime.CoreObject"))
+		if (o instanceof use("Runtime.BaseObject"))
 		{
 		}
 	},
@@ -46,10 +46,10 @@ Object.assign(Runtime.CoreObject.prototype,
 	},
 	getClassName: function(ctx)
 	{
-		return "Runtime.CoreObject";
+		return "Runtime.BaseObject";
 	},
 });
-Object.assign(Runtime.CoreObject,
+Object.assign(Runtime.BaseObject,
 {
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
@@ -58,7 +58,7 @@ Object.assign(Runtime.CoreObject,
 	},
 	getCurrentClassName: function()
 	{
-		return "Runtime.CoreObject";
+		return "Runtime.BaseObject";
 	},
 	getParentClassName: function()
 	{
@@ -71,8 +71,8 @@ Object.assign(Runtime.CoreObject,
 		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
 		return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_CLASS,
-			"class_name": "Runtime.CoreObject",
-			"name": "Runtime.CoreObject",
+			"class_name": "Runtime.BaseObject",
+			"name": "Runtime.BaseObject",
 			"annotations": Collection.from([
 			]),
 		});
@@ -100,5 +100,5 @@ Object.assign(Runtime.CoreObject,
 	{
 		return null;
 	},
-});use.add(Runtime.CoreObject);
-module.exports = Runtime.CoreObject;
+});use.add(Runtime.BaseObject);
+module.exports = Runtime.BaseObject;

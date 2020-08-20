@@ -18,14 +18,29 @@ var use = require('bayrell').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-Runtime.ModuleDescription = function(ctx)
+Runtime.Mutex = function(ctx)
 {
 };
-Object.assign(Runtime.ModuleDescription.prototype,
+Object.assign(Runtime.Mutex.prototype,
 {
+	lock: function(ctx)
+	{
+	},
+	unLock: function(ctx)
+	{
+	},
+	isLocked: function(ctx)
+	{
+	},
+	wait: async function(ctx)
+	{
+	},
+	waitAndLock: async function(ctx)
+	{
+	},
 	assignObject: function(ctx,o)
 	{
-		if (o instanceof use("Runtime.ModuleDescription"))
+		if (o instanceof use("Runtime.Mutex"))
 		{
 		}
 	},
@@ -38,57 +53,11 @@ Object.assign(Runtime.ModuleDescription.prototype,
 	},
 	getClassName: function(ctx)
 	{
-		return "Runtime.ModuleDescription";
+		return "Runtime.Mutex";
 	},
 });
-Object.assign(Runtime.ModuleDescription,
+Object.assign(Runtime.Mutex,
 {
-	/**
-	 * Returns module name
-	 * @return string
-	 */
-	getModuleName: function(ctx)
-	{
-		return "Runtime";
-	},
-	/**
-	 * Returns module name
-	 * @return string
-	 */
-	getModuleVersion: function(ctx)
-	{
-		return "0.10.1";
-	},
-	/**
-	 * Returns required modules
-	 * @return Map<string>
-	 */
-	requiredModules: function(ctx)
-	{
-		return null;
-	},
-	/**
-	 * Returns module files load order
-	 * @return Collection<string>
-	 */
-	assets: function(ctx)
-	{
-		return use("Runtime.Collection").from(["Runtime/rtl","Runtime/rs","Runtime/re","Runtime/lib","Runtime/AsyncAwait","Runtime/Collection","Runtime/Dict","Runtime/Map","Runtime/Vector","Runtime/Monad","Runtime/BaseObject","Runtime/BaseStruct","Runtime/DateTime","Runtime/Exceptions/RuntimeException","Runtime/Interfaces/AssetsInterface","Runtime/Interfaces/ModuleDescriptionInterface","Runtime/ModuleDescription"]);
-	},
-	/**
-	 * Returns enities
-	 */
-	entities: function(ctx)
-	{
-		return use("Runtime.Collection").from([]);
-	},
-	/**
-	 * Returns enities
-	 */
-	resources: function(ctx)
-	{
-		return null;
-	},
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
 	{
@@ -96,7 +65,7 @@ Object.assign(Runtime.ModuleDescription,
 	},
 	getCurrentClassName: function()
 	{
-		return "Runtime.ModuleDescription";
+		return "Runtime.Mutex";
 	},
 	getParentClassName: function()
 	{
@@ -109,8 +78,8 @@ Object.assign(Runtime.ModuleDescription,
 		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
 		return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_CLASS,
-			"class_name": "Runtime.ModuleDescription",
-			"name": "Runtime.ModuleDescription",
+			"class_name": "Runtime.Mutex",
+			"name": "Runtime.Mutex",
 			"annotations": Collection.from([
 			]),
 		});
@@ -138,10 +107,5 @@ Object.assign(Runtime.ModuleDescription,
 	{
 		return null;
 	},
-	__implements__:
-	[
-		use("Runtime.Interfaces.ModuleDescriptionInterface"),
-		use("Runtime.Interfaces.AssetsInterface"),
-	],
-});use.add(Runtime.ModuleDescription);
-module.exports = Runtime.ModuleDescription;
+});use.add(Runtime.Mutex);
+module.exports = Runtime.Mutex;

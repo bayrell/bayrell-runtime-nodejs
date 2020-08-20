@@ -20,9 +20,9 @@ var use = require('bayrell').use;
 if (typeof Runtime == 'undefined') Runtime = {};
 Runtime.DateTime = function(ctx)
 {
-	use("Runtime.CoreStruct").apply(this, arguments);
+	use("Runtime.BaseStruct").apply(this, arguments);
 };
-Runtime.DateTime.prototype = Object.create(use("Runtime.CoreStruct").prototype);
+Runtime.DateTime.prototype = Object.create(use("Runtime.BaseStruct").prototype);
 Runtime.DateTime.prototype.constructor = Runtime.DateTime;
 Object.assign(Runtime.DateTime.prototype,
 {
@@ -174,7 +174,7 @@ Object.assign(Runtime.DateTime.prototype,
 		this.s = 0;
 		this.ms = 0;
 		this.tz = "UTC";
-		use("Runtime.CoreStruct").prototype._init.call(this,ctx);
+		use("Runtime.BaseStruct").prototype._init.call(this,ctx);
 	},
 	assignObject: function(ctx,o)
 	{
@@ -189,7 +189,7 @@ Object.assign(Runtime.DateTime.prototype,
 			this.ms = o.ms;
 			this.tz = o.tz;
 		}
-		use("Runtime.CoreStruct").prototype.assignObject.call(this,ctx,o);
+		use("Runtime.BaseStruct").prototype.assignObject.call(this,ctx,o);
 	},
 	assignValue: function(ctx,k,v)
 	{
@@ -201,7 +201,7 @@ Object.assign(Runtime.DateTime.prototype,
 		else if (k == "s")this.s = v;
 		else if (k == "ms")this.ms = v;
 		else if (k == "tz")this.tz = v;
-		else use("Runtime.CoreStruct").prototype.assignValue.call(this,ctx,k,v);
+		else use("Runtime.BaseStruct").prototype.assignValue.call(this,ctx,k,v);
 	},
 	takeValue: function(ctx,k,d)
 	{
@@ -214,14 +214,14 @@ Object.assign(Runtime.DateTime.prototype,
 		else if (k == "s")return this.s;
 		else if (k == "ms")return this.ms;
 		else if (k == "tz")return this.tz;
-		return use("Runtime.CoreStruct").prototype.takeValue.call(this,ctx,k,d);
+		return use("Runtime.BaseStruct").prototype.takeValue.call(this,ctx,k,d);
 	},
 	getClassName: function(ctx)
 	{
 		return "Runtime.DateTime";
 	},
 });
-Object.assign(Runtime.DateTime, use("Runtime.CoreStruct"));
+Object.assign(Runtime.DateTime, use("Runtime.BaseStruct"));
 Object.assign(Runtime.DateTime,
 {
 	/**
@@ -268,7 +268,7 @@ Object.assign(Runtime.DateTime,
 	},
 	getParentClassName: function()
 	{
-		return "Runtime.CoreStruct";
+		return "Runtime.BaseStruct";
 	},
 	getClassInfo: function(ctx)
 	{

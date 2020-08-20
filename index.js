@@ -18,7 +18,7 @@
 
 
 var exports = {
-	VERSION: '0.10.0',
+	VERSION: '0.10.1',
 	MODULE_NAME: 'Runtime',
 }
 
@@ -44,9 +44,10 @@ add("Runtime.Collection");
 add("Runtime.Dict");
 add("Runtime.Map");
 add("Runtime.Monad");
+add("Runtime.Mutex");
 add("Runtime.Vector");
-add("Runtime.CoreObject");
-add("Runtime.CoreStruct");
+add("Runtime.BaseObject");
+add("Runtime.BaseStruct");
 add("Runtime.DateTime");
 add("Runtime.PathInfo");
 add("Runtime.Reference");

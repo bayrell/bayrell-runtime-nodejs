@@ -21,16 +21,16 @@ if (typeof Runtime == 'undefined') Runtime = {};
 Runtime.Reference = function(ctx, ref)
 {
 	if (ref == undefined) ref = null;
-	use("Runtime.CoreObject").call(this, ctx);
+	use("Runtime.BaseObject").call(this, ctx);
 	this.ref = ref;
 };
-Runtime.Reference.prototype = Object.create(use("Runtime.CoreObject").prototype);
+Runtime.Reference.prototype = Object.create(use("Runtime.BaseObject").prototype);
 Runtime.Reference.prototype.constructor = Runtime.Reference;
 Object.assign(Runtime.Reference.prototype,
 {
 	/**
 	 * Assign and clone data from other object
-	 * @param CoreObject obj
+	 * @param BaseObject obj
 	 */
 	assignObject: function(ctx, obj)
 	{
@@ -40,14 +40,14 @@ Object.assign(Runtime.Reference.prototype,
 			this.uq = obj.uq;
 			this.ref = this.ref;
 		}
-		use("Runtime.CoreObject").prototype.assignObject.call(this, ctx, obj);
+		use("Runtime.BaseObject").prototype.assignObject.call(this, ctx, obj);
 	},
 	_init: function(ctx)
 	{
 		var __v0 = use("Runtime.rtl");
 		this.uq = __v0.unique(ctx);
 		this.ref = null;
-		use("Runtime.CoreObject").prototype._init.call(this,ctx);
+		use("Runtime.BaseObject").prototype._init.call(this,ctx);
 	},
 	assignObject: function(ctx,o)
 	{
@@ -56,27 +56,27 @@ Object.assign(Runtime.Reference.prototype,
 			this.uq = o.uq;
 			this.ref = o.ref;
 		}
-		use("Runtime.CoreObject").prototype.assignObject.call(this,ctx,o);
+		use("Runtime.BaseObject").prototype.assignObject.call(this,ctx,o);
 	},
 	assignValue: function(ctx,k,v)
 	{
 		if (k == "uq")this.uq = v;
 		else if (k == "ref")this.ref = v;
-		else use("Runtime.CoreObject").prototype.assignValue.call(this,ctx,k,v);
+		else use("Runtime.BaseObject").prototype.assignValue.call(this,ctx,k,v);
 	},
 	takeValue: function(ctx,k,d)
 	{
 		if (d == undefined) d = null;
 		if (k == "uq")return this.uq;
 		else if (k == "ref")return this.ref;
-		return use("Runtime.CoreObject").prototype.takeValue.call(this,ctx,k,d);
+		return use("Runtime.BaseObject").prototype.takeValue.call(this,ctx,k,d);
 	},
 	getClassName: function(ctx)
 	{
 		return "Runtime.Reference";
 	},
 });
-Object.assign(Runtime.Reference, use("Runtime.CoreObject"));
+Object.assign(Runtime.Reference, use("Runtime.BaseObject"));
 Object.assign(Runtime.Reference,
 {
 	/* ======================= Class Init Functions ======================= */
@@ -90,7 +90,7 @@ Object.assign(Runtime.Reference,
 	},
 	getParentClassName: function()
 	{
-		return "Runtime.CoreObject";
+		return "Runtime.BaseObject";
 	},
 	getClassInfo: function(ctx)
 	{

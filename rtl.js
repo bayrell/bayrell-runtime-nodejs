@@ -23,6 +23,13 @@ Runtime.rtl = function(ctx)
 };
 Object.assign(Runtime.rtl.prototype,
 {
+	/**
+	 * Returns unix timestamp
+	 */
+	utime: function(ctx)
+	{
+		return (new Date()).getTime() * 1000;
+	},
 	assignObject: function(ctx,o)
 	{
 		if (o instanceof use("Runtime.rtl"))
@@ -292,6 +299,12 @@ Object.assign(Runtime.rtl,
 		Runtime.AsyncThread.run(ctx, t);
 	},
 	/**
+	 * Run thread
+	 */
+	runThread: function(ctx, f)
+	{
+	},
+	/**
 	 * Returns value
 	 */
 	get: function(ctx, item, key, def_val)
@@ -318,7 +331,7 @@ Object.assign(Runtime.rtl,
 		if (def_val == undefined) def_val = null;
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
-		var CoreStruct = use("Runtime.CoreStruct");
+		var BaseStruct = use("Runtime.BaseStruct");
 		
 		if (def_val == undefined) def_val = null;
 		if (item === null) return def_val;
@@ -336,7 +349,7 @@ Object.assign(Runtime.rtl,
 			val = this.attr(ctx, item, path, def_val);
 			return val;
 		}
-		else if (item instanceof CoreStruct)
+		else if (item instanceof BaseStruct)
 		{
 			item = item.takeValue(ctx, key, def_val);
 			val = this.attr(ctx, item, path, def_val);
@@ -362,7 +375,7 @@ Object.assign(Runtime.rtl,
 			}
 			var new_data = null;
 			var attr_name = attrs.first(ctx);
-			var __v0 = use("Runtime.CoreStruct");
+			var __v0 = use("Runtime.BaseStruct");
 			var __v2 = use("Runtime.Dict");
 			var __v3 = use("Runtime.Collection");
 			if (data instanceof __v0)
@@ -398,7 +411,7 @@ Object.assign(Runtime.rtl,
 	 */
 	to: function(v, o)
 	{
-		var e = Runtime.rtl.get(ctx, o, "e");
+		var e = o.e;
 		if (e == "mixed" || e == "primitive" || e == "var" || e == "fn" || e == "callback")
 		{
 			return v;
@@ -875,8 +888,8 @@ Object.assign(Runtime.rtl,
 	{
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
-		var CoreObject = use("Runtime.CoreObject");
-		var CoreStruct = use("Runtime.CoreStruct");
+		var BaseObject = use("Runtime.BaseObject");
+		var BaseStruct = use("Runtime.BaseStruct");
 		var FakeStruct = use("Runtime.FakeStruct");
 		var Reference = use("Runtime.Reference");
 		
@@ -935,7 +948,7 @@ Object.assign(Runtime.rtl,
 			}
 			return res;
 		}
-		else if (val instanceof CoreStruct)
+		else if (val instanceof BaseStruct)
 		{
 			return val;
 		}
@@ -947,7 +960,7 @@ Object.assign(Runtime.rtl,
 		{
 			return new Reference(ctx, val.ref);
 		}
-		else if (val instanceof CoreObject || typeof val == 'object')
+		else if (val instanceof BaseObject || typeof val == 'object')
 		{
 			var proto = Object.getPrototypeOf(val);
 			var res = Object.create(proto);

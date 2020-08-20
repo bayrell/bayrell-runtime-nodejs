@@ -20,9 +20,9 @@ var use = require('bayrell').use;
 if (typeof Runtime == 'undefined') Runtime = {};
 Runtime.PathInfo = function(ctx)
 {
-	use("Runtime.CoreStruct").apply(this, arguments);
+	use("Runtime.BaseStruct").apply(this, arguments);
 };
-Runtime.PathInfo.prototype = Object.create(use("Runtime.CoreStruct").prototype);
+Runtime.PathInfo.prototype = Object.create(use("Runtime.BaseStruct").prototype);
 Runtime.PathInfo.prototype.constructor = Runtime.PathInfo;
 Object.assign(Runtime.PathInfo.prototype,
 {
@@ -42,7 +42,7 @@ Object.assign(Runtime.PathInfo.prototype,
 		this.basename = "";
 		this.extension = "";
 		this.filename = "";
-		use("Runtime.CoreStruct").prototype._init.call(this,ctx);
+		use("Runtime.BaseStruct").prototype._init.call(this,ctx);
 	},
 	assignObject: function(ctx,o)
 	{
@@ -54,7 +54,7 @@ Object.assign(Runtime.PathInfo.prototype,
 			this.extension = o.extension;
 			this.filename = o.filename;
 		}
-		use("Runtime.CoreStruct").prototype.assignObject.call(this,ctx,o);
+		use("Runtime.BaseStruct").prototype.assignObject.call(this,ctx,o);
 	},
 	assignValue: function(ctx,k,v)
 	{
@@ -63,7 +63,7 @@ Object.assign(Runtime.PathInfo.prototype,
 		else if (k == "basename")this.basename = v;
 		else if (k == "extension")this.extension = v;
 		else if (k == "filename")this.filename = v;
-		else use("Runtime.CoreStruct").prototype.assignValue.call(this,ctx,k,v);
+		else use("Runtime.BaseStruct").prototype.assignValue.call(this,ctx,k,v);
 	},
 	takeValue: function(ctx,k,d)
 	{
@@ -73,14 +73,14 @@ Object.assign(Runtime.PathInfo.prototype,
 		else if (k == "basename")return this.basename;
 		else if (k == "extension")return this.extension;
 		else if (k == "filename")return this.filename;
-		return use("Runtime.CoreStruct").prototype.takeValue.call(this,ctx,k,d);
+		return use("Runtime.BaseStruct").prototype.takeValue.call(this,ctx,k,d);
 	},
 	getClassName: function(ctx)
 	{
 		return "Runtime.PathInfo";
 	},
 });
-Object.assign(Runtime.PathInfo, use("Runtime.CoreStruct"));
+Object.assign(Runtime.PathInfo, use("Runtime.BaseStruct"));
 Object.assign(Runtime.PathInfo,
 {
 	/* ======================= Class Init Functions ======================= */
@@ -94,7 +94,7 @@ Object.assign(Runtime.PathInfo,
 	},
 	getParentClassName: function()
 	{
-		return "Runtime.CoreStruct";
+		return "Runtime.BaseStruct";
 	},
 	getClassInfo: function(ctx)
 	{

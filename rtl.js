@@ -198,14 +198,16 @@ Object.assign(Runtime.rtl,
 	 */
 	method_exists: function(ctx, class_name, method_name)
 	{
+		if (typeof(class_name) == "object")
+		{
+			if (class_name[method_name] != undefined) return true;
+			return false;
+		}
+		
 		var obj = this.find_class(class_name);
 		if (!this.exists(ctx, obj)) return false;
-		if (
-			!this.exists(ctx, obj[method_name]) && 
-			!this.exists(ctx, obj.prototype) && 
-			!this.exists(ctx, obj.prototype[method_name])
-		) return false;
-		return true;
+		if (this.exists(ctx, obj[method_name])) return true;
+		return false;
 	},
 	/**
 	 * Create object by class_name. If class name does not exists return null
@@ -219,8 +221,8 @@ Object.assign(Runtime.rtl,
 		if (!(obj instanceof Function)) return null;
 		if (args == undefined || args == null) args = [];
 		args = args.slice(); 
-		args.unshift(null);
 		args.unshift(ctx);
+		args.unshift(null);
 		var f = Function.prototype.bind.apply(obj, args);
 		return new f;
 	},
@@ -285,8 +287,16 @@ Object.assign(Runtime.rtl,
 	 * Call await method
 	 * @return fn
 	 */
-	applyAwait: function(ctx, f, args)
+	applyAsync: async function(ctx, f, args)
 	{
+		await f.apply(null, args);
+	},
+	/**
+	 * Run thread
+	 */
+	runThread: function(ctx, f)
+	{
+		/*
 		args.unshift(ctx);
 		var t = new Runtime.AsyncThread(ctx, {
 			"tasks": Runtime.Collection.from([
@@ -297,12 +307,7 @@ Object.assign(Runtime.rtl,
 			])
 		});
 		Runtime.AsyncThread.run(ctx, t);
-	},
-	/**
-	 * Run thread
-	 */
-	runThread: function(ctx, f)
-	{
+		*/
 	},
 	/**
 	 * Returns value
@@ -336,6 +341,7 @@ Object.assign(Runtime.rtl,
 		if (def_val == undefined) def_val = null;
 		if (item === null) return def_val;
 		if (typeof path == "string") path = Collection.from([path]);
+		else if (Array.isArray(path) && path.count == undefined) path = Collection.from(path);
 		if (path.count() == 0)
 		{
 			return item;
@@ -363,6 +369,9 @@ Object.assign(Runtime.rtl,
 	 */
 	setAttr: function(ctx, item, attrs, new_value)
 	{
+		var Collection = use("Runtime.Collection");
+		if (typeof attrs == "string") attrs = Collection.from([attrs]);
+		else if (Array.isArray(attrs) && attrs.count == undefined) attrs = Collection.from(attrs);
 		var f = (ctx, attrs, data, new_value, f) => 
 		{
 			if (attrs.count(ctx) == 0)

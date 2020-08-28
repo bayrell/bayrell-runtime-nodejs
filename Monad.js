@@ -108,7 +108,7 @@ Object.assign(Runtime.Monad.prototype,
 	/**
 	 * Call method on value
 	 */
-	callMethod: function(ctx, method_name, args)
+	callMethod: function(ctx, f, args)
 	{
 		if (args == undefined) args = null;
 		if (this.val === null || this.err != null)
@@ -121,13 +121,7 @@ Object.assign(Runtime.Monad.prototype,
 		try
 		{
 			var __v0 = use("Runtime.rtl");
-			var f = __v0.method(ctx, this.val.getClassName(ctx), method_name);
-			if (args != null)
-			{
-				var __v1 = use("Runtime.rtl");
-				f = __v1.apply(ctx, f, args);
-			}
-			res = f(ctx, this.val);
+			res = __v0.apply(ctx, f, args);
 		}
 		catch (_ex)
 		{
@@ -149,7 +143,7 @@ Object.assign(Runtime.Monad.prototype,
 	/**
 	 * Call async method on value
 	 */
-	callMethodAsync: async function(ctx, method_name, args)
+	callMethodAsync: async function(ctx, f, args)
 	{
 		if (args == undefined) args = null;
 		if (this.val === null || this.err != null)
@@ -162,13 +156,7 @@ Object.assign(Runtime.Monad.prototype,
 		try
 		{
 			var __v0 = use("Runtime.rtl");
-			var f = __v0.method(ctx, this.val.getClassName(ctx), method_name);
-			if (args != null)
-			{
-				var __v1 = use("Runtime.rtl");
-				f = __v1.apply(ctx, f, args);
-			}
-			res = await f(ctx, this.val);
+			res = await __v0.applyAsync(ctx, f, args);
 		}
 		catch (_ex)
 		{

@@ -32,7 +32,7 @@ Object.assign(Runtime.Reference.prototype,
 	 * Assign and clone data from other object
 	 * @param BaseObject obj
 	 */
-	assignObject: function(ctx, obj)
+	assignObject1: function(ctx, obj)
 	{
 		var __v0 = use("Runtime.Reference");
 		if (obj instanceof __v0)
@@ -40,7 +40,7 @@ Object.assign(Runtime.Reference.prototype,
 			this.uq = obj.uq;
 			this.ref = this.ref;
 		}
-		use("Runtime.BaseObject").prototype.assignObject.call(this, ctx, obj);
+		use("Runtime.BaseObject").prototype.assignObject1.call(this, ctx, obj);
 	},
 	_init: function(ctx)
 	{

@@ -162,8 +162,8 @@ Object.assign(Runtime.RuntimeUtils,
 			}
 			if (!arr.has(ctx, name))
 			{
-				var __v0 = use("Runtime.Vector");
-				arr.set(ctx, name, new __v0(ctx));
+				var __v2 = use("Runtime.Vector");
+				arr.set(ctx, name, new __v2(ctx));
 			}
 			var v = arr.item(ctx, name);
 			v.appendVector(ctx, info.annotations);
@@ -274,8 +274,8 @@ Object.assign(Runtime.RuntimeUtils,
 				for (var i = 0;i < annotations.count(ctx);i++)
 				{
 					var annotation_name = annotations.item(ctx, i);
-					var __v0 = use("Runtime.rtl");
-					if (__v0.is_instanceof(ctx, item, annotation_name))
+					var __v1 = use("Runtime.rtl");
+					if (__v1.is_instanceof(ctx, item, annotation_name))
 					{
 						return true;
 					}

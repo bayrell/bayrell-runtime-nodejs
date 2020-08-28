@@ -147,6 +147,27 @@ Object.assign(Runtime.BaseStruct,
 	{
 		return new (Function.prototype.bind.apply(this, [null, ctx, items]));
 	},
+	/**
+	 * Update struct
+	 * @param Collection<string> path
+	 * @param var value
+	 * @return BaseStruct
+	 */
+	update: function(ctx, item, items)
+	{
+		return item.copy(ctx, items);
+	},
+	/**
+	 * Update struct
+	 * @param Collection<string> path
+	 * @param var value
+	 * @return BaseStruct
+	 */
+	setAttr: function(ctx, item, path, value)
+	{
+		var __v0 = use("Runtime.rtl");
+		return __v0.setAttr(ctx, item, path, value);
+	},
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
 	{
@@ -196,11 +217,6 @@ Object.assign(Runtime.BaseStruct,
 	{
 		return null;
 	},
-	__implements__:
-	[
-		use(""),
-		use("Runtime.Interfaces.SerializeInterface"),
-	],
 });use.add(Runtime.BaseStruct);
 module.exports = Runtime.BaseStruct;
 Runtime.BaseStruct.prototype.get = function(ctx, k, v){ return this[k] != undefined ? this[k] : v; };

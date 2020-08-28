@@ -55,6 +55,23 @@ Object.assign(Runtime.fs.prototype,
 });
 Object.assign(Runtime.fs,
 {
+	DIRECTORY_SEPARATOR: "/",
+	/**
+	 * Add first slash
+	 */
+	addFirstSlash: function(ctx, s)
+	{
+		var __v0 = use("Runtime.re");
+		return __v0.replace(ctx, "//", "/", this.DIRECTORY_SEPARATOR + use("Runtime.rtl").toStr(s));
+	},
+	/**
+	 * Add last slash
+	 */
+	addLastSlash: function(ctx, s)
+	{
+		var __v0 = use("Runtime.re");
+		return __v0.replace(ctx, "//", "/", s + use("Runtime.rtl").toStr(this.DIRECTORY_SEPARATOR));
+	},
 	/**
 	 * Concat
 	 */
@@ -70,7 +87,7 @@ Object.assign(Runtime.fs,
 	{
 		var res = arr.reduce(ctx, (ctx, res, item) => 
 		{
-			return res + use("Runtime.rtl").toStr("/") + use("Runtime.rtl").toStr(item);
+			return res + use("Runtime.rtl").toStr(this.DIRECTORY_SEPARATOR) + use("Runtime.rtl").toStr(item);
 		}, "");
 		var __v0 = use("Runtime.re");
 		return __v0.replace(ctx, "//", "/", res);
@@ -308,6 +325,13 @@ Object.assign(Runtime.fs,
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
 		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
+		if (field_name == "DIRECTORY_SEPARATOR") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.fs",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
 		return null;
 	},
 	getMethodsList: function(ctx)

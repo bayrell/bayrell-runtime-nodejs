@@ -261,6 +261,20 @@ Object.assign(Runtime.lib,
 		};
 	},
 	/**
+	 * Sort asc
+	 */
+	sortAsc: function(ctx, a, b)
+	{
+		return (a > b) ? (1) : ((a < b) ? (-1) : (0));
+	},
+	/**
+	 * Sort desc
+	 */
+	sortDesc: function(ctx, a, b)
+	{
+		return (a > b) ? (-1) : ((a < b) ? (1) : (0));
+	},
+	/**
 	 * Convert monad by type
 	 */
 	to: function(ctx, type_value, def_value)

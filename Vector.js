@@ -18,7 +18,6 @@ var use = require('bayrell').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-var isBrowser=function(){return typeof window !== "undefined" && this === window;}
 Runtime.Vector = function(ctx)
 {
 	use("Runtime.Collection").apply(this, arguments);
@@ -256,7 +255,7 @@ Object.assign(Runtime.Vector,
 	{
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
-		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
+		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
 		return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_CLASS,
 			"class_name": "Runtime.Vector",
@@ -275,7 +274,7 @@ Object.assign(Runtime.Vector,
 	{
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
-		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
+		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
 		return null;
 	},
 	getMethodsList: function(ctx)

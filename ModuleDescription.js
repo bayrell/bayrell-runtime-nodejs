@@ -57,7 +57,7 @@ Object.assign(Runtime.ModuleDescription,
 	 */
 	getModuleVersion: function(ctx)
 	{
-		return "0.10.2";
+		return "0.10.3";
 	},
 	/**
 	 * Returns required modules
@@ -106,7 +106,7 @@ Object.assign(Runtime.ModuleDescription,
 	{
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
-		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
+		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
 		return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_CLASS,
 			"class_name": "Runtime.ModuleDescription",
@@ -125,7 +125,7 @@ Object.assign(Runtime.ModuleDescription,
 	{
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
-		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
+		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
 		return null;
 	},
 	getMethodsList: function(ctx)

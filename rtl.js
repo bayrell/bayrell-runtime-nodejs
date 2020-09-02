@@ -727,7 +727,7 @@ Object.assign(Runtime.rtl,
 	/**
 	 * Apply async chain
 	 */
-	chainAwait: async function(ctx, chain, args)
+	chainAsync: async function(ctx, chain, args)
 	{
 		for (var i = 0;i < chain.count(ctx);i++)
 		{
@@ -1007,7 +1007,7 @@ Object.assign(Runtime.rtl,
 	{
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
-		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
+		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
 		return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_CLASS,
 			"class_name": "Runtime.rtl",
@@ -1026,7 +1026,7 @@ Object.assign(Runtime.rtl,
 	{
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
-		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
+		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
 		if (field_name == "LOG_FATAL") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
@@ -1342,5 +1342,5 @@ Object.assign(Runtime.rtl,
 	},
 });use.add(Runtime.rtl);
 module.exports = Runtime.rtl;
-if (typeof rtl != 'undefined') rtl._memorize_not_found = {'s':'memorize_key_not_found','id':Symbol()};
-if (typeof Runtime != 'undefined') Runtime.rtl._memorize_not_found = {'s':'memorize_key_not_found','id':Symbol()};
+if (typeof Runtime != 'undefined' && typeof Runtime.rtl != 'undefined')
+	Runtime.rtl._memorize_not_found = {'s':'memorize_key_not_found','id':Symbol()};

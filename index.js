@@ -18,7 +18,7 @@
 
 
 var exports = {
-	VERSION: '0.10.2',
+	VERSION: '0.10.3',
 	MODULE_NAME: 'Runtime',
 }
 
@@ -51,9 +51,9 @@ add("Runtime.BaseStruct");
 add("Runtime.DateTime");
 add("Runtime.PathInfo");
 add("Runtime.Reference");
+add("Runtime.IntrospectionClass");
+add("Runtime.IntrospectionInfo");
 add("Runtime.RuntimeUtils");
-add("Runtime.Annotations.IntrospectionClass");
-add("Runtime.Annotations.IntrospectionInfo");
 add("Runtime.Exceptions.RuntimeException");
 add("Runtime.Exceptions.ApiException");
 add("Runtime.Exceptions.AssignStructValueError");

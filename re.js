@@ -61,6 +61,9 @@ Object.assign(Runtime.re,
 	 */
 	matchAll: function(ctx, r, s)
 	{
+		var arr = [...s.matchAll( new RegExp(r, "g") )];
+		if (arr.length == 0) return null;
+		return Runtime.Collection.from( arr.map( (s) => s[1] ).filter( (s) => s != undefined ) );
 		return null;
 	},
 	/**
@@ -91,7 +94,7 @@ Object.assign(Runtime.re,
 	{
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
-		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
+		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
 		return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_CLASS,
 			"class_name": "Runtime.re",
@@ -110,7 +113,7 @@ Object.assign(Runtime.re,
 	{
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
-		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
+		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
 		return null;
 	},
 	getMethodsList: function(ctx)

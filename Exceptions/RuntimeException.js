@@ -45,7 +45,7 @@ Runtime.Exceptions.RuntimeException = function(ctx, message, code, prev)
 	if (message == undefined) message = "";
 	if (code == undefined) code = -1;
 	if (prev == undefined) prev = null;
-	use("Runtime.Exceptions.ClassException").call(this, ctx, message, code, prev);
+	Runtime.Exceptions.ClassException.call(this, message, code, prev);
 	this._init(ctx);
 	this.error_str = message;
 	this.error_code = code;
@@ -179,7 +179,7 @@ Object.assign(Runtime.Exceptions.RuntimeException,
 	{
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
-		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
+		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
 		return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_CLASS,
 			"class_name": "Runtime.Exceptions.RuntimeException",
@@ -209,7 +209,7 @@ Object.assign(Runtime.Exceptions.RuntimeException,
 	{
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
-		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
+		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
 		if (field_name == "context") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Exceptions.RuntimeException",

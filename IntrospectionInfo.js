@@ -18,14 +18,13 @@ var use = require('bayrell').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-if (typeof Runtime.Annotations == 'undefined') Runtime.Annotations = {};
-Runtime.Annotations.IntrospectionInfo = function(ctx)
+Runtime.IntrospectionInfo = function(ctx)
 {
 	use("Runtime.BaseStruct").apply(this, arguments);
 };
-Runtime.Annotations.IntrospectionInfo.prototype = Object.create(use("Runtime.BaseStruct").prototype);
-Runtime.Annotations.IntrospectionInfo.prototype.constructor = Runtime.Annotations.IntrospectionInfo;
-Object.assign(Runtime.Annotations.IntrospectionInfo.prototype,
+Runtime.IntrospectionInfo.prototype = Object.create(use("Runtime.BaseStruct").prototype);
+Runtime.IntrospectionInfo.prototype.constructor = Runtime.IntrospectionInfo;
+Object.assign(Runtime.IntrospectionInfo.prototype,
 {
 	/**
 	 * Returns true if has annotations by class_name
@@ -53,7 +52,7 @@ Object.assign(Runtime.Annotations.IntrospectionInfo.prototype,
 	},
 	assignObject: function(ctx,o)
 	{
-		if (o instanceof use("Runtime.Annotations.IntrospectionInfo"))
+		if (o instanceof use("Runtime.IntrospectionInfo"))
 		{
 			this.class_name = o.class_name;
 			this.kind = o.kind;
@@ -81,11 +80,11 @@ Object.assign(Runtime.Annotations.IntrospectionInfo.prototype,
 	},
 	getClassName: function(ctx)
 	{
-		return "Runtime.Annotations.IntrospectionInfo";
+		return "Runtime.IntrospectionInfo";
 	},
 });
-Object.assign(Runtime.Annotations.IntrospectionInfo, use("Runtime.BaseStruct"));
-Object.assign(Runtime.Annotations.IntrospectionInfo,
+Object.assign(Runtime.IntrospectionInfo, use("Runtime.BaseStruct"));
+Object.assign(Runtime.IntrospectionInfo,
 {
 	ITEM_CLASS: "class",
 	ITEM_FIELD: "field",
@@ -93,11 +92,11 @@ Object.assign(Runtime.Annotations.IntrospectionInfo,
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
 	{
-		return "Runtime.Annotations";
+		return "Runtime";
 	},
 	getCurrentClassName: function()
 	{
-		return "Runtime.Annotations.IntrospectionInfo";
+		return "Runtime.IntrospectionInfo";
 	},
 	getParentClassName: function()
 	{
@@ -107,11 +106,11 @@ Object.assign(Runtime.Annotations.IntrospectionInfo,
 	{
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
-		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
+		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
 		return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_CLASS,
-			"class_name": "Runtime.Annotations.IntrospectionInfo",
-			"name": "Runtime.Annotations.IntrospectionInfo",
+			"class_name": "Runtime.IntrospectionInfo",
+			"name": "Runtime.IntrospectionInfo",
 			"annotations": Collection.from([
 			]),
 		});
@@ -133,52 +132,52 @@ Object.assign(Runtime.Annotations.IntrospectionInfo,
 	{
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
-		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
+		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
 		if (field_name == "ITEM_CLASS") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
-			"class_name": "Runtime.Annotations.IntrospectionInfo",
+			"class_name": "Runtime.IntrospectionInfo",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "ITEM_FIELD") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
-			"class_name": "Runtime.Annotations.IntrospectionInfo",
+			"class_name": "Runtime.IntrospectionInfo",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "ITEM_METHOD") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
-			"class_name": "Runtime.Annotations.IntrospectionInfo",
+			"class_name": "Runtime.IntrospectionInfo",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "class_name") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
-			"class_name": "Runtime.Annotations.IntrospectionInfo",
+			"class_name": "Runtime.IntrospectionInfo",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "kind") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
-			"class_name": "Runtime.Annotations.IntrospectionInfo",
+			"class_name": "Runtime.IntrospectionInfo",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "name") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
-			"class_name": "Runtime.Annotations.IntrospectionInfo",
+			"class_name": "Runtime.IntrospectionInfo",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "annotations") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
-			"class_name": "Runtime.Annotations.IntrospectionInfo",
+			"class_name": "Runtime.IntrospectionInfo",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -195,5 +194,5 @@ Object.assign(Runtime.Annotations.IntrospectionInfo,
 	{
 		return null;
 	},
-});use.add(Runtime.Annotations.IntrospectionInfo);
-module.exports = Runtime.Annotations.IntrospectionInfo;
+});use.add(Runtime.IntrospectionInfo);
+module.exports = Runtime.IntrospectionInfo;

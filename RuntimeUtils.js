@@ -254,7 +254,7 @@ Object.assign(Runtime.RuntimeUtils,
 		{
 			return item.toCollection(ctx);
 		});
-		var __v2 = use("Runtime.Annotations.IntrospectionClass");
+		var __v2 = use("Runtime.IntrospectionClass");
 		var __v3 = use("Runtime.rtl");
 		var __memorize_value = new __v2(ctx, use("Runtime.Dict").from({"class_name":class_name,"class_info":(class_info != null) ? (class_info.toCollection(ctx)) : (null),"fields":fields.toDict(ctx),"methods":methods.toDict(ctx),"interfaces":__v3.getInterfaces(ctx, class_name)}));
 		use("Runtime.rtl")._memorizeSave("Runtime.RuntimeUtils.getClassIntrospection", arguments, __memorize_value);
@@ -613,7 +613,7 @@ Object.assign(Runtime.RuntimeUtils,
 	{
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
-		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
+		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
 		return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_CLASS,
 			"class_name": "Runtime.RuntimeUtils",
@@ -632,7 +632,7 @@ Object.assign(Runtime.RuntimeUtils,
 	{
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
-		var IntrospectionInfo = use("Runtime.Annotations.IntrospectionInfo");
+		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
 		if (field_name == "_global_context") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.RuntimeUtils",

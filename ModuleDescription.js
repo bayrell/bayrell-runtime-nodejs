@@ -57,7 +57,7 @@ Object.assign(Runtime.ModuleDescription,
 	 */
 	getModuleVersion: function(ctx)
 	{
-		return "0.10.3";
+		return "0.10.4";
 	},
 	/**
 	 * Returns required modules
@@ -68,26 +68,11 @@ Object.assign(Runtime.ModuleDescription,
 		return null;
 	},
 	/**
-	 * Returns module files load order
-	 * @return Collection<string>
-	 */
-	assets: function(ctx)
-	{
-		return use("Runtime.Collection").from(["Runtime/rtl","Runtime/rs","Runtime/re","Runtime/lib","Runtime/AsyncAwait","Runtime/Collection","Runtime/Dict","Runtime/Map","Runtime/Vector","Runtime/Monad","Runtime/BaseObject","Runtime/BaseStruct","Runtime/DateTime","Runtime/Exceptions/RuntimeException","Runtime/Interfaces/AssetsInterface","Runtime/Interfaces/ModuleDescriptionInterface","Runtime/ModuleDescription"]);
-	},
-	/**
 	 * Returns enities
 	 */
 	entities: function(ctx)
 	{
 		return use("Runtime.Collection").from([]);
-	},
-	/**
-	 * Returns enities
-	 */
-	resources: function(ctx)
-	{
-		return null;
 	},
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
@@ -138,10 +123,5 @@ Object.assign(Runtime.ModuleDescription,
 	{
 		return null;
 	},
-	__implements__:
-	[
-		use("Runtime.Interfaces.ModuleDescriptionInterface"),
-		use("Runtime.Interfaces.AssetsInterface"),
-	],
 });use.add(Runtime.ModuleDescription);
 module.exports = Runtime.ModuleDescription;

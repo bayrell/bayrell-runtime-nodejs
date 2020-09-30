@@ -222,7 +222,7 @@ Object.assign(Runtime.Dict.prototype,
 		if (typeof this._map["|" + key] == "undefined")
 		{
 			var _KeyNotFound = use("Runtime.Exceptions.KeyNotFound");
-			throw new _KeyNotFound(key);
+			throw new _KeyNotFound(ctx, key);
 		}
 		var val = this._map["|" + key];
 		if (val === null || typeof val == "undefined") return null;
@@ -256,6 +256,18 @@ Object.assign(Runtime.Dict.prototype,
 			return res;
 		}
 		return this;
+	},
+	/**
+	 * Remove value from position
+	 * @param string key
+	 * @return self
+	 */
+	removeKeys: function(ctx, keys)
+	{
+		return (keys != null) ? (keys.reduce(ctx, (ctx, item, key) => 
+		{
+			return item.removeIm(ctx, key);
+		}, this)) : (this);
 	},
 	/**
 	 * Returns vector of the keys
@@ -368,6 +380,26 @@ Object.assign(Runtime.Dict.prototype,
 			res._map[key] = map._map[key];
 		}
 		return res;
+	},
+	/**
+	 * Clone this struct with fields
+	 * @param Collection fields = null
+	 * @return BaseStruct
+	 */
+	intersect: function(ctx, fields)
+	{
+		if (fields == undefined) fields = null;
+		if (fields == null)
+		{
+			return use("Runtime.Dict").from({});
+		}
+		var __v0 = use("Runtime.Map");
+		var obj = new __v0(ctx);
+		fields.each(ctx, (ctx, field_name) => 
+		{
+			obj.set(ctx, field_name, this.get(ctx, field_name, null));
+		});
+		return obj.toDict(ctx);
 	},
 	assignObject: function(ctx,o)
 	{

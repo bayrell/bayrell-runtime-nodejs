@@ -284,11 +284,33 @@ Object.assign(Runtime.rs,
 	 * @param {int} flags - Флаги
 	 * @return {string} json строка
 	 */
-	json_encode: function(ctx, s, flags)
+	json_encode_primitive: function(ctx, s, flags)
 	{
 		if (flags & 128 == 128) 
 			return JSON.stringify(obj, null, 2);
 		return JSON.stringify(obj);
+	},
+	/**
+	 * Json encode data
+	 * @param var data
+	 * @return string
+	 */
+	json_encode: function(ctx, data)
+	{
+		var __v0 = use("Runtime.rtl");
+		var f = __v0.method(ctx, "Runtime.RuntimeUtils", "json_encode");
+		return f(ctx, data);
+	},
+	/**
+	 * Json decode to primitive values
+	 * @param string s Encoded string
+	 * @return var
+	 */
+	json_decode: function(ctx, obj)
+	{
+		var __v0 = use("Runtime.rtl");
+		var f = __v0.method(ctx, "Runtime.RuntimeUtils", "json_decode");
+		return f(ctx, obj);
 	},
 	/**
 	 * Escape HTML special chars
@@ -298,7 +320,6 @@ Object.assign(Runtime.rs,
 	htmlEscape: function(ctx, s)
 	{
 		if (s instanceof Runtime.Collection) return s;
-		if (s instanceof Runtime.UIStruct) return s;
 		var obj = {
 			"<":"&lt;",
 			">": "&gt;", 
@@ -443,6 +464,19 @@ Object.assign(Runtime.rs,
 	{
 		return this.replace(ctx, "\n", "<br/>", s);
 	},
+	/**
+	 * Remove spaces
+	 */
+	spaceless: function(ctx, s)
+	{
+		var __v0 = use("Runtime.re");
+		s = __v0.replace(ctx, " +", " ", s);
+		var __v1 = use("Runtime.re");
+		s = __v1.replace(ctx, "\t", "", s);
+		var __v2 = use("Runtime.re");
+		s = __v2.replace(ctx, "\n", "", s);
+		return s;
+	},
 	/* =================== Deprecated =================== */
 	/**
 	 * Разбивает строку на подстроки
@@ -542,6 +576,47 @@ Object.assign(Runtime.rs,
 	base64_decode_url: function(ctx, s)
 	{
 		return Buffer.from(s, 'base64').toString('ascii');
+	},
+	/**
+	 * Returns string lenght
+	 * @param string s The string
+	 * @return int
+	 */
+	url_get_add: function(ctx, s, key, value)
+	{
+		var pos = this.strpos(ctx, s, "?");
+		var s1 = this.substr(ctx, s, 0, pos);
+		var s2 = (pos >= 0) ? (this.substr(ctx, s, pos + 1)) : ("");
+		var find = false;
+		var arr = this.explode(ctx, "&", s2);
+		arr = arr.map(ctx, (ctx, s) => 
+		{
+			var arr = this.explode(ctx, "=", s);
+			if (value == "")
+			{
+				return "";
+			}
+			if (Runtime.rtl.get(ctx, arr, 0) == key)
+			{
+				find = true;
+				return key + use("Runtime.rtl").toStr("=") + use("Runtime.rtl").toStr(this.htmlEscape(ctx, value));
+			}
+			return s;
+		}).filter(ctx, (ctx, s) => 
+		{
+			return s != "";
+		});
+		if (!find && value != "")
+		{
+			arr = arr.appendIm(ctx, key + use("Runtime.rtl").toStr("=") + use("Runtime.rtl").toStr(this.htmlEscape(ctx, value)));
+		}
+		s = s1;
+		s2 = this.join(ctx, "&", arr);
+		if (s2 != "")
+		{
+			s = s + use("Runtime.rtl").toStr("?") + use("Runtime.rtl").toStr(s2);
+		}
+		return s;
 	},
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()

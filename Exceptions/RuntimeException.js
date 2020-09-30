@@ -104,7 +104,6 @@ Object.assign(Runtime.Exceptions.RuntimeException.prototype,
 	},
 	_init: function(ctx)
 	{
-		this.context = null;
 		this.prev = null;
 		this.error_message = "";
 		this.error_str = "";
@@ -118,7 +117,6 @@ Object.assign(Runtime.Exceptions.RuntimeException.prototype,
 	{
 		if (o instanceof use("Runtime.Exceptions.RuntimeException"))
 		{
-			this.context = o.context;
 			this.prev = o.prev;
 			this.error_message = o.error_message;
 			this.error_str = o.error_str;
@@ -131,8 +129,7 @@ Object.assign(Runtime.Exceptions.RuntimeException.prototype,
 	},
 	assignValue: function(ctx,k,v)
 	{
-		if (k == "context")this.context = v;
-		else if (k == "prev")this.prev = v;
+		if (k == "prev")this.prev = v;
 		else if (k == "error_message")this.error_message = v;
 		else if (k == "error_str")this.error_str = v;
 		else if (k == "error_code")this.error_code = v;
@@ -144,8 +141,7 @@ Object.assign(Runtime.Exceptions.RuntimeException.prototype,
 	takeValue: function(ctx,k,d)
 	{
 		if (d == undefined) d = null;
-		if (k == "context")return this.context;
-		else if (k == "prev")return this.prev;
+		if (k == "prev")return this.prev;
 		else if (k == "error_message")return this.error_message;
 		else if (k == "error_str")return this.error_str;
 		else if (k == "error_code")return this.error_code;
@@ -194,7 +190,6 @@ Object.assign(Runtime.Exceptions.RuntimeException,
 		if (f==undefined) f=0;
 		if ((f|2)==2)
 		{
-			a.push("context");
 			a.push("prev");
 			a.push("error_message");
 			a.push("error_str");
@@ -210,13 +205,6 @@ Object.assign(Runtime.Exceptions.RuntimeException,
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
 		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
-		if (field_name == "context") return new IntrospectionInfo(ctx, {
-			"kind": IntrospectionInfo.ITEM_FIELD,
-			"class_name": "Runtime.Exceptions.RuntimeException",
-			"name": field_name,
-			"annotations": Collection.from([
-			]),
-		});
 		if (field_name == "prev") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Exceptions.RuntimeException",

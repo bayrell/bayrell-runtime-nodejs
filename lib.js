@@ -115,7 +115,8 @@ Object.assign(Runtime.lib,
 	{
 		return (ctx, item1) => 
 		{
-			return (item1 != null) ? (item1.takeValue(ctx, key) == value) : (false);
+			var __v0 = use("Runtime.rtl");
+			return (item1 != null) ? (__v0.attr(ctx, item1, key) == value) : (false);
 		};
 	},
 	/**
@@ -125,7 +126,31 @@ Object.assign(Runtime.lib,
 	{
 		return (ctx, item1) => 
 		{
-			return (item1 != null) ? (item1.takeValue(ctx, key) != value) : (false);
+			var __v0 = use("Runtime.rtl");
+			return (item1 != null) ? (__v0.attr(ctx, item1, key) != value) : (false);
+		};
+	},
+	equalAttrNot: function(ctx, key, value)
+	{
+		return this.equalNotAttr;
+	},
+	/**
+	 * Equal attrs
+	 */
+	equalAttrs: function(ctx, search)
+	{
+		return (ctx, item) => 
+		{
+			var fields = search.keys(ctx);
+			for (var i = 0;i < fields.count(ctx);i++)
+			{
+				var field_name = Runtime.rtl.get(ctx, fields, i);
+				if (Runtime.rtl.get(ctx, search, field_name) != Runtime.rtl.get(ctx, item, field_name))
+				{
+					return false;
+				}
+			}
+			return true;
 		};
 	},
 	/**
@@ -241,6 +266,16 @@ Object.assign(Runtime.lib,
 		};
 	},
 	/**
+	 * Intersect
+	 */
+	intersect: function(ctx, arr)
+	{
+		return (ctx, m) => 
+		{
+			return m.intersect(ctx, arr);
+		};
+	},
+	/**
 	 * Sort
 	 */
 	sort: function(ctx, f)
@@ -273,6 +308,26 @@ Object.assign(Runtime.lib,
 	sortDesc: function(ctx, a, b)
 	{
 		return (a > b) ? (-1) : ((a < b) ? (1) : (0));
+	},
+	/**
+	 * Sort attr
+	 */
+	sortAttr: function(ctx, field_name, f)
+	{
+		return (ctx, a, b) => 
+		{
+			var a = Runtime.rtl.get(ctx, a, field_name);
+			var b = Runtime.rtl.get(ctx, b, field_name);
+			if (f == "asc")
+			{
+				return (a > b) ? (1) : ((a < b) ? (-1) : (0));
+			}
+			if (f == "desc")
+			{
+				return (a > b) ? (-1) : ((a < b) ? (1) : (0));
+			}
+			return f(ctx, a, b);
+		};
 	},
 	/**
 	 * Convert monad by type
@@ -330,6 +385,94 @@ Object.assign(Runtime.lib,
 	monad: function(ctx, m)
 	{
 		return m;
+	},
+	/**
+	 * Get method from class
+	 * @return fn
+	 */
+	method: function(ctx, method_name)
+	{
+		return (ctx, class_name) => 
+		{
+			var __v0 = use("Runtime.rtl");
+			return __v0.method(ctx, class_name, method_name);
+		};
+	},
+	/**
+	 * Apply function
+	 * @return fn
+	 */
+	applyMethod: function(ctx, method_name, args)
+	{
+		if (args == undefined) args = null;
+		return (ctx, class_name) => 
+		{
+			var __v0 = use("Runtime.rtl");
+			var f = __v0.method(ctx, class_name, method_name);
+			var __v1 = use("Runtime.rtl");
+			return __v1.apply(ctx, f, args);
+		};
+	},
+	/**
+	 * Apply async function
+	 * @return fn
+	 */
+	applyMethodAsync: function(ctx, method_name, args)
+	{
+		if (args == undefined) args = null;
+		return async (ctx, class_name) => 
+		{
+			var __v0 = use("Runtime.rtl");
+			var f = __v0.method(ctx, class_name, method_name);
+			var __v1 = use("Runtime.rtl");
+			return Promise.resolve(__v1.apply(ctx, f, args));
+		};
+	},
+	/**
+	 * Apply function
+	 * @return fn
+	 */
+	apply: function(ctx, args)
+	{
+		if (args == undefined) args = null;
+		return (ctx, f) => 
+		{
+			var __v0 = use("Runtime.rtl");
+			return __v0.apply(ctx, f, args);
+		};
+	},
+	/**
+	 * Apply async function
+	 * @return fn
+	 */
+	applyAsync: function(ctx, args)
+	{
+		if (args == undefined) args = null;
+		return async (ctx, f) => 
+		{
+			var __v0 = use("Runtime.rtl");
+			return await __v0.applyAsync(ctx, f, args);
+		};
+	},
+	/**
+	 * Log message
+	 * @return fn
+	 */
+	log: function(ctx, message)
+	{
+		if (message == undefined) message = "";
+		return (ctx, value) => 
+		{
+			if (message == "")
+			{
+				console.log(value);
+			}
+			else
+			{
+				console.log(message);
+			}
+			return value;
+		};
 	},
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()

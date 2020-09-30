@@ -129,7 +129,7 @@ Object.assign(Runtime.Collection.prototype,
 		if (pos < 0 || pos >= this.length)
 		{
 			var _IndexOutOfRange = use("Runtime.Exceptions.IndexOutOfRange");
-			throw new _IndexOutOfRange(ctx);
+			throw new _IndexOutOfRange(ctx, pos);
 		}
 		return this[pos];
 	},

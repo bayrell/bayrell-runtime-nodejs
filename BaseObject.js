@@ -31,6 +31,14 @@ Object.assign(Runtime.BaseObject.prototype,
 	_init: function(ctx)
 	{
 	},
+	/* Old functions */
+	assignValue: function(ctx, k, v)
+	{
+	},
+	takeValue: function(ctx, k, v)
+	{
+		if (v == undefined) v = null;
+	},
 	assignObject: function(ctx,o)
 	{
 		if (o instanceof use("Runtime.BaseObject"))

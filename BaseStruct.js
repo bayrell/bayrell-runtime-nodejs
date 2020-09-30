@@ -61,16 +61,26 @@ Object.assign(Runtime.BaseStruct.prototype,
 		return this;
 	},
 	/**
+	 * Copy this struct with new values
+	 * @param Map obj = null
+	 * @return BaseStruct
+	 */
+	clone: function(ctx, obj)
+	{
+		if (obj == undefined) obj = null;
+		return this.copy(ctx, obj);
+	},
+	/**
 	 * Clone this struct with fields
 	 * @param Collection fields = null
 	 * @return BaseStruct
 	 */
-	clone: function(ctx, fields)
+	intersect: function(ctx, fields)
 	{
 		if (fields == undefined) fields = null;
 		if (fields == null)
 		{
-			return this;
+			return use("Runtime.Dict").from({});
 		}
 		var __v0 = use("Runtime.Map");
 		var obj = new __v0(ctx);
@@ -93,6 +103,32 @@ Object.assign(Runtime.BaseStruct.prototype,
 	{
 		var __v0 = use("Runtime.Map");
 		return this.copy(ctx, (new __v0(ctx)).set(ctx, field_name, f(ctx, this.takeValue(ctx, field_name))).toDict(ctx));
+	},
+	/**
+	 * Returns struct as Dict
+	 * @return Dict
+	 */
+	takeDict: function(ctx)
+	{
+		var __v0 = use("Runtime.Map");
+		var values = new __v0(ctx);
+		var __v1 = use("Runtime.RuntimeUtils");
+		var names = __v1.getVariablesNames(ctx, this.getClassName(ctx), 1);
+		for (var i = 0;i < names.count(ctx);i++)
+		{
+			var variable_name = names.item(ctx, i);
+			var value = this.get(ctx, variable_name, null);
+			values.set(ctx, variable_name, value);
+		}
+		return values.toDict(ctx);
+	},
+	/**
+	 * Returns struct as Dict
+	 * @return Dict
+	 */
+	toDict: function(ctx)
+	{
+		return this.takeDict(ctx);
 	},
 	assignObject: function(ctx,o)
 	{
@@ -217,6 +253,10 @@ Object.assign(Runtime.BaseStruct,
 	{
 		return null;
 	},
+	__implements__:
+	[
+		use("Runtime.SerializeInterface"),
+	],
 });use.add(Runtime.BaseStruct);
 module.exports = Runtime.BaseStruct;
 Runtime.BaseStruct.prototype.get = function(ctx, k, v){ return this[k] != undefined ? this[k] : v; };

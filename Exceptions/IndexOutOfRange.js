@@ -19,11 +19,11 @@ var use = require('bayrell').use;
  */
 if (typeof Runtime == 'undefined') Runtime = {};
 if (typeof Runtime.Exceptions == 'undefined') Runtime.Exceptions = {};
-Runtime.Exceptions.IndexOutOfRange = function(ctx, prev)
+Runtime.Exceptions.IndexOutOfRange = function(ctx, pos, prev)
 {
 	if (prev == undefined) prev = null;
 	var __v0 = use("Runtime.rtl");
-	use("Runtime.Exceptions.RuntimeException").call(this, ctx, ctx.constructor.translate(ctx, ctx, "Runtime", "Index out of range"), __v0.ERROR_INDEX_OUT_OF_RANGE, prev);
+	use("Runtime.Exceptions.RuntimeException").call(this, ctx, ctx.constructor.translate(ctx, "Runtime", "Index out of range. Pos: %pos%", use("Runtime.Dict").from({"pos":pos})), __v0.ERROR_INDEX_OUT_OF_RANGE, prev);
 };
 Runtime.Exceptions.IndexOutOfRange.prototype = Object.create(use("Runtime.Exceptions.RuntimeException").prototype);
 Runtime.Exceptions.IndexOutOfRange.prototype.constructor = Runtime.Exceptions.IndexOutOfRange;

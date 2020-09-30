@@ -261,6 +261,19 @@ Object.assign(Runtime.RuntimeUtils,
 		return __memorize_value;
 	},
 	/**
+	 * Returns Introspection of the class name
+	 * @param string class_name
+	 * @return Vector<IntrospectionInfo>
+	 */
+	getClassIntrospectionWithParents: function(ctx, class_name)
+	{
+		var __memorize_value = use("Runtime.rtl")._memorizeValue("Runtime.RuntimeUtils.getClassIntrospectionWithParents", arguments);
+		if (__memorize_value != use("Runtime.rtl")._memorize_not_found) return __memorize_value;
+		var __memorize_value = this.getClassIntrospection(ctx, class_name);
+		use("Runtime.rtl")._memorizeSave("Runtime.RuntimeUtils.getClassIntrospectionWithParents", arguments, __memorize_value);
+		return __memorize_value;
+	},
+	/**
 	 * Returns methods in class by annotation name
 	 */
 	getMethodsIntrospection: function(ctx, class_name, annotations)
@@ -289,7 +302,7 @@ Object.assign(Runtime.RuntimeUtils,
 	/* ============================= Serialization Functions ============================= */
 	ObjectToNative: function(ctx, value, force_class_name)
 	{
-		if (force_class_name == undefined) force_class_name = false;
+		if (force_class_name == undefined) force_class_name = true;
 		var value1 = Runtime.RuntimeUtils.ObjectToPrimitive(ctx, value, force_class_name);
 		var value2 = Runtime.RuntimeUtils.PrimitiveToNative(ctx, value1);
 		return value2;
@@ -307,7 +320,7 @@ Object.assign(Runtime.RuntimeUtils,
 	 */
 	ObjectToPrimitive: function(ctx, obj, force_class_name)
 	{
-		if (force_class_name == undefined) force_class_name = false;
+		if (force_class_name == undefined) force_class_name = true;
 		if (obj === null)
 		{
 			return null;
@@ -356,14 +369,16 @@ Object.assign(Runtime.RuntimeUtils,
 			
 			delete keys;
 			*/
+			/*
 			if (force_class_name)
 			{
-				obj = obj.setIm(ctx, "__class_name__", "Runtime.Dict");
+				obj = obj.setIm("__class_name__", classof Dict);
 			}
+			*/
 			return obj.toDict(ctx);
 		}
-		var __v0 = use("Runtime.Interfaces.SerializeInterface");
-		if (Runtime.rtl.is_implements(obj, __v0))
+		var __v0 = use("Runtime.BaseStruct");
+		if (obj instanceof __v0)
 		{
 			var __v1 = use("Runtime.Map");
 			var values = new __v1(ctx);
@@ -375,7 +390,10 @@ Object.assign(Runtime.RuntimeUtils,
 				var value = Runtime.RuntimeUtils.ObjectToPrimitive(ctx, value, force_class_name);
 				values.set(ctx, variable_name, value);
 			}
-			values.set(ctx, "__class_name__", obj.getClassName(ctx));
+			if (force_class_name)
+			{
+				values.set(ctx, "__class_name__", obj.getClassName(ctx));
+			}
 			return values.toDict(ctx);
 		}
 		return null;
@@ -438,7 +456,7 @@ Object.assign(Runtime.RuntimeUtils,
 				return null;
 			}
 			var __v2 = use("Runtime.rtl");
-			if (!__v2.class_implements(ctx, class_name, "Runtime.Interfaces.SerializeInterface"))
+			if (!__v2.class_implements(ctx, class_name, "Runtime.SerializeInterface"))
 			{
 				return null;
 			}
@@ -520,12 +538,11 @@ Object.assign(Runtime.RuntimeUtils,
 		if (value instanceof _Dict)
 		{
 			var obj = {};
-			value.each((k, v)=>{
+			value.each((v, k)=>{
 				obj[k] = _Utils.PrimitiveToNative(v);
 			});
 			return obj;
 		}
-		
 		return value;
 	},
 	/**

@@ -23,7 +23,7 @@ Runtime.Exceptions.AssignStructValueError = function(ctx, name, prev)
 {
 	if (prev == undefined) prev = null;
 	var __v0 = use("Runtime.rtl");
-	use("Runtime.Exceptions.RuntimeException").call(this, ctx, ctx.constructor.translate(ctx, ctx, "Runtime", "Can not set key '" + use("Runtime.rtl").toStr(name) + use("Runtime.rtl").toStr("' in immutable struct")), __v0.ERROR_INDEX_OUT_OF_RANGE, prev);
+	use("Runtime.Exceptions.RuntimeException").call(this, ctx, ctx.constructor.translate(ctx, "Runtime", "Can not set key '" + use("Runtime.rtl").toStr(name) + use("Runtime.rtl").toStr("' in immutable struct")), __v0.ERROR_INDEX_OUT_OF_RANGE, prev);
 };
 Runtime.Exceptions.AssignStructValueError.prototype = Object.create(use("Runtime.Exceptions.RuntimeException").prototype);
 Runtime.Exceptions.AssignStructValueError.prototype.constructor = Runtime.Exceptions.AssignStructValueError;

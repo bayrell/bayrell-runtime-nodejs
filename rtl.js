@@ -24,11 +24,10 @@ Runtime.rtl = function(ctx)
 Object.assign(Runtime.rtl.prototype,
 {
 	/**
-	 * Returns unix timestamp
+	 * Debug
 	 */
-	utime: function(ctx)
+	trace: function()
 	{
-		return (new Date()).getTime() * 1000;
 	},
 	assignObject: function(ctx,o)
 	{
@@ -84,6 +83,8 @@ Object.assign(Runtime.rtl,
 	ERROR_AUTH: -16,
 	ERROR_DUPLICATE: -17,
 	ERROR_API_NOT_FOUND: -18,
+	ERROR_API_WRONG_FORMAT: -19,
+	ERROR_API_WRONG_APP_NAME: -20,
 	ERROR_FATAL: -99,
 	ERROR_HTTP_CONTINUE: -100,
 	ERROR_HTTP_SWITCH: -101,
@@ -294,20 +295,17 @@ Object.assign(Runtime.rtl,
 	/**
 	 * Run thread
 	 */
-	runThread: function(ctx, f)
+	runThread: function(ctx, f, args)
 	{
-		/*
-		args.unshift(ctx);
-		var t = new Runtime.AsyncThread(ctx, {
-			"tasks": Runtime.Collection.from([
-				new Runtime.AsyncTask(ctx, {
-					"pos": "0",
-					"f": f.apply(null, args),
-				})
-			])
-		});
-		Runtime.AsyncThread.run(ctx, t);
-		*/
+		if (args == undefined) args = null;
+		if (args == null)
+		{
+			args = use("Runtime.Collection").from([]);
+		}
+		(async () => {
+			try { args = args.prependIm(ctx); await f.apply(args); }
+			catch (e) { console.log(e.stack); }
+		})();
 	},
 	/**
 	 * Returns value
@@ -320,7 +318,10 @@ Object.assign(Runtime.rtl,
 			return def_val;
 		}
 		if (item == undefined) return def_val;
-		if (item instanceof Runtime.Dict || item instanceof Runtime.Collection)
+		if (item instanceof Runtime.Dict ||
+			item instanceof Runtime.Collection ||
+			item instanceof Runtime.BaseStruct
+		)
 		{
 			return item.get(ctx, key, def_val);
 		}
@@ -342,6 +343,7 @@ Object.assign(Runtime.rtl,
 		if (item === null) return def_val;
 		if (typeof path == "string") path = Collection.from([path]);
 		else if (Array.isArray(path) && path.count == undefined) path = Collection.from(path);
+		if (!(path instanceof Collection)) return def_val;
 		if (path.count() == 0)
 		{
 			return item;
@@ -457,7 +459,7 @@ Object.assign(Runtime.rtl,
 		return (ctx, m) => 
 		{
 			var __v0 = use("Runtime.Monad");
-			return new __v0(ctx, (m.err == null) ? (this.convert(m.value(ctx), type_value, def_value)) : (def_value));
+			return new __v0(ctx, (m.err == null) ? (this.convert(m.val, type_value, def_value)) : (def_value));
 		};
 	},
 	/**
@@ -480,11 +482,39 @@ Object.assign(Runtime.rtl,
 	 * @param var type_template
 	 * @return var
 	 */
-	convert: function(value, type_value, def_value, type_template)
+	convert: function(v, t, d)
 	{
-		if (def_value == undefined) def_value = null;
-		if (type_template == undefined) type_template = "";
-		return value;
+		if (d == undefined) d = null;
+		if (v == null)
+		{
+			v = d;
+		}
+		if (t == "mixed" || t == "primitive" || t == "var" || t == "fn" || t == "callback")
+		{
+			return v;
+		}
+		var __v0 = use("Runtime.rtl");
+		if (t == "bool" || t == "boolean")
+		{
+			return this.toBool(null, v);
+		}
+		else if (t == "string")
+		{
+			return this.toString(null, v);
+		}
+		else if (t == "int")
+		{
+			return this.toInt(null, v);
+		}
+		else if (t == "float" || t == "double")
+		{
+			return this.toFloat(null, v);
+		}
+		else if (__v0.is_instanceof(null, v, t))
+		{
+			return v;
+		}
+		return d;
 	},
 	/**
 	 * Returns true if value instanceof tp
@@ -516,6 +546,15 @@ Object.assign(Runtime.rtl,
 			return true;
 		}
 		return false;
+	},
+	/**
+	 * Return true if value is empty
+	 * @param var value
+	 * @return bool
+	 */
+	isEmpty: function(ctx, value)
+	{
+		return !this.exists(ctx, value) || value === null || value === "" || value === false || value === 0;
 	},
 	/**
 	 * Return true if value is exists
@@ -567,6 +606,15 @@ Object.assign(Runtime.rtl,
 		return false;
 	},
 	/**
+	 * Return true if value is boolean
+	 * @param var value
+	 * @return bool
+	 */
+	isBool: function(ctx, value)
+	{
+		return this.isBoolean(ctx, value);
+	},
+	/**
 	 * Return true if value is number
 	 * @param var value
 	 * @return bool
@@ -606,6 +654,16 @@ Object.assign(Runtime.rtl,
 	{
 		if (typeof value == 'string') return true;
 		else if (value instanceof String) return true;
+		return false;
+	},
+	/**
+	 * Return true if value is function
+	 * @param var value
+	 * @return bool
+	 */
+	isFn: function(ctx, value)
+	{
+		if (typeof(value) == 'function') return true;
 		return false;
 	},
 	/**
@@ -865,6 +923,18 @@ Object.assign(Runtime.rtl,
 		return Symbol();
 	},
 	/**
+	 * Generate uuid
+	 */
+	uid: function(ctx)
+	{
+	},
+	/**
+	 * Generate timestamp based uuid
+	 */
+	time_uid: function(ctx)
+	{
+	},
+	/**
 	 * Returns random value x, where a <= x <= b
 	 * @param int a
 	 * @param int b
@@ -887,6 +957,13 @@ Object.assign(Runtime.rtl,
 	time: function(ctx)
 	{
 		return Math.round((new Date()).getTime() / 1000);
+	},
+	/**
+	 * Returns unix timestamp
+	 */
+	utime: function(ctx)
+	{
+		return (new Date()).getTime() * 1000;
 	},
 	/**
 	 * Clone var
@@ -989,6 +1066,13 @@ Object.assign(Runtime.rtl,
 	 */
 	timestamp: function(ctx, s)
 	{
+	},
+	/**
+	 * Returns module path. For backend only
+	 */
+	getModulePath: function(ctx, module_name)
+	{
+		return "";
 	},
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
@@ -1265,6 +1349,20 @@ Object.assign(Runtime.rtl,
 			"annotations": Collection.from([
 			]),
 		});
+		if (field_name == "ERROR_API_WRONG_FORMAT") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.rtl",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "ERROR_API_WRONG_APP_NAME") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.rtl",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
 		if (field_name == "ERROR_FATAL") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
@@ -1333,6 +1431,7 @@ Object.assign(Runtime.rtl,
 	getMethodsList: function(ctx)
 	{
 		var a = [
+			"getModulePath",
 		];
 		return use("Runtime.Collection").from(a);
 	},

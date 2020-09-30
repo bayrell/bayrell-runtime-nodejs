@@ -23,7 +23,7 @@ Runtime.Exceptions.KeyNotFound = function(ctx, key, prev)
 {
 	if (prev == undefined) prev = null;
 	var __v0 = use("Runtime.rtl");
-	use("Runtime.Exceptions.RuntimeException").call(this, ctx, ctx.constructor.translate(ctx, ctx, "Runtime", "Key '" + use("Runtime.rtl").toStr(key) + use("Runtime.rtl").toStr("' not found")), __v0.ERROR_KEY_NOT_FOUND, prev);
+	use("Runtime.Exceptions.RuntimeException").call(this, ctx, ctx.constructor.translate(ctx, "Runtime", "Key '%key%' not found", use("Runtime.Dict").from({"key":key})), __v0.ERROR_KEY_NOT_FOUND, prev);
 };
 Runtime.Exceptions.KeyNotFound.prototype = Object.create(use("Runtime.Exceptions.RuntimeException").prototype);
 Runtime.Exceptions.KeyNotFound.prototype.constructor = Runtime.Exceptions.KeyNotFound;

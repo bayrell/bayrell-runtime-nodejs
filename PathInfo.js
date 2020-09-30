@@ -177,7 +177,7 @@ Object.assign(Runtime.PathInfo,
 	},
 	__implements__:
 	[
-		use("Runtime.Interfaces.StringInterface"),
+		use("Runtime.StringInterface"),
 	],
 });use.add(Runtime.PathInfo);
 module.exports = Runtime.PathInfo;

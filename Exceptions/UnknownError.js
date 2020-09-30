@@ -23,7 +23,7 @@ Runtime.Exceptions.UnknownError = function(ctx, prev)
 {
 	if (prev == undefined) prev = null;
 	var __v0 = use("Runtime.rtl");
-	use("Runtime.Exceptions.RuntimeException").call(this, ctx, ctx.constructor.translate(ctx, ctx, "Runtime", "Unknown error"), __v0.ERROR_UNKNOWN, prev);
+	use("Runtime.Exceptions.RuntimeException").call(this, ctx, ctx.constructor.translate(ctx, "Runtime", "Unknown error"), __v0.ERROR_UNKNOWN, prev);
 };
 Runtime.Exceptions.UnknownError.prototype = Object.create(use("Runtime.Exceptions.RuntimeException").prototype);
 Runtime.Exceptions.UnknownError.prototype.constructor = Runtime.Exceptions.UnknownError;

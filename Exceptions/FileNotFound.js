@@ -18,77 +18,54 @@ var use = require('bayrell').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-Runtime.re = function(ctx)
+if (typeof Runtime.Exceptions == 'undefined') Runtime.Exceptions = {};
+Runtime.Exceptions.FileNotFound = function(ctx, name, object, code, prev)
 {
+	if (object == undefined) object = "File";
+	if (code == undefined) code = -5;
+	if (prev == undefined) prev = null;
+	use("Runtime.Exceptions.RuntimeException").call(this, ctx, ctx.constructor.translate(ctx, "Runtime", "%object% '%name%' not found", use("Runtime.Dict").from({"name":name,"object":object})), code, prev);
 };
-Object.assign(Runtime.re.prototype,
+Runtime.Exceptions.FileNotFound.prototype = Object.create(use("Runtime.Exceptions.RuntimeException").prototype);
+Runtime.Exceptions.FileNotFound.prototype.constructor = Runtime.Exceptions.FileNotFound;
+Object.assign(Runtime.Exceptions.FileNotFound.prototype,
 {
 	assignObject: function(ctx,o)
 	{
-		if (o instanceof use("Runtime.re"))
+		if (o instanceof use("Runtime.Exceptions.FileNotFound"))
 		{
 		}
+		use("Runtime.Exceptions.RuntimeException").prototype.assignObject.call(this,ctx,o);
 	},
 	assignValue: function(ctx,k,v)
 	{
+		use("Runtime.Exceptions.RuntimeException").prototype.assignValue.call(this,ctx,k,v);
 	},
 	takeValue: function(ctx,k,d)
 	{
 		if (d == undefined) d = null;
+		return use("Runtime.Exceptions.RuntimeException").prototype.takeValue.call(this,ctx,k,d);
 	},
 	getClassName: function(ctx)
 	{
-		return "Runtime.re";
+		return "Runtime.Exceptions.FileNotFound";
 	},
 });
-Object.assign(Runtime.re,
+Object.assign(Runtime.Exceptions.FileNotFound, use("Runtime.Exceptions.RuntimeException"));
+Object.assign(Runtime.Exceptions.FileNotFound,
 {
-	/**
-	 * Search regular expression
-	 * @param string r regular expression
-	 * @param string s string
-	 * @return bool
-	 */
-	match: function(ctx, r, s)
-	{
-		return s.match( new RegExp(r, "g") ) != null;
-	},
-	/**
-	 * Search regular expression
-	 * @param string r regular expression
-	 * @param string s string
-	 * @return Vector result
-	 */
-	matchAll: function(ctx, r, s)
-	{
-		var arr = [...s.matchAll( new RegExp(r, "g") )];
-		if (arr.length == 0) return null;
-		return Runtime.Collection.from( arr.map( (v) => Runtime.Collection.from(v) ) );
-		return null;
-	},
-	/**
-	 * Replace with regular expression
-	 * @param string r - regular expression
-	 * @param string replace - new value
-	 * @param string s - replaceable string
-	 * @return string
-	 */
-	replace: function(ctx, r, replace, s)
-	{
-		return s.replace(new RegExp(r, "g"), replace);
-	},
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
 	{
-		return "Runtime";
+		return "Runtime.Exceptions";
 	},
 	getCurrentClassName: function()
 	{
-		return "Runtime.re";
+		return "Runtime.Exceptions.FileNotFound";
 	},
 	getParentClassName: function()
 	{
-		return "";
+		return "Runtime.Exceptions.RuntimeException";
 	},
 	getClassInfo: function(ctx)
 	{
@@ -97,8 +74,8 @@ Object.assign(Runtime.re,
 		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
 		return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_CLASS,
-			"class_name": "Runtime.re",
-			"name": "Runtime.re",
+			"class_name": "Runtime.Exceptions.FileNotFound",
+			"name": "Runtime.Exceptions.FileNotFound",
 			"annotations": Collection.from([
 			]),
 		});
@@ -126,5 +103,5 @@ Object.assign(Runtime.re,
 	{
 		return null;
 	},
-});use.add(Runtime.re);
-module.exports = Runtime.re;
+});use.add(Runtime.Exceptions.FileNotFound);
+module.exports = Runtime.Exceptions.FileNotFound;

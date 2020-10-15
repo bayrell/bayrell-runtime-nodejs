@@ -59,6 +59,17 @@ Object.assign(Runtime.BaseObject.prototype,
 });
 Object.assign(Runtime.BaseObject,
 {
+	/**
+	 * Returns new instance
+	 */
+	newInstance: function(ctx, items)
+	{
+		return null;
+	},
+	createInstance: function(ctx, items)
+	{
+		return this.newInstance(ctx, items);
+	},
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
 	{

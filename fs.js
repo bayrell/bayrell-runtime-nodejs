@@ -75,10 +75,13 @@ Object.assign(Runtime.fs,
 	/**
 	 * Concat
 	 */
-	concat: function(ctx, base_path, file_name)
+	concat: function(ctx)
 	{
-		var __v0 = use("Runtime.re");
-		return __v0.replace(ctx, "//", "/", base_path + use("Runtime.rtl").toStr("/") + use("Runtime.rtl").toStr(file_name));
+		var arr = use("Runtime.Collection").from([]);
+		var Collection = use("Runtime.Collection");
+		for (var i=1; i<arguments.length; i++) arr.push( arguments[i] );
+		arr = Collection.from(arr);
+		return this.concatArr(ctx, arr);
 	},
 	/**
 	 * Concat array
@@ -328,6 +331,7 @@ Object.assign(Runtime.fs,
 		if (field_name == "DIRECTORY_SEPARATOR") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.fs",
+			"t": "string",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),

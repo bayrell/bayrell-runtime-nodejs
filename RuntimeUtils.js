@@ -73,6 +73,8 @@ Object.assign(Runtime.RuntimeUtils,
 	 */
 	getParents: function(ctx, class_name)
 	{
+		var __memorize_value = use("Runtime.rtl")._memorizeValue("Runtime.RuntimeUtils.getParents", arguments);
+		if (__memorize_value != use("Runtime.rtl")._memorize_not_found) return __memorize_value;
 		var __v0 = use("Runtime.Vector");
 		var res = new __v0(ctx);
 		res.push(ctx, class_name);
@@ -86,7 +88,9 @@ Object.assign(Runtime.RuntimeUtils,
 				res.push(ctx, class_name);
 			}
 		}
-		return res.toCollection(ctx);
+		var __memorize_value = res.toCollection(ctx);
+		use("Runtime.rtl")._memorizeSave("Runtime.RuntimeUtils.getParents", arguments, __memorize_value);
+		return __memorize_value;
 	},
 	/**
 	 * Returns Introspection of the class name
@@ -299,6 +303,31 @@ Object.assign(Runtime.RuntimeUtils,
 		});
 		return d.keys(ctx);
 	},
+	/**
+	 * Returns IntrospectionInfo of field
+	 */
+	getFieldInfo: function(ctx, class_name, field_name)
+	{
+		var __memorize_value = use("Runtime.rtl")._memorizeValue("Runtime.RuntimeUtils.getFieldInfo", arguments);
+		if (__memorize_value != use("Runtime.rtl")._memorize_not_found) return __memorize_value;
+		var parents = this.getParents(ctx, class_name);
+		for (var i = 0;i < parents.count(ctx);i++)
+		{
+			var parent_class_name = Runtime.rtl.get(ctx, parents, i);
+			var __v0 = use("Runtime.rtl");
+			var getFieldInfoByName = __v0.method(ctx, parent_class_name, "getFieldInfoByName");
+			var res = getFieldInfoByName(ctx, field_name);
+			if (res != null)
+			{
+				var __memorize_value = res;
+				use("Runtime.rtl")._memorizeSave("Runtime.RuntimeUtils.getFieldInfo", arguments, __memorize_value);
+				return __memorize_value;
+			}
+		}
+		var __memorize_value = null;
+		use("Runtime.rtl")._memorizeSave("Runtime.RuntimeUtils.getFieldInfo", arguments, __memorize_value);
+		return __memorize_value;
+	},
 	/* ============================= Serialization Functions ============================= */
 	ObjectToNative: function(ctx, value, force_class_name)
 	{
@@ -337,16 +366,6 @@ Object.assign(Runtime.RuntimeUtils,
 			{
 				return this.ObjectToPrimitive(ctx, value, force_class_name);
 			});
-			/*
-			Vector<var> res = new Vector();
-			for (int i=0; i<obj.count(); i++)
-			{
-				var value = obj.item(i);
-				value = self::ObjectToPrimitive( value, force_class_name );
-				res.push(value);
-			}
-			return res.toCollection();
-			*/
 		}
 		var __v0 = use("Runtime.Dict");
 		if (obj instanceof __v0)
@@ -355,27 +374,12 @@ Object.assign(Runtime.RuntimeUtils,
 			{
 				return this.ObjectToPrimitive(ctx, value, force_class_name);
 			});
-			/*
-			Map<var> res = new Map();
-			Vector<string> keys = obj.keys();
-			
-			for (int i=0; i<keys.count(); i++)
-			{
-				string key = keys.item(i);
-				var value = obj.item(key);
-				value = self::ObjectToPrimitive( value, force_class_name );
-				res.set(key, value);
-			}
-			
-			delete keys;
-			*/
-			/*
-			if (force_class_name)
-			{
-				obj = obj.setIm("__class_name__", classof Dict);
-			}
-			*/
 			return obj.toDict(ctx);
+		}
+		var __v0 = use("Runtime.DateTime");
+		if (obj instanceof __v0)
+		{
+			return obj;
 		}
 		var __v0 = use("Runtime.BaseStruct");
 		if (obj instanceof __v0)
@@ -490,19 +494,27 @@ Object.assign(Runtime.RuntimeUtils,
 		var _rtl = use("Runtime.rtl");
 		var _Utils = use("Runtime.RuntimeUtils");
 		var _Collection = use("Runtime.Collection");
+		var _DateTime = use("Runtime.DateTime");
 		var _Dict = use("Runtime.Dict");
 		
 		if (value === null)
 			return null;
 		
-		if (Array.isArray(value)){
+		if (Array.isArray(value))
+		{
 			var new_value = _Collection.from(value);
 			new_value = new_value.map(ctx, (ctx, val)=>{
 				return _Utils.NativeToPrimitive(ctx, val);
 			});
 			return new_value;
 		}
-		if (typeof value == 'object'){
+		if (typeof value == 'object')
+		{
+			if (value["__class_name__"] == "Runtime.DateTime")
+			{
+				var new_value = _DateTime.from(value);
+				return new_value;
+			}
 			var new_value = _Dict.from(value);
 			new_value = new_value.map(ctx, (ctx, val, key)=>{
 				return _Utils.NativeToPrimitive(ctx, val);
@@ -522,10 +534,16 @@ Object.assign(Runtime.RuntimeUtils,
 		var _rtl = use("Runtime.rtl");
 		var _Utils = use("Runtime.RuntimeUtils");
 		var _Collection = use("Runtime.Collection");
+		var _DateTime = use("Runtime.DateTime");
 		var _Dict = use("Runtime.Dict");
 		
 		if (value === null)
 			return null;
+		
+		if (value instanceof _DateTime)
+		{
+			value = value.toDict(ctx).setIm(ctx, "__class_name__", "Runtime.DateTime");
+		}
 		
 		if (value instanceof _Collection)
 		{
@@ -653,6 +671,7 @@ Object.assign(Runtime.RuntimeUtils,
 		if (field_name == "_global_context") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.RuntimeUtils",
+			"t": "var",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -660,6 +679,7 @@ Object.assign(Runtime.RuntimeUtils,
 		if (field_name == "_variables_names") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.RuntimeUtils",
+			"t": "Runtime.Map",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -667,6 +687,7 @@ Object.assign(Runtime.RuntimeUtils,
 		if (field_name == "JSON_PRETTY") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.RuntimeUtils",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),

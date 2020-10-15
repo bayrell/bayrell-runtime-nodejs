@@ -273,6 +273,7 @@ Object.assign(Runtime.Monad,
 		if (field_name == "val") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Monad",
+			"t": "var",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -280,6 +281,7 @@ Object.assign(Runtime.Monad,
 		if (field_name == "err") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Monad",
+			"t": "var",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),

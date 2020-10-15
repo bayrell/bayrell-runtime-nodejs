@@ -131,6 +131,7 @@ Object.assign(Runtime.PathInfo,
 		if (field_name == "filepath") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.PathInfo",
+			"t": "string",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -138,6 +139,7 @@ Object.assign(Runtime.PathInfo,
 		if (field_name == "dirname") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.PathInfo",
+			"t": "string",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -145,6 +147,7 @@ Object.assign(Runtime.PathInfo,
 		if (field_name == "basename") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.PathInfo",
+			"t": "string",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -152,6 +155,7 @@ Object.assign(Runtime.PathInfo,
 		if (field_name == "extension") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.PathInfo",
+			"t": "string",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -159,6 +163,7 @@ Object.assign(Runtime.PathInfo,
 		if (field_name == "filename") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.PathInfo",
+			"t": "string",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),

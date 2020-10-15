@@ -108,6 +108,7 @@ Object.assign(Runtime.Exceptions.ApiException,
 		if (field_name == "response") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Exceptions.ApiException",
+			"t": "var",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),

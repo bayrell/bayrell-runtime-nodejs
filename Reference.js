@@ -124,6 +124,7 @@ Object.assign(Runtime.Reference,
 		if (field_name == "uq") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Reference",
+			"t": "string",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -131,6 +132,7 @@ Object.assign(Runtime.Reference,
 		if (field_name == "ref") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Reference",
+			"t": "T",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),

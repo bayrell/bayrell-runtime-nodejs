@@ -124,6 +124,7 @@ Object.assign(Runtime.IntrospectionClass,
 		if (field_name == "class_name") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.IntrospectionClass",
+			"t": "string",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -131,6 +132,8 @@ Object.assign(Runtime.IntrospectionClass,
 		if (field_name == "class_info") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.IntrospectionClass",
+			"t": "Runtime.Collection",
+			"s": ["Runtime.BaseStruct"],
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -138,6 +141,8 @@ Object.assign(Runtime.IntrospectionClass,
 		if (field_name == "fields") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.IntrospectionClass",
+			"t": "Runtime.Dict",
+			"s": ["Runtime.Collection"],
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -145,6 +150,8 @@ Object.assign(Runtime.IntrospectionClass,
 		if (field_name == "methods") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.IntrospectionClass",
+			"t": "Runtime.Dict",
+			"s": ["Runtime.Collection"],
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -152,6 +159,8 @@ Object.assign(Runtime.IntrospectionClass,
 		if (field_name == "interfaces") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.IntrospectionClass",
+			"t": "Runtime.Collection",
+			"s": ["string"],
 			"name": field_name,
 			"annotations": Collection.from([
 			]),

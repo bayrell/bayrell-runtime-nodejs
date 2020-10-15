@@ -47,6 +47,7 @@ Object.assign(Runtime.IntrospectionInfo.prototype,
 		this.class_name = "";
 		this.kind = "";
 		this.name = "";
+		this.t = "";
 		this.annotations = null;
 		use("Runtime.BaseStruct").prototype._init.call(this,ctx);
 	},
@@ -57,6 +58,7 @@ Object.assign(Runtime.IntrospectionInfo.prototype,
 			this.class_name = o.class_name;
 			this.kind = o.kind;
 			this.name = o.name;
+			this.t = o.t;
 			this.annotations = o.annotations;
 		}
 		use("Runtime.BaseStruct").prototype.assignObject.call(this,ctx,o);
@@ -66,6 +68,7 @@ Object.assign(Runtime.IntrospectionInfo.prototype,
 		if (k == "class_name")this.class_name = v;
 		else if (k == "kind")this.kind = v;
 		else if (k == "name")this.name = v;
+		else if (k == "t")this.t = v;
 		else if (k == "annotations")this.annotations = v;
 		else use("Runtime.BaseStruct").prototype.assignValue.call(this,ctx,k,v);
 	},
@@ -75,6 +78,7 @@ Object.assign(Runtime.IntrospectionInfo.prototype,
 		if (k == "class_name")return this.class_name;
 		else if (k == "kind")return this.kind;
 		else if (k == "name")return this.name;
+		else if (k == "t")return this.t;
 		else if (k == "annotations")return this.annotations;
 		return use("Runtime.BaseStruct").prototype.takeValue.call(this,ctx,k,d);
 	},
@@ -124,6 +128,7 @@ Object.assign(Runtime.IntrospectionInfo,
 			a.push("class_name");
 			a.push("kind");
 			a.push("name");
+			a.push("t");
 			a.push("annotations");
 		}
 		return use("Runtime.Collection").from(a);
@@ -136,6 +141,7 @@ Object.assign(Runtime.IntrospectionInfo,
 		if (field_name == "ITEM_CLASS") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.IntrospectionInfo",
+			"t": "string",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -143,6 +149,7 @@ Object.assign(Runtime.IntrospectionInfo,
 		if (field_name == "ITEM_FIELD") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.IntrospectionInfo",
+			"t": "string",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -150,6 +157,7 @@ Object.assign(Runtime.IntrospectionInfo,
 		if (field_name == "ITEM_METHOD") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.IntrospectionInfo",
+			"t": "string",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -157,6 +165,7 @@ Object.assign(Runtime.IntrospectionInfo,
 		if (field_name == "class_name") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.IntrospectionInfo",
+			"t": "string",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -164,6 +173,7 @@ Object.assign(Runtime.IntrospectionInfo,
 		if (field_name == "kind") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.IntrospectionInfo",
+			"t": "string",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -171,6 +181,15 @@ Object.assign(Runtime.IntrospectionInfo,
 		if (field_name == "name") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.IntrospectionInfo",
+			"t": "string",
+			"name": field_name,
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "t") return new IntrospectionInfo(ctx, {
+			"kind": IntrospectionInfo.ITEM_FIELD,
+			"class_name": "Runtime.IntrospectionInfo",
+			"t": "string",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -178,6 +197,8 @@ Object.assign(Runtime.IntrospectionInfo,
 		if (field_name == "annotations") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.IntrospectionInfo",
+			"t": "Runtime.Collection",
+			"s": ["Runtime.BaseStruct"],
 			"name": field_name,
 			"annotations": Collection.from([
 			]),

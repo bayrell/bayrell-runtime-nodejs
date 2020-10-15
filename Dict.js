@@ -386,9 +386,10 @@ Object.assign(Runtime.Dict.prototype,
 	 * @param Collection fields = null
 	 * @return BaseStruct
 	 */
-	intersect: function(ctx, fields)
+	intersect: function(ctx, fields, skip_empty)
 	{
 		if (fields == undefined) fields = null;
+		if (skip_empty == undefined) skip_empty = true;
 		if (fields == null)
 		{
 			return use("Runtime.Dict").from({});
@@ -397,6 +398,10 @@ Object.assign(Runtime.Dict.prototype,
 		var obj = new __v0(ctx);
 		fields.each(ctx, (ctx, field_name) => 
 		{
+			if (skip_empty && !this.has(ctx, field_name))
+			{
+				return ;
+			}
 			obj.set(ctx, field_name, this.get(ctx, field_name, null));
 		});
 		return obj.toDict(ctx);

@@ -208,6 +208,7 @@ Object.assign(Runtime.Exceptions.RuntimeException,
 		if (field_name == "prev") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Exceptions.RuntimeException",
+			"t": "Object",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -215,6 +216,7 @@ Object.assign(Runtime.Exceptions.RuntimeException,
 		if (field_name == "error_message") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Exceptions.RuntimeException",
+			"t": "string",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -222,6 +224,7 @@ Object.assign(Runtime.Exceptions.RuntimeException,
 		if (field_name == "error_str") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Exceptions.RuntimeException",
+			"t": "string",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -229,6 +232,7 @@ Object.assign(Runtime.Exceptions.RuntimeException,
 		if (field_name == "error_code") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Exceptions.RuntimeException",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -236,6 +240,7 @@ Object.assign(Runtime.Exceptions.RuntimeException,
 		if (field_name == "error_file") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Exceptions.RuntimeException",
+			"t": "string",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -243,6 +248,7 @@ Object.assign(Runtime.Exceptions.RuntimeException,
 		if (field_name == "error_line") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Exceptions.RuntimeException",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -250,6 +256,7 @@ Object.assign(Runtime.Exceptions.RuntimeException,
 		if (field_name == "error_pos") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Exceptions.RuntimeException",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),

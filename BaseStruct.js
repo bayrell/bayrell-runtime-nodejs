@@ -31,13 +31,6 @@ Runtime.BaseStruct.prototype.constructor = Runtime.BaseStruct;
 Object.assign(Runtime.BaseStruct.prototype,
 {
 	/**
-	 * Init struct data
-	 */
-	initData: function(ctx, old, changed)
-	{
-		if (changed == undefined) changed = null;
-	},
-	/**
 	 * Copy this struct with new values
 	 * @param Map obj = null
 	 * @return BaseStruct
@@ -155,26 +148,67 @@ Object.assign(Runtime.BaseStruct, use("Runtime.BaseObject"));
 Object.assign(Runtime.BaseStruct,
 {
 	/**
+	 * Returns field value
+	 */
+	_initDataGet: function(ctx, old, changed, field_name)
+	{
+		return (changed != null && changed.has(ctx, field_name)) ? (Runtime.rtl.get(ctx, changed, field_name)) : (Runtime.rtl.get(ctx, old, field_name));
+	},
+	/**
+	 * Init struct data
+	 */
+	_initData: function(ctx, old, changed)
+	{
+		return changed;
+	},
+	/**
 	 * Assign
 	 */
-	_assign: function(ctx, item, old_item, obj)
+	_assign: function(ctx, new_item, old_item, obj)
 	{
+		var __v0 = use("Runtime.rtl");
+		obj = __v0.convert(ctx, obj, "Runtime.Dict");
+		obj = new_item.constructor._initData(ctx, old_item, obj);
 		if (obj == null)
 		{
-			item.initData(ctx, old_item, obj);
 			return ;
 		}
+		var check_types = false;
+		var class_name = this.getCurrentClassName(ctx);
 		var _Dict = use("Runtime.Dict");
+		var RuntimeUtils = use("Runtime.RuntimeUtils");
 		if (obj instanceof _Dict)
 		{
-			for (var key in obj._map) item[key.substring(1)] = obj._map[key];
+			for (var key in obj._map)
+			{
+				var value = obj._map[key];
+				if (check_types)
+				{
+					info = RuntimeUtils.getFieldInfo(ctx, new_item.getClassName(), key);
+					if (info)
+					{
+						value = rtl.convert(ctx, value, info.t, null);
+					}
+				}
+				new_item[key.substring(1)] = value;
+			}
 		}
 		else
 		{
-			for (var key in obj) item[key] = obj[key];
+			for (var key in obj)
+			{
+				var value = obj[key];
+				if (check_types)
+				{
+					info = RuntimeUtils.getFieldInfo(ctx, new_item.getClassName(), key);
+					if (info)
+					{
+						value = rtl.convert(ctx, value, info.t, null);
+					}
+				}
+				new_item[key] = value;
+			}
 		}
-		
-		item.initData(ctx, old_item, obj);
 	},
 	/**
 	 * Returns new instance

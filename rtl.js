@@ -335,6 +335,10 @@ Object.assign(Runtime.rtl,
 	attr: function(ctx, item, path, def_val)
 	{
 		if (def_val == undefined) def_val = null;
+		if (path == null)
+		{
+			return def_val;
+		}
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
 		var BaseStruct = use("Runtime.BaseStruct");
@@ -371,6 +375,10 @@ Object.assign(Runtime.rtl,
 	 */
 	setAttr: function(ctx, item, attrs, new_value)
 	{
+		if (attrs == null)
+		{
+			return item;
+		}
 		var Collection = use("Runtime.Collection");
 		if (typeof attrs == "string") attrs = Collection.from([attrs]);
 		else if (Array.isArray(attrs) && attrs.count == undefined) attrs = Collection.from(attrs);
@@ -459,7 +467,7 @@ Object.assign(Runtime.rtl,
 		return (ctx, m) => 
 		{
 			var __v0 = use("Runtime.Monad");
-			return new __v0(ctx, (m.err == null) ? (this.convert(m.val, type_value, def_value)) : (def_value));
+			return new __v0(ctx, (m.err == null) ? (this.convert(ctx, m.val, type_value, def_value)) : (def_value));
 		};
 	},
 	/**
@@ -482,39 +490,38 @@ Object.assign(Runtime.rtl,
 	 * @param var type_template
 	 * @return var
 	 */
-	convert: function(v, t, d)
+	convert: function(ctx, v, t, d)
 	{
 		if (d == undefined) d = null;
-		if (v == null)
+		if (v === null)
 		{
-			v = d;
+			return d;
 		}
 		if (t == "mixed" || t == "primitive" || t == "var" || t == "fn" || t == "callback")
 		{
 			return v;
 		}
-		var __v0 = use("Runtime.rtl");
 		if (t == "bool" || t == "boolean")
 		{
-			return this.toBool(null, v);
+			return this.toBool(ctx, v);
 		}
 		else if (t == "string")
 		{
-			return this.toString(null, v);
+			return this.toString(ctx, v);
 		}
 		else if (t == "int")
 		{
-			return this.toInt(null, v);
+			return this.toInt(ctx, v);
 		}
 		else if (t == "float" || t == "double")
 		{
-			return this.toFloat(null, v);
+			return this.toFloat(ctx, v);
 		}
-		else if (__v0.is_instanceof(null, v, t))
+		else if (this.is_instanceof(ctx, v, t))
 		{
 			return v;
 		}
-		return d;
+		return this.toObject(ctx, v, t, d);
 	},
 	/**
 	 * Returns true if value instanceof tp
@@ -733,6 +740,54 @@ Object.assign(Runtime.rtl,
 		if (s_res.localeCompare(s_val) == 0)
 			return res;
 		return 0;
+	},
+	/**
+	 * Convert to object
+	 */
+	toObject: function(ctx, v, t, d)
+	{
+		if (d == undefined) d = null;
+		if (this.is_instanceof(ctx, v, t))
+		{
+			return v;
+		}
+		if (t == "Runtime.Collection")
+		{
+			var __v0 = use("Runtime.Collection");
+			return __v0.from(v);
+		}
+		if (t == "Runtime.Vector")
+		{
+			var __v0 = use("Runtime.Vector");
+			return __v0.from(v);
+		}
+		if (t == "Runtime.Dict")
+		{
+			var __v0 = use("Runtime.Dict");
+			return __v0.from(v);
+		}
+		if (t == "Runtime.Map")
+		{
+			var __v0 = use("Runtime.Map");
+			return __v0.from(v);
+		}
+		try
+		{
+			var newInstance = this.method(ctx, t, "newInstance");
+			return newInstance(ctx, v);
+		}
+		catch (_ex)
+		{
+			if (true)
+			{
+				var e = _ex;
+			}
+			else
+			{
+				throw _ex;
+			}
+		}
+		return d;
 	},
 	/**
 	 * Round up
@@ -1114,6 +1169,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "LOG_FATAL") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1121,6 +1177,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "LOG_CRITICAL") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1128,6 +1185,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "LOG_ERROR") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1135,6 +1193,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "LOG_WARNING") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1142,6 +1201,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "LOG_INFO") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1149,6 +1209,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "LOG_DEBUG") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1156,6 +1217,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "LOG_DEBUG2") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1163,6 +1225,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "STATUS_PLAN") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1170,6 +1233,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "STATUS_DONE") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1177,6 +1241,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "STATUS_PROCESS") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1184,6 +1249,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "STATUS_FAIL") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1191,6 +1257,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "ERROR_NULL") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1198,6 +1265,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "ERROR_OK") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1205,6 +1273,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "ERROR_PROCCESS") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1212,6 +1281,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "ERROR_FALSE") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1219,6 +1289,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "ERROR_UNKNOWN") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1226,6 +1297,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "ERROR_INDEX_OUT_OF_RANGE") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1233,6 +1305,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "ERROR_KEY_NOT_FOUND") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1240,6 +1313,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "ERROR_STOP_ITERATION") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1247,6 +1321,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "ERROR_FILE_NOT_FOUND") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1254,6 +1329,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "ERROR_ITEM_NOT_FOUND") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1261,6 +1337,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "ERROR_OBJECT_DOES_NOT_EXISTS") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1268,6 +1345,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "ERROR_OBJECT_ALLREADY_EXISTS") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1275,6 +1353,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "ERROR_ASSERT") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1282,6 +1361,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "ERROR_REQUEST") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1289,6 +1369,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "ERROR_RESPONSE") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1296,6 +1377,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "ERROR_CSRF_TOKEN") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1303,6 +1385,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "ERROR_RUNTIME") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1310,6 +1393,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "ERROR_VALIDATION") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1317,6 +1401,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "ERROR_PARSE_SERIALIZATION_ERROR") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1324,6 +1409,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "ERROR_ASSIGN_DATA_STRUCT_VALUE") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1331,6 +1417,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "ERROR_AUTH") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1338,6 +1425,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "ERROR_DUPLICATE") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1345,6 +1433,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "ERROR_API_NOT_FOUND") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1352,6 +1441,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "ERROR_API_WRONG_FORMAT") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1359,6 +1449,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "ERROR_API_WRONG_APP_NAME") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1366,6 +1457,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "ERROR_FATAL") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1373,6 +1465,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "ERROR_HTTP_CONTINUE") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1380,6 +1473,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "ERROR_HTTP_SWITCH") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1387,6 +1481,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "ERROR_HTTP_PROCESSING") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1394,6 +1489,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "ERROR_HTTP_OK") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1401,6 +1497,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "ERROR_HTTP_BAD_GATEWAY") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "int",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1408,6 +1505,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "_memorize_cache") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "var",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1415,6 +1513,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "_memorize_not_found") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "var",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),
@@ -1422,6 +1521,7 @@ Object.assign(Runtime.rtl,
 		if (field_name == "_memorize_hkey") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
+			"t": "var",
 			"name": field_name,
 			"annotations": Collection.from([
 			]),

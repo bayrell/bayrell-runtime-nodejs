@@ -202,25 +202,6 @@ Object.assign(Runtime.Monad.prototype,
 		this.val = null;
 		this.err = null;
 	},
-	assignObject: function(ctx,o)
-	{
-		if (o instanceof use("Runtime.Monad"))
-		{
-			this.val = o.val;
-			this.err = o.err;
-		}
-	},
-	assignValue: function(ctx,k,v)
-	{
-		if (k == "val")this.val = v;
-		else if (k == "err")this.err = v;
-	},
-	takeValue: function(ctx,k,d)
-	{
-		if (d == undefined) d = null;
-		if (k == "val")return this.val;
-		else if (k == "err")return this.err;
-	},
 	getClassName: function(ctx)
 	{
 		return "Runtime.Monad";
@@ -258,7 +239,7 @@ Object.assign(Runtime.Monad,
 	{
 		var a = [];
 		if (f==undefined) f=0;
-		if ((f|2)==2)
+		if ((f&2)==2)
 		{
 			a.push("val");
 			a.push("err");
@@ -273,24 +254,26 @@ Object.assign(Runtime.Monad,
 		if (field_name == "val") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Monad",
-			"t": "var",
 			"name": field_name,
+			"t": "var",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "err") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Monad",
-			"t": "var",
 			"name": field_name,
+			"t": "var",
 			"annotations": Collection.from([
 			]),
 		});
 		return null;
 	},
-	getMethodsList: function(ctx)
+	getMethodsList: function(ctx,f)
 	{
-		var a = [
+		if (f==undefined) f=0;
+		var a = [];
+		if ((f&4)==4) a=[
 		];
 		return use("Runtime.Collection").from(a);
 	},

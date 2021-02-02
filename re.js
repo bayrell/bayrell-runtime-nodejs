@@ -23,19 +23,6 @@ Runtime.re = function(ctx)
 };
 Object.assign(Runtime.re.prototype,
 {
-	assignObject: function(ctx,o)
-	{
-		if (o instanceof use("Runtime.re"))
-		{
-		}
-	},
-	assignValue: function(ctx,k,v)
-	{
-	},
-	takeValue: function(ctx,k,d)
-	{
-		if (d == undefined) d = null;
-	},
 	getClassName: function(ctx)
 	{
 		return "Runtime.re";
@@ -116,9 +103,11 @@ Object.assign(Runtime.re,
 		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
 		return null;
 	},
-	getMethodsList: function(ctx)
+	getMethodsList: function(ctx,f)
 	{
-		var a = [
+		if (f==undefined) f=0;
+		var a = [];
+		if ((f&4)==4) a=[
 		];
 		return use("Runtime.Collection").from(a);
 	},

@@ -113,43 +113,6 @@ Object.assign(Runtime.Exceptions.RuntimeException.prototype,
 		this.error_pos = -1;
 		use("Runtime.Exceptions.ClassException").prototype._init.call(this,ctx);
 	},
-	assignObject: function(ctx,o)
-	{
-		if (o instanceof use("Runtime.Exceptions.RuntimeException"))
-		{
-			this.prev = o.prev;
-			this.error_message = o.error_message;
-			this.error_str = o.error_str;
-			this.error_code = o.error_code;
-			this.error_file = o.error_file;
-			this.error_line = o.error_line;
-			this.error_pos = o.error_pos;
-		}
-		use("Runtime.Exceptions.ClassException").prototype.assignObject.call(this,ctx,o);
-	},
-	assignValue: function(ctx,k,v)
-	{
-		if (k == "prev")this.prev = v;
-		else if (k == "error_message")this.error_message = v;
-		else if (k == "error_str")this.error_str = v;
-		else if (k == "error_code")this.error_code = v;
-		else if (k == "error_file")this.error_file = v;
-		else if (k == "error_line")this.error_line = v;
-		else if (k == "error_pos")this.error_pos = v;
-		else use("Runtime.Exceptions.ClassException").prototype.assignValue.call(this,ctx,k,v);
-	},
-	takeValue: function(ctx,k,d)
-	{
-		if (d == undefined) d = null;
-		if (k == "prev")return this.prev;
-		else if (k == "error_message")return this.error_message;
-		else if (k == "error_str")return this.error_str;
-		else if (k == "error_code")return this.error_code;
-		else if (k == "error_file")return this.error_file;
-		else if (k == "error_line")return this.error_line;
-		else if (k == "error_pos")return this.error_pos;
-		return use("Runtime.Exceptions.ClassException").prototype.takeValue.call(this,ctx,k,d);
-	},
 	getClassName: function(ctx)
 	{
 		return "Runtime.Exceptions.RuntimeException";
@@ -188,7 +151,7 @@ Object.assign(Runtime.Exceptions.RuntimeException,
 	{
 		var a = [];
 		if (f==undefined) f=0;
-		if ((f|2)==2)
+		if ((f&2)==2)
 		{
 			a.push("prev");
 			a.push("error_message");
@@ -208,64 +171,66 @@ Object.assign(Runtime.Exceptions.RuntimeException,
 		if (field_name == "prev") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Exceptions.RuntimeException",
-			"t": "Object",
 			"name": field_name,
+			"t": "Object",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "error_message") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Exceptions.RuntimeException",
-			"t": "string",
 			"name": field_name,
+			"t": "string",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "error_str") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Exceptions.RuntimeException",
-			"t": "string",
 			"name": field_name,
+			"t": "string",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "error_code") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Exceptions.RuntimeException",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "error_file") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Exceptions.RuntimeException",
-			"t": "string",
 			"name": field_name,
+			"t": "string",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "error_line") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Exceptions.RuntimeException",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "error_pos") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Exceptions.RuntimeException",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		return null;
 	},
-	getMethodsList: function(ctx)
+	getMethodsList: function(ctx,f)
 	{
-		var a = [
+		if (f==undefined) f=0;
+		var a = [];
+		if ((f&4)==4) a=[
 		];
 		return use("Runtime.Collection").from(a);
 	},

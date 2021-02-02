@@ -18,70 +18,63 @@ var use = require('bayrell').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-Runtime.PathInfo = function(ctx)
+Runtime.Date = function(ctx)
 {
 	use("Runtime.BaseStruct").apply(this, arguments);
 };
-Runtime.PathInfo.prototype = Object.create(use("Runtime.BaseStruct").prototype);
-Runtime.PathInfo.prototype.constructor = Runtime.PathInfo;
-Object.assign(Runtime.PathInfo.prototype,
+Runtime.Date.prototype = Object.create(use("Runtime.BaseStruct").prototype);
+Runtime.Date.prototype.constructor = Runtime.Date;
+Object.assign(Runtime.Date.prototype,
 {
 	/**
-	 * Returns string
+	 * Return date
+	 * @return string
 	 */
-	toString: function(ctx)
+	getDate: function(ctx)
 	{
-		return this.filepath;
+		return this.y + use("Runtime.rtl").toStr("-") + use("Runtime.rtl").toStr(this.m) + use("Runtime.rtl").toStr("-") + use("Runtime.rtl").toStr(this.d);
 	},
 	_init: function(ctx)
 	{
 		var defProp = use('Runtime.rtl').defProp;
 		var a = Object.getOwnPropertyNames(this);
-		this.filepath = "";
-		this.dirname = "";
-		this.basename = "";
-		this.extension = "";
-		this.filename = "";
+		this.y = 0;
+		this.m = 0;
+		this.d = 0;
 		use("Runtime.BaseStruct").prototype._init.call(this,ctx);
 	},
 	assignObject: function(ctx,o)
 	{
-		if (o instanceof use("Runtime.PathInfo"))
+		if (o instanceof use("Runtime.Date"))
 		{
-			this.filepath = o.filepath;
-			this.dirname = o.dirname;
-			this.basename = o.basename;
-			this.extension = o.extension;
-			this.filename = o.filename;
+			this.y = o.y;
+			this.m = o.m;
+			this.d = o.d;
 		}
 		use("Runtime.BaseStruct").prototype.assignObject.call(this,ctx,o);
 	},
 	assignValue: function(ctx,k,v)
 	{
-		if (k == "filepath")this.filepath = v;
-		else if (k == "dirname")this.dirname = v;
-		else if (k == "basename")this.basename = v;
-		else if (k == "extension")this.extension = v;
-		else if (k == "filename")this.filename = v;
+		if (k == "y")this.y = v;
+		else if (k == "m")this.m = v;
+		else if (k == "d")this.d = v;
 		else use("Runtime.BaseStruct").prototype.assignValue.call(this,ctx,k,v);
 	},
 	takeValue: function(ctx,k,d)
 	{
 		if (d == undefined) d = null;
-		if (k == "filepath")return this.filepath;
-		else if (k == "dirname")return this.dirname;
-		else if (k == "basename")return this.basename;
-		else if (k == "extension")return this.extension;
-		else if (k == "filename")return this.filename;
+		if (k == "y")return this.y;
+		else if (k == "m")return this.m;
+		else if (k == "d")return this.d;
 		return use("Runtime.BaseStruct").prototype.takeValue.call(this,ctx,k,d);
 	},
 	getClassName: function(ctx)
 	{
-		return "Runtime.PathInfo";
+		return "Runtime.Date";
 	},
 });
-Object.assign(Runtime.PathInfo, use("Runtime.BaseStruct"));
-Object.assign(Runtime.PathInfo,
+Object.assign(Runtime.Date, use("Runtime.BaseStruct"));
+Object.assign(Runtime.Date,
 {
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
@@ -90,7 +83,7 @@ Object.assign(Runtime.PathInfo,
 	},
 	getCurrentClassName: function()
 	{
-		return "Runtime.PathInfo";
+		return "Runtime.Date";
 	},
 	getParentClassName: function()
 	{
@@ -103,8 +96,8 @@ Object.assign(Runtime.PathInfo,
 		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
 		return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_CLASS,
-			"class_name": "Runtime.PathInfo",
-			"name": "Runtime.PathInfo",
+			"class_name": "Runtime.Date",
+			"name": "Runtime.Date",
 			"annotations": Collection.from([
 			]),
 		});
@@ -115,11 +108,9 @@ Object.assign(Runtime.PathInfo,
 		if (f==undefined) f=0;
 		if ((f&3)==3)
 		{
-			a.push("filepath");
-			a.push("dirname");
-			a.push("basename");
-			a.push("extension");
-			a.push("filename");
+			a.push("y");
+			a.push("m");
+			a.push("d");
 		}
 		return use("Runtime.Collection").from(a);
 	},
@@ -128,43 +119,27 @@ Object.assign(Runtime.PathInfo,
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
 		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
-		if (field_name == "filepath") return new IntrospectionInfo(ctx, {
+		if (field_name == "y") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
-			"class_name": "Runtime.PathInfo",
+			"class_name": "Runtime.Date",
 			"name": field_name,
-			"t": "string",
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
-		if (field_name == "dirname") return new IntrospectionInfo(ctx, {
+		if (field_name == "m") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
-			"class_name": "Runtime.PathInfo",
+			"class_name": "Runtime.Date",
 			"name": field_name,
-			"t": "string",
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
-		if (field_name == "basename") return new IntrospectionInfo(ctx, {
+		if (field_name == "d") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
-			"class_name": "Runtime.PathInfo",
+			"class_name": "Runtime.Date",
 			"name": field_name,
-			"t": "string",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "extension") return new IntrospectionInfo(ctx, {
-			"kind": IntrospectionInfo.ITEM_FIELD,
-			"class_name": "Runtime.PathInfo",
-			"name": field_name,
-			"t": "string",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "filename") return new IntrospectionInfo(ctx, {
-			"kind": IntrospectionInfo.ITEM_FIELD,
-			"class_name": "Runtime.PathInfo",
-			"name": field_name,
-			"t": "string",
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
@@ -182,9 +157,19 @@ Object.assign(Runtime.PathInfo,
 	{
 		return null;
 	},
-	__implements__:
-	[
-		use("Runtime.StringInterface"),
-	],
-});use.add(Runtime.PathInfo);
-module.exports = Runtime.PathInfo;
+});use.add(Runtime.Date);
+module.exports = Runtime.Date;
+Runtime.Date.prototype.toObject = function(ctx)
+{
+	var dt = new Date(this.y, this.m - 1, this.d);
+	return dt;
+}
+Runtime.Date.fromObject = function(ctx, dt)
+{
+	var Dict = use("Runtime.Dict");
+	var y = Number(dt.getFullYear());
+	var m = Number(dt.getMonth()) + 1;
+	var d = Number(dt.getDate());
+	var dt = new Runtime.Date( ctx, Dict.from({"y":y,"m":m,"d":d}) );
+	return dt;
+}

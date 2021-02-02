@@ -123,22 +123,6 @@ Object.assign(Runtime.BaseStruct.prototype,
 	{
 		return this.takeDict(ctx);
 	},
-	assignObject: function(ctx,o)
-	{
-		if (o instanceof use("Runtime.BaseStruct"))
-		{
-		}
-		use("Runtime.BaseObject").prototype.assignObject.call(this,ctx,o);
-	},
-	assignValue: function(ctx,k,v)
-	{
-		use("Runtime.BaseObject").prototype.assignValue.call(this,ctx,k,v);
-	},
-	takeValue: function(ctx,k,d)
-	{
-		if (d == undefined) d = null;
-		return use("Runtime.BaseObject").prototype.takeValue.call(this,ctx,k,d);
-	},
 	getClassName: function(ctx)
 	{
 		return "Runtime.BaseStruct";
@@ -277,9 +261,11 @@ Object.assign(Runtime.BaseStruct,
 		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
 		return null;
 	},
-	getMethodsList: function(ctx)
+	getMethodsList: function(ctx,f)
 	{
-		var a = [
+		if (f==undefined) f=0;
+		var a = [];
+		if ((f&4)==4) a=[
 		];
 		return use("Runtime.Collection").from(a);
 	},

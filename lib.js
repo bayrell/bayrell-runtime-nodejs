@@ -24,19 +24,6 @@ Runtime.lib = function(ctx)
 };
 Object.assign(Runtime.lib.prototype,
 {
-	assignObject: function(ctx,o)
-	{
-		if (o instanceof use("Runtime.lib"))
-		{
-		}
-	},
-	assignValue: function(ctx,k,v)
-	{
-	},
-	takeValue: function(ctx,k,d)
-	{
-		if (d == undefined) d = null;
-	},
 	getClassName: function(ctx)
 	{
 		return "Runtime.lib";
@@ -474,6 +461,55 @@ Object.assign(Runtime.lib,
 			return value;
 		};
 	},
+	/**
+	 * Function or
+	 */
+	or: function(ctx, arr)
+	{
+		return (ctx, item) => 
+		{
+			for (var i = 0;i < arr.count(ctx);i++)
+			{
+				var f = Runtime.rtl.get(ctx, arr, i);
+				var res = f(ctx, item);
+				if (res)
+				{
+					return true;
+				}
+			}
+			return false;
+		};
+	},
+	/**
+	 * Function and
+	 */
+	and: function(ctx, arr)
+	{
+		return (ctx, item) => 
+		{
+			for (var i = 0;i < arr.count(ctx);i++)
+			{
+				var f = Runtime.rtl.get(ctx, arr, i);
+				var res = f(ctx, item);
+				if (res)
+				{
+					return true;
+				}
+			}
+			return false;
+		};
+	},
+	/**
+	 * Join
+	 */
+	join: function(ctx, ch)
+	{
+		return (ctx, items) => 
+		{
+			var __v0 = use("Runtime.rs");
+			return __v0.join(ctx, ch, items);
+		};
+	},
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
 	{
@@ -513,9 +549,11 @@ Object.assign(Runtime.lib,
 		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
 		return null;
 	},
-	getMethodsList: function(ctx)
+	getMethodsList: function(ctx,f)
 	{
-		var a = [
+		if (f==undefined) f=0;
+		var a = [];
+		if ((f&4)==4) a=[
 		];
 		return use("Runtime.Collection").from(a);
 	},

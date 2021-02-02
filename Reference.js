@@ -49,28 +49,6 @@ Object.assign(Runtime.Reference.prototype,
 		this.ref = null;
 		use("Runtime.BaseObject").prototype._init.call(this,ctx);
 	},
-	assignObject: function(ctx,o)
-	{
-		if (o instanceof use("Runtime.Reference"))
-		{
-			this.uq = o.uq;
-			this.ref = o.ref;
-		}
-		use("Runtime.BaseObject").prototype.assignObject.call(this,ctx,o);
-	},
-	assignValue: function(ctx,k,v)
-	{
-		if (k == "uq")this.uq = v;
-		else if (k == "ref")this.ref = v;
-		else use("Runtime.BaseObject").prototype.assignValue.call(this,ctx,k,v);
-	},
-	takeValue: function(ctx,k,d)
-	{
-		if (d == undefined) d = null;
-		if (k == "uq")return this.uq;
-		else if (k == "ref")return this.ref;
-		return use("Runtime.BaseObject").prototype.takeValue.call(this,ctx,k,d);
-	},
 	getClassName: function(ctx)
 	{
 		return "Runtime.Reference";
@@ -109,7 +87,7 @@ Object.assign(Runtime.Reference,
 	{
 		var a = [];
 		if (f==undefined) f=0;
-		if ((f|2)==2)
+		if ((f&2)==2)
 		{
 			a.push("uq");
 			a.push("ref");
@@ -124,24 +102,26 @@ Object.assign(Runtime.Reference,
 		if (field_name == "uq") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Reference",
-			"t": "string",
 			"name": field_name,
+			"t": "string",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "ref") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.Reference",
-			"t": "T",
 			"name": field_name,
+			"t": "T",
 			"annotations": Collection.from([
 			]),
 		});
 		return null;
 	},
-	getMethodsList: function(ctx)
+	getMethodsList: function(ctx,f)
 	{
-		var a = [
+		if (f==undefined) f=0;
+		var a = [];
+		if ((f&4)==4) a=[
 		];
 		return use("Runtime.Collection").from(a);
 	},

@@ -32,9 +32,13 @@ Object.assign(Runtime.DateTime.prototype,
 	 */
 	getTimestamp: function(ctx)
 	{
-		var dt = this.getObjectData(ctx);
+		var dt = this.toObject(ctx);
 		return dt.getTime();
 		return null;
+	},
+	timestamp: function(ctx)
+	{
+		return this.getTimestamp(ctx);
 	},
 	/**
 	 * Returns day of week
@@ -42,7 +46,7 @@ Object.assign(Runtime.DateTime.prototype,
 	 */
 	getDayOfWeek: function(ctx)
 	{
-		var dt = this.getObjectData(ctx);
+		var dt = this.toObject(ctx);
 		return dt.getDay();
 		return null;
 	},
@@ -50,10 +54,10 @@ Object.assign(Runtime.DateTime.prototype,
 	 * Return db datetime
 	 * @return string
 	 */
-	getDBTime: function(ctx, tz)
+	getDateTime: function(ctx, tz)
 	{
 		if (tz == undefined) tz = "UTC";
-		var dt = this.getObjectData(ctx);
+		var dt = this.toObject(ctx);
 		var offset = this.constructor.getTimezoneOffset(ctx, tz);
 		var offset = offset - dt.getTimezoneOffset();
 		dt = this.constructor.shiftOffset(ctx, dt, -offset);
@@ -80,17 +84,9 @@ Object.assign(Runtime.DateTime.prototype,
 	getDate: function(ctx, tz)
 	{
 		if (tz == undefined) tz = "UTC";
-		var value = this.getDBTime(ctx, tz);
+		var value = this.getDateTime(ctx, tz);
 		var __v0 = use("Runtime.rs");
 		return __v0.substr(ctx, value, 0, 10);
-	},
-	/**
-	 * Return datetime by UTC
-	 * @return string
-	 */
-	getDBTimeUTC: function(ctx)
-	{
-		return this.constructor.getDBTime(ctx, "UTC");
 	},
 	/**
 	 * Return datetime in RFC822
@@ -268,7 +264,7 @@ Object.assign(Runtime.DateTime,
 	{
 		var a = [];
 		if (f==undefined) f=0;
-		if ((f|3)==3)
+		if ((f&3)==3)
 		{
 			a.push("y");
 			a.push("m");
@@ -289,72 +285,74 @@ Object.assign(Runtime.DateTime,
 		if (field_name == "y") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.DateTime",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "m") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.DateTime",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "d") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.DateTime",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "h") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.DateTime",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "i") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.DateTime",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "s") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.DateTime",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "ms") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.DateTime",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "tz") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.DateTime",
-			"t": "string",
 			"name": field_name,
+			"t": "string",
 			"annotations": Collection.from([
 			]),
 		});
 		return null;
 	},
-	getMethodsList: function(ctx)
+	getMethodsList: function(ctx,f)
 	{
-		var a = [
+		if (f==undefined) f=0;
+		var a = [];
+		if ((f&4)==4) a=[
 		];
 		return use("Runtime.Collection").from(a);
 	},
@@ -405,7 +403,7 @@ Runtime.DateTime.shiftOffset = function(ctx, dt, offset)
 	return dt;
 }
 
-Runtime.DateTime.prototype.getObjectData = function(ctx)
+Runtime.DateTime.prototype.toObject = function(ctx)
 {
 	var dt = new Date(this.y, this.m - 1, this.d, this.h, this.i, this.s);
 	var offset = this.constructor.getTimezoneOffset(ctx, this.tz);

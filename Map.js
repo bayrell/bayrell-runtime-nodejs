@@ -61,22 +61,6 @@ Object.assign(Runtime.Map.prototype,
 		this._map = {};
 		return this;
 	},
-	assignObject: function(ctx,o)
-	{
-		if (o instanceof use("Runtime.Map"))
-		{
-		}
-		use("Runtime.Dict").prototype.assignObject.call(this,ctx,o);
-	},
-	assignValue: function(ctx,k,v)
-	{
-		use("Runtime.Dict").prototype.assignValue.call(this,ctx,k,v);
-	},
-	takeValue: function(ctx,k,d)
-	{
-		if (d == undefined) d = null;
-		return use("Runtime.Dict").prototype.takeValue.call(this,ctx,k,d);
-	},
 	getClassName: function(ctx)
 	{
 		return "Runtime.Map";
@@ -133,9 +117,11 @@ Object.assign(Runtime.Map,
 		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
 		return null;
 	},
-	getMethodsList: function(ctx)
+	getMethodsList: function(ctx,f)
 	{
-		var a = [
+		if (f==undefined) f=0;
+		var a = [];
+		if ((f&4)==4) a=[
 		];
 		return use("Runtime.Collection").from(a);
 	},

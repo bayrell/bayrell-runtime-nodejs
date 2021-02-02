@@ -29,22 +29,6 @@ Runtime.Exceptions.UnknownError.prototype = Object.create(use("Runtime.Exception
 Runtime.Exceptions.UnknownError.prototype.constructor = Runtime.Exceptions.UnknownError;
 Object.assign(Runtime.Exceptions.UnknownError.prototype,
 {
-	assignObject: function(ctx,o)
-	{
-		if (o instanceof use("Runtime.Exceptions.UnknownError"))
-		{
-		}
-		use("Runtime.Exceptions.RuntimeException").prototype.assignObject.call(this,ctx,o);
-	},
-	assignValue: function(ctx,k,v)
-	{
-		use("Runtime.Exceptions.RuntimeException").prototype.assignValue.call(this,ctx,k,v);
-	},
-	takeValue: function(ctx,k,d)
-	{
-		if (d == undefined) d = null;
-		return use("Runtime.Exceptions.RuntimeException").prototype.takeValue.call(this,ctx,k,d);
-	},
 	getClassName: function(ctx)
 	{
 		return "Runtime.Exceptions.UnknownError";
@@ -92,9 +76,11 @@ Object.assign(Runtime.Exceptions.UnknownError,
 		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
 		return null;
 	},
-	getMethodsList: function(ctx)
+	getMethodsList: function(ctx,f)
 	{
-		var a = [
+		if (f==undefined) f=0;
+		var a = [];
+		if ((f&4)==4) a=[
 		];
 		return use("Runtime.Collection").from(a);
 	},

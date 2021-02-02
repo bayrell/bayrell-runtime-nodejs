@@ -29,19 +29,6 @@ Object.assign(Runtime.rtl.prototype,
 	trace: function()
 	{
 	},
-	assignObject: function(ctx,o)
-	{
-		if (o instanceof use("Runtime.rtl"))
-		{
-		}
-	},
-	assignValue: function(ctx,k,v)
-	{
-	},
-	takeValue: function(ctx,k,d)
-	{
-		if (d == undefined) d = null;
-	},
 	getClassName: function(ctx)
 	{
 		return "Runtime.rtl";
@@ -1169,368 +1156,370 @@ Object.assign(Runtime.rtl,
 		if (field_name == "LOG_FATAL") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "LOG_CRITICAL") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "LOG_ERROR") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "LOG_WARNING") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "LOG_INFO") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "LOG_DEBUG") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "LOG_DEBUG2") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "STATUS_PLAN") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "STATUS_DONE") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "STATUS_PROCESS") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "STATUS_FAIL") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "ERROR_NULL") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "ERROR_OK") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "ERROR_PROCCESS") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "ERROR_FALSE") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "ERROR_UNKNOWN") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "ERROR_INDEX_OUT_OF_RANGE") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "ERROR_KEY_NOT_FOUND") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "ERROR_STOP_ITERATION") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "ERROR_FILE_NOT_FOUND") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "ERROR_ITEM_NOT_FOUND") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "ERROR_OBJECT_DOES_NOT_EXISTS") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "ERROR_OBJECT_ALLREADY_EXISTS") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "ERROR_ASSERT") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "ERROR_REQUEST") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "ERROR_RESPONSE") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "ERROR_CSRF_TOKEN") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "ERROR_RUNTIME") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "ERROR_VALIDATION") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "ERROR_PARSE_SERIALIZATION_ERROR") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "ERROR_ASSIGN_DATA_STRUCT_VALUE") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "ERROR_AUTH") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "ERROR_DUPLICATE") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "ERROR_API_NOT_FOUND") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "ERROR_API_WRONG_FORMAT") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "ERROR_API_WRONG_APP_NAME") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "ERROR_FATAL") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "ERROR_HTTP_CONTINUE") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "ERROR_HTTP_SWITCH") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "ERROR_HTTP_PROCESSING") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "ERROR_HTTP_OK") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "ERROR_HTTP_BAD_GATEWAY") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "int",
 			"name": field_name,
+			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "_memorize_cache") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "var",
 			"name": field_name,
+			"t": "var",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "_memorize_not_found") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "var",
 			"name": field_name,
+			"t": "var",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "_memorize_hkey") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.rtl",
-			"t": "var",
 			"name": field_name,
+			"t": "var",
 			"annotations": Collection.from([
 			]),
 		});
 		return null;
 	},
-	getMethodsList: function(ctx)
+	getMethodsList: function(ctx,f)
 	{
-		var a = [
+		if (f==undefined) f=0;
+		var a = [];
+		if ((f&4)==4) a=[
 			"getModulePath",
 		];
 		return use("Runtime.Collection").from(a);

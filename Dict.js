@@ -373,11 +373,15 @@ Object.assign(Runtime.Dict.prototype,
 	concat: function(ctx, map)
 	{
 		if (map == undefined) map = null;
+		var _map = {};
+		var Dict = use("Runtime.Dict");
 		if (map == null) return this;
+		if (map instanceof Dict) _map = map._map;
+		else if (typeof map == "object") _map = map;
 		var res = this.cp(ctx);
-		for (var key in map._map)
+		for (var key in _map)
 		{
-			res._map[key] = map._map[key];
+			res._map[key] = _map[key];
 		}
 		return res;
 	},
@@ -405,22 +409,6 @@ Object.assign(Runtime.Dict.prototype,
 			obj.set(ctx, field_name, this.get(ctx, field_name, null));
 		});
 		return obj.toDict(ctx);
-	},
-	assignObject: function(ctx,o)
-	{
-		if (o instanceof use("Runtime.Dict"))
-		{
-		}
-		use("Runtime._Map").prototype.assignObject.call(this,ctx,o);
-	},
-	assignValue: function(ctx,k,v)
-	{
-		use("Runtime._Map").prototype.assignValue.call(this,ctx,k,v);
-	},
-	takeValue: function(ctx,k,d)
-	{
-		if (d == undefined) d = null;
-		return use("Runtime._Map").prototype.takeValue.call(this,ctx,k,d);
 	},
 	getClassName: function(ctx)
 	{
@@ -486,9 +474,11 @@ Object.assign(Runtime.Dict,
 		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
 		return null;
 	},
-	getMethodsList: function(ctx)
+	getMethodsList: function(ctx,f)
 	{
-		var a = [
+		if (f==undefined) f=0;
+		var a = [];
+		if ((f&4)==4) a=[
 		];
 		return use("Runtime.Collection").from(a);
 	},

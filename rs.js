@@ -23,19 +23,6 @@ Runtime.rs = function(ctx)
 };
 Object.assign(Runtime.rs.prototype,
 {
-	assignObject: function(ctx,o)
-	{
-		if (o instanceof use("Runtime.rs"))
-		{
-		}
-	},
-	assignValue: function(ctx,k,v)
-	{
-	},
-	takeValue: function(ctx,k,d)
-	{
-		if (d == undefined) d = null;
-	},
 	getClassName: function(ctx)
 	{
 		return "Runtime.rs";
@@ -585,17 +572,13 @@ Object.assign(Runtime.rs,
 	url_get_add: function(ctx, s, key, value)
 	{
 		var pos = this.strpos(ctx, s, "?");
-		var s1 = this.substr(ctx, s, 0, pos);
+		var s1 = (pos >= 0) ? (this.substr(ctx, s, 0, pos)) : (s);
 		var s2 = (pos >= 0) ? (this.substr(ctx, s, pos + 1)) : ("");
 		var find = false;
 		var arr = this.explode(ctx, "&", s2);
 		arr = arr.map(ctx, (ctx, s) => 
 		{
 			var arr = this.explode(ctx, "=", s);
-			if (value == "")
-			{
-				return "";
-			}
 			if (Runtime.rtl.get(ctx, arr, 0) == key)
 			{
 				find = true;
@@ -657,9 +640,11 @@ Object.assign(Runtime.rs,
 		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
 		return null;
 	},
-	getMethodsList: function(ctx)
+	getMethodsList: function(ctx,f)
 	{
-		var a = [
+		if (f==undefined) f=0;
+		var a = [];
+		if ((f&4)==4) a=[
 		];
 		return use("Runtime.Collection").from(a);
 	},

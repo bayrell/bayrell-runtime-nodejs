@@ -23,19 +23,6 @@ Runtime.ModuleDescription = function(ctx)
 };
 Object.assign(Runtime.ModuleDescription.prototype,
 {
-	assignObject: function(ctx,o)
-	{
-		if (o instanceof use("Runtime.ModuleDescription"))
-		{
-		}
-	},
-	assignValue: function(ctx,k,v)
-	{
-	},
-	takeValue: function(ctx,k,d)
-	{
-		if (d == undefined) d = null;
-	},
 	getClassName: function(ctx)
 	{
 		return "Runtime.ModuleDescription";
@@ -57,7 +44,7 @@ Object.assign(Runtime.ModuleDescription,
 	 */
 	getModuleVersion: function(ctx)
 	{
-		return "0.10.5";
+		return "0.10.6";
 	},
 	/**
 	 * Returns required modules
@@ -113,9 +100,11 @@ Object.assign(Runtime.ModuleDescription,
 		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
 		return null;
 	},
-	getMethodsList: function(ctx)
+	getMethodsList: function(ctx,f)
 	{
-		var a = [
+		if (f==undefined) f=0;
+		var a = [];
+		if ((f&4)==4) a=[
 		];
 		return use("Runtime.Collection").from(a);
 	},

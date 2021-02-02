@@ -106,7 +106,7 @@ Object.assign(Runtime.IntrospectionClass,
 	{
 		var a = [];
 		if (f==undefined) f=0;
-		if ((f|3)==3)
+		if ((f&3)==3)
 		{
 			a.push("class_name");
 			a.push("class_info");
@@ -124,52 +124,54 @@ Object.assign(Runtime.IntrospectionClass,
 		if (field_name == "class_name") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.IntrospectionClass",
-			"t": "string",
 			"name": field_name,
+			"t": "string",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "class_info") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.IntrospectionClass",
+			"name": field_name,
 			"t": "Runtime.Collection",
 			"s": ["Runtime.BaseStruct"],
-			"name": field_name,
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "fields") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.IntrospectionClass",
+			"name": field_name,
 			"t": "Runtime.Dict",
 			"s": ["Runtime.Collection"],
-			"name": field_name,
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "methods") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.IntrospectionClass",
+			"name": field_name,
 			"t": "Runtime.Dict",
 			"s": ["Runtime.Collection"],
-			"name": field_name,
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "interfaces") return new IntrospectionInfo(ctx, {
 			"kind": IntrospectionInfo.ITEM_FIELD,
 			"class_name": "Runtime.IntrospectionClass",
+			"name": field_name,
 			"t": "Runtime.Collection",
 			"s": ["string"],
-			"name": field_name,
 			"annotations": Collection.from([
 			]),
 		});
 		return null;
 	},
-	getMethodsList: function(ctx)
+	getMethodsList: function(ctx,f)
 	{
-		var a = [
+		if (f==undefined) f=0;
+		var a = [];
+		if ((f&4)==4) a=[
 		];
 		return use("Runtime.Collection").from(a);
 	},

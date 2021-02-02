@@ -29,6 +29,10 @@ Runtime._Collection.prototype = Object.create(Array.prototype);
 Runtime._Collection.prototype.constructor = Runtime._Collection;
 Object.assign(Runtime._Collection.prototype,
 {
+	toArray: function()
+	{
+		return Array.prototype.slice.call(this);
+	},
 	toStr: function(value)
 	{
 		return use("Runtime.rtl").toStr(value);
@@ -585,22 +589,6 @@ Object.assign(Runtime.Collection.prototype,
 		var __v0 = use("Runtime.rs");
 		return __v0.join(ctx, ch, this);
 	},
-	assignObject: function(ctx,o)
-	{
-		if (o instanceof use("Runtime.Collection"))
-		{
-		}
-		use("Runtime._Collection").prototype.assignObject.call(this,ctx,o);
-	},
-	assignValue: function(ctx,k,v)
-	{
-		use("Runtime._Collection").prototype.assignValue.call(this,ctx,k,v);
-	},
-	takeValue: function(ctx,k,d)
-	{
-		if (d == undefined) d = null;
-		return use("Runtime._Collection").prototype.takeValue.call(this,ctx,k,d);
-	},
 	getClassName: function(ctx)
 	{
 		return "Runtime.Collection";
@@ -665,9 +653,11 @@ Object.assign(Runtime.Collection,
 		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
 		return null;
 	},
-	getMethodsList: function(ctx)
+	getMethodsList: function(ctx,f)
 	{
-		var a = [
+		if (f==undefined) f=0;
+		var a = [];
+		if ((f&4)==4) a=[
 		];
 		return use("Runtime.Collection").from(a);
 	},

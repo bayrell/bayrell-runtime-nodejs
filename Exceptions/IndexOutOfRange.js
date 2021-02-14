@@ -19,22 +19,22 @@ var use = require('bayrell').use;
  */
 if (typeof Runtime == 'undefined') Runtime = {};
 if (typeof Runtime.Exceptions == 'undefined') Runtime.Exceptions = {};
-Runtime.Exceptions.IndexOutOfRange = function(ctx, pos, prev)
+Runtime.Exceptions.IndexOutOfRange = function(pos, prev)
 {
 	if (prev == undefined) prev = null;
-	var __v0 = use("Runtime.rtl");
-	use("Runtime.Exceptions.RuntimeException").call(this, ctx, ctx.constructor.translate(ctx, "Runtime", "Index out of range. Pos: %pos%", use("Runtime.Dict").from({"pos":pos})), __v0.ERROR_INDEX_OUT_OF_RANGE, prev);
+	var __v0 = Runtime.rtl;
+	Runtime.Exceptions.RuntimeException.call(this, ctx.constructor.translate("Runtime", "Index out of range. Pos: %pos%", Runtime.Dict.from({"pos":pos})), __v0.ERROR_INDEX_OUT_OF_RANGE, prev);
 };
-Runtime.Exceptions.IndexOutOfRange.prototype = Object.create(use("Runtime.Exceptions.RuntimeException").prototype);
+Runtime.Exceptions.IndexOutOfRange.prototype = Object.create(Runtime.Exceptions.RuntimeException.prototype);
 Runtime.Exceptions.IndexOutOfRange.prototype.constructor = Runtime.Exceptions.IndexOutOfRange;
 Object.assign(Runtime.Exceptions.IndexOutOfRange.prototype,
 {
-	getClassName: function(ctx)
+	getClassName: function()
 	{
 		return "Runtime.Exceptions.IndexOutOfRange";
 	},
 });
-Object.assign(Runtime.Exceptions.IndexOutOfRange, use("Runtime.Exceptions.RuntimeException"));
+Object.assign(Runtime.Exceptions.IndexOutOfRange, Runtime.Exceptions.RuntimeException);
 Object.assign(Runtime.Exceptions.IndexOutOfRange,
 {
 	/* ======================= Class Init Functions ======================= */
@@ -50,41 +50,36 @@ Object.assign(Runtime.Exceptions.IndexOutOfRange,
 	{
 		return "Runtime.Exceptions.RuntimeException";
 	},
-	getClassInfo: function(ctx)
+	getClassInfo: function()
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
-		return new IntrospectionInfo(ctx, {
-			"kind": IntrospectionInfo.ITEM_CLASS,
-			"class_name": "Runtime.Exceptions.IndexOutOfRange",
-			"name": "Runtime.Exceptions.IndexOutOfRange",
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		return Dict.from({
 			"annotations": Collection.from([
 			]),
 		});
 	},
-	getFieldsList: function(ctx, f)
+	getFieldsList: function(f)
 	{
 		var a = [];
 		if (f==undefined) f=0;
-		return use("Runtime.Collection").from(a);
+		return Runtime.Collection.from(a);
 	},
-	getFieldInfoByName: function(ctx,field_name)
+	getFieldInfoByName: function(field_name)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
 		return null;
 	},
-	getMethodsList: function(ctx,f)
+	getMethodsList: function(f)
 	{
 		if (f==undefined) f=0;
 		var a = [];
 		if ((f&4)==4) a=[
 		];
-		return use("Runtime.Collection").from(a);
+		return Runtime.Collection.from(a);
 	},
-	getMethodInfoByName: function(ctx,field_name)
+	getMethodInfoByName: function(field_name)
 	{
 		return null;
 	},

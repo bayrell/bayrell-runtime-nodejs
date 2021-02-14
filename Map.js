@@ -18,11 +18,11 @@ var use = require('bayrell').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-Runtime.Map = function(ctx)
+Runtime.Map = function()
 {
-	use("Runtime.Dict").apply(this, arguments);
+	Runtime.Dict.apply(this, arguments);
 };
-Runtime.Map.prototype = Object.create(use("Runtime.Dict").prototype);
+Runtime.Map.prototype = Object.create(Runtime.Dict.prototype);
 Runtime.Map.prototype.constructor = Runtime.Map;
 Object.assign(Runtime.Map.prototype,
 {
@@ -32,7 +32,7 @@ Object.assign(Runtime.Map.prototype,
 	 * @param T value 
 	 * @return self
 	 */
-	set: function(ctx, key, value)
+	setValue: function(key, value)
 	{
 		key = this.toStr(key);
 		this._map["|" + key] = value;
@@ -43,7 +43,7 @@ Object.assign(Runtime.Map.prototype,
 	 * @param string key
 	 * @return self
 	 */
-	remove: function(ctx, key)
+	removeValue: function(key)
 	{
 		key = this.toStr(key);
 		if (typeof this._map["|" + key] != "undefined")
@@ -56,27 +56,28 @@ Object.assign(Runtime.Map.prototype,
 	 * Clear all values from vector
 	 * @return self
 	 */
-	clear: function(ctx)
+	clear: function()
 	{
 		this._map = {};
 		return this;
 	},
-	getClassName: function(ctx)
+	getClassName: function()
 	{
 		return "Runtime.Map";
 	},
 });
-Object.assign(Runtime.Map, use("Runtime.Dict"));
+Object.assign(Runtime.Map, Runtime.Dict);
 Object.assign(Runtime.Map,
 {
 	/**
 	 * Returns new Instance
 	 * @return Object
 	 */
-	Instance: function(ctx)
+	Instance: function(val)
 	{
-		var __v0 = use("Runtime.Map");
-		return new __v0(ctx);
+		if (val == undefined) val = null;
+		var __v0 = Runtime.Map;
+		return new __v0(val);
 	},
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
@@ -91,41 +92,36 @@ Object.assign(Runtime.Map,
 	{
 		return "Runtime.Dict";
 	},
-	getClassInfo: function(ctx)
+	getClassInfo: function()
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
-		return new IntrospectionInfo(ctx, {
-			"kind": IntrospectionInfo.ITEM_CLASS,
-			"class_name": "Runtime.Map",
-			"name": "Runtime.Map",
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		return Dict.from({
 			"annotations": Collection.from([
 			]),
 		});
 	},
-	getFieldsList: function(ctx, f)
+	getFieldsList: function(f)
 	{
 		var a = [];
 		if (f==undefined) f=0;
-		return use("Runtime.Collection").from(a);
+		return Runtime.Collection.from(a);
 	},
-	getFieldInfoByName: function(ctx,field_name)
+	getFieldInfoByName: function(field_name)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
 		return null;
 	},
-	getMethodsList: function(ctx,f)
+	getMethodsList: function(f)
 	{
 		if (f==undefined) f=0;
 		var a = [];
 		if ((f&4)==4) a=[
 		];
-		return use("Runtime.Collection").from(a);
+		return Runtime.Collection.from(a);
 	},
-	getMethodInfoByName: function(ctx,field_name)
+	getMethodInfoByName: function(field_name)
 	{
 		return null;
 	},

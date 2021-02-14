@@ -18,52 +18,22 @@ var use = require('bayrell').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-Runtime.re = function()
+Runtime.LambdaChainClass = function()
 {
+	Runtime.Entity.apply(this, arguments);
 };
-Object.assign(Runtime.re.prototype,
+Runtime.LambdaChainClass.prototype = Object.create(Runtime.Entity.prototype);
+Runtime.LambdaChainClass.prototype.constructor = Runtime.LambdaChainClass;
+Object.assign(Runtime.LambdaChainClass.prototype,
 {
 	getClassName: function()
 	{
-		return "Runtime.re";
+		return "Runtime.LambdaChainClass";
 	},
 });
-Object.assign(Runtime.re,
+Object.assign(Runtime.LambdaChainClass, Runtime.Entity);
+Object.assign(Runtime.LambdaChainClass,
 {
-	/**
-	 * Search regular expression
-	 * @param string r regular expression
-	 * @param string s string
-	 * @return bool
-	 */
-	match: function(r, s)
-	{
-		return s.match( new RegExp(r, "g") ) != null;
-	},
-	/**
-	 * Search regular expression
-	 * @param string r regular expression
-	 * @param string s string
-	 * @return Vector result
-	 */
-	matchAll: function(r, s)
-	{
-		var arr = [...s.matchAll( new RegExp(r, "g") )];
-		if (arr.length == 0) return null;
-		return Runtime.Collection.from( arr.map( (v) => Runtime.Collection.from(v) ) );
-		return null;
-	},
-	/**
-	 * Replace with regular expression
-	 * @param string r - regular expression
-	 * @param string replace - new value
-	 * @param string s - replaceable string
-	 * @return string
-	 */
-	replace: function(r, replace, s)
-	{
-		return s.replace(new RegExp(r, "g"), replace);
-	},
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
 	{
@@ -71,11 +41,11 @@ Object.assign(Runtime.re,
 	},
 	getCurrentClassName: function()
 	{
-		return "Runtime.re";
+		return "Runtime.LambdaChainClass";
 	},
 	getParentClassName: function()
 	{
-		return "";
+		return "Runtime.Entity";
 	},
 	getClassInfo: function()
 	{
@@ -110,5 +80,5 @@ Object.assign(Runtime.re,
 	{
 		return null;
 	},
-});use.add(Runtime.re);
-module.exports = Runtime.re;
+});use.add(Runtime.LambdaChainClass);
+module.exports = Runtime.LambdaChainClass;

@@ -18,13 +18,13 @@ var use = require('bayrell').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-Runtime.Reference = function(ctx, ref)
+Runtime.Reference = function(ref)
 {
 	if (ref == undefined) ref = null;
-	use("Runtime.BaseObject").call(this, ctx);
+	Runtime.BaseObject.call(this);
 	this.ref = ref;
 };
-Runtime.Reference.prototype = Object.create(use("Runtime.BaseObject").prototype);
+Runtime.Reference.prototype = Object.create(Runtime.BaseObject.prototype);
 Runtime.Reference.prototype.constructor = Runtime.Reference;
 Object.assign(Runtime.Reference.prototype,
 {
@@ -32,29 +32,29 @@ Object.assign(Runtime.Reference.prototype,
 	 * Assign and clone data from other object
 	 * @param BaseObject obj
 	 */
-	assignObject1: function(ctx, obj)
+	assignObject1: function(obj)
 	{
-		var __v0 = use("Runtime.Reference");
+		var __v0 = Runtime.Reference;
 		if (obj instanceof __v0)
 		{
 			this.uq = obj.uq;
 			this.ref = this.ref;
 		}
-		use("Runtime.BaseObject").prototype.assignObject1.call(this, ctx, obj);
+		Runtime.BaseObject.prototype.assignObject1.call(this, obj);
 	},
-	_init: function(ctx)
+	_init: function()
 	{
-		var __v0 = use("Runtime.rtl");
-		this.uq = __v0.unique(ctx);
+		var __v0 = Runtime.rtl;
+		this.uq = __v0.unique();
 		this.ref = null;
-		use("Runtime.BaseObject").prototype._init.call(this,ctx);
+		Runtime.BaseObject.prototype._init.call(this);
 	},
-	getClassName: function(ctx)
+	getClassName: function()
 	{
 		return "Runtime.Reference";
 	},
 });
-Object.assign(Runtime.Reference, use("Runtime.BaseObject"));
+Object.assign(Runtime.Reference, Runtime.BaseObject);
 Object.assign(Runtime.Reference,
 {
 	/* ======================= Class Init Functions ======================= */
@@ -70,20 +70,16 @@ Object.assign(Runtime.Reference,
 	{
 		return "Runtime.BaseObject";
 	},
-	getClassInfo: function(ctx)
+	getClassInfo: function()
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
-		return new IntrospectionInfo(ctx, {
-			"kind": IntrospectionInfo.ITEM_CLASS,
-			"class_name": "Runtime.Reference",
-			"name": "Runtime.Reference",
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		return Dict.from({
 			"annotations": Collection.from([
 			]),
 		});
 	},
-	getFieldsList: function(ctx, f)
+	getFieldsList: function(f)
 	{
 		var a = [];
 		if (f==undefined) f=0;
@@ -92,40 +88,33 @@ Object.assign(Runtime.Reference,
 			a.push("uq");
 			a.push("ref");
 		}
-		return use("Runtime.Collection").from(a);
+		return Runtime.Collection.from(a);
 	},
-	getFieldInfoByName: function(ctx,field_name)
+	getFieldInfoByName: function(field_name)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
-		if (field_name == "uq") return new IntrospectionInfo(ctx, {
-			"kind": IntrospectionInfo.ITEM_FIELD,
-			"class_name": "Runtime.Reference",
-			"name": field_name,
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		if (field_name == "uq") return Dict.from({
 			"t": "string",
 			"annotations": Collection.from([
 			]),
 		});
-		if (field_name == "ref") return new IntrospectionInfo(ctx, {
-			"kind": IntrospectionInfo.ITEM_FIELD,
-			"class_name": "Runtime.Reference",
-			"name": field_name,
+		if (field_name == "ref") return Dict.from({
 			"t": "T",
 			"annotations": Collection.from([
 			]),
 		});
 		return null;
 	},
-	getMethodsList: function(ctx,f)
+	getMethodsList: function(f)
 	{
 		if (f==undefined) f=0;
 		var a = [];
 		if ((f&4)==4) a=[
 		];
-		return use("Runtime.Collection").from(a);
+		return Runtime.Collection.from(a);
 	},
-	getMethodInfoByName: function(ctx,field_name)
+	getMethodInfoByName: function(field_name)
 	{
 		return null;
 	},

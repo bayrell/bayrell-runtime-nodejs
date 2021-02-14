@@ -18,52 +18,52 @@ var use = require('bayrell').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-Runtime.re = function()
+Runtime.BaseDriver = function(object_name, entity)
 {
+	if (object_name == undefined) object_name = "";
+	if (entity == undefined) entity = null;
+	Runtime.BaseObject.call(this);
+	this.object_name = object_name;
+	this.entity = entity;
 };
-Object.assign(Runtime.re.prototype,
+Runtime.BaseDriver.prototype = Object.create(Runtime.BaseObject.prototype);
+Runtime.BaseDriver.prototype.constructor = Runtime.BaseDriver;
+Object.assign(Runtime.BaseDriver.prototype,
 {
+	/**
+	 * Returns object name
+	 */
+	getObjectName: function()
+	{
+		return this.object_name;
+	},
+	/**
+	 * Returns entity
+	 */
+	getEntity: function()
+	{
+		return this.entity;
+	},
+	/**
+	 * Start driver
+	 */
+	startDriver: async function()
+	{
+	},
+	_init: function()
+	{
+		this.object_name = "";
+		this.entity = null;
+		Runtime.BaseObject.prototype._init.call(this);
+	},
 	getClassName: function()
 	{
-		return "Runtime.re";
+		return "Runtime.BaseDriver";
 	},
 });
-Object.assign(Runtime.re,
+Object.assign(Runtime.BaseDriver, Runtime.BaseObject);
+Object.assign(Runtime.BaseDriver,
 {
-	/**
-	 * Search regular expression
-	 * @param string r regular expression
-	 * @param string s string
-	 * @return bool
-	 */
-	match: function(r, s)
-	{
-		return s.match( new RegExp(r, "g") ) != null;
-	},
-	/**
-	 * Search regular expression
-	 * @param string r regular expression
-	 * @param string s string
-	 * @return Vector result
-	 */
-	matchAll: function(r, s)
-	{
-		var arr = [...s.matchAll( new RegExp(r, "g") )];
-		if (arr.length == 0) return null;
-		return Runtime.Collection.from( arr.map( (v) => Runtime.Collection.from(v) ) );
-		return null;
-	},
-	/**
-	 * Replace with regular expression
-	 * @param string r - regular expression
-	 * @param string replace - new value
-	 * @param string s - replaceable string
-	 * @return string
-	 */
-	replace: function(r, replace, s)
-	{
-		return s.replace(new RegExp(r, "g"), replace);
-	},
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
 	{
@@ -71,11 +71,11 @@ Object.assign(Runtime.re,
 	},
 	getCurrentClassName: function()
 	{
-		return "Runtime.re";
+		return "Runtime.BaseDriver";
 	},
 	getParentClassName: function()
 	{
-		return "";
+		return "Runtime.BaseObject";
 	},
 	getClassInfo: function()
 	{
@@ -90,12 +90,27 @@ Object.assign(Runtime.re,
 	{
 		var a = [];
 		if (f==undefined) f=0;
+		if ((f&2)==2)
+		{
+			a.push("object_name");
+			a.push("entity");
+		}
 		return Runtime.Collection.from(a);
 	},
 	getFieldInfoByName: function(field_name)
 	{
 		var Collection = Runtime.Collection;
 		var Dict = Runtime.Dict;
+		if (field_name == "object_name") return Dict.from({
+			"t": "string",
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "entity") return Dict.from({
+			"t": "Runtime.Entity",
+			"annotations": Collection.from([
+			]),
+		});
 		return null;
 	},
 	getMethodsList: function(f)
@@ -110,5 +125,5 @@ Object.assign(Runtime.re,
 	{
 		return null;
 	},
-});use.add(Runtime.re);
-module.exports = Runtime.re;
+});use.add(Runtime.BaseDriver);
+module.exports = Runtime.BaseDriver;

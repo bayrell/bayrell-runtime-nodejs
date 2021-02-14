@@ -19,12 +19,12 @@ var use = require('bayrell').use;
  */
 if (typeof Runtime == 'undefined') Runtime = {};
 /* Lambda Functions */
-Runtime.lib = function(ctx)
+Runtime.lib = function()
 {
 };
 Object.assign(Runtime.lib.prototype,
 {
-	getClassName: function(ctx)
+	getClassName: function()
 	{
 		return "Runtime.lib";
 	},
@@ -34,53 +34,53 @@ Object.assign(Runtime.lib,
 	/**
 	 * Check object is istance
 	 */
-	isInstance: function(ctx, class_name)
+	isInstance: function(class_name)
 	{
-		return (ctx, item) => 
+		return (item) => 
 		{
-			var __v0 = use("Runtime.rtl");
-			return __v0.is_instanceof(ctx, item, class_name);
+			var __v0 = Runtime.rtl;
+			return __v0.is_instanceof(item, class_name);
 		};
 	},
 	/**
 	 * Check object is implements interface
 	 */
-	isImplements: function(ctx, class_name)
+	isImplements: function(class_name)
 	{
-		return (ctx, item) => 
+		return (item) => 
 		{
-			var __v0 = use("Runtime.rtl");
-			return __v0.is_implements(ctx, item, class_name);
+			var __v0 = Runtime.rtl;
+			return __v0.is_implements(item, class_name);
 		};
 	},
 	/**
 	 * Check class is implements interface
 	 */
-	classImplements: function(ctx, class_name)
+	classImplements: function(class_name)
 	{
-		return (ctx, item) => 
+		return (item) => 
 		{
-			var __v0 = use("Runtime.rtl");
-			return __v0.class_implements(ctx, item, class_name);
+			var __v0 = Runtime.rtl;
+			return __v0.class_implements(item, class_name);
 		};
 	},
 	/**
 	 * Create struct
 	 */
-	createStruct: function(ctx, class_name)
+	createStruct: function(class_name)
 	{
-		return (ctx, data) => 
+		return (data) => 
 		{
-			var __v0 = use("Runtime.rtl");
-			return __v0.newInstance(ctx, class_name, use("Runtime.Collection").from([data]));
+			var __v0 = Runtime.rtl;
+			return __v0.newInstance(class_name, Runtime.Collection.from([data]));
 		};
 	},
 	/**
 	 * Equal two struct by key
 	 */
-	equal: function(ctx, value)
+	equal: function(value)
 	{
-		return (ctx, item) => 
+		return (item) => 
 		{
 			return item == value;
 		};
@@ -88,9 +88,9 @@ Object.assign(Runtime.lib,
 	/**
 	 * Equal two struct by key
 	 */
-	equalNot: function(ctx, value)
+	equalNot: function(value)
 	{
-		return (ctx, item) => 
+		return (item) => 
 		{
 			return item != value;
 		};
@@ -98,41 +98,41 @@ Object.assign(Runtime.lib,
 	/**
 	 * Equal two struct by key
 	 */
-	equalAttr: function(ctx, key, value)
+	equalAttr: function(key, value)
 	{
-		return (ctx, item1) => 
+		return (item1) => 
 		{
-			var __v0 = use("Runtime.rtl");
-			return (item1 != null) ? (__v0.attr(ctx, item1, key) == value) : (false);
+			var __v0 = Runtime.rtl;
+			return (item1 != null) ? (__v0.attr(item1, key) == value) : (false);
 		};
 	},
 	/**
 	 * Equal two struct by key
 	 */
-	equalNotAttr: function(ctx, key, value)
+	equalNotAttr: function(key, value)
 	{
-		return (ctx, item1) => 
+		return (item1) => 
 		{
-			var __v0 = use("Runtime.rtl");
-			return (item1 != null) ? (__v0.attr(ctx, item1, key) != value) : (false);
+			var __v0 = Runtime.rtl;
+			return (item1 != null) ? (__v0.attr(item1, key) != value) : (false);
 		};
 	},
-	equalAttrNot: function(ctx, key, value)
+	equalAttrNot: function(key, value)
 	{
-		return this.equalNotAttr;
+		return this.equalNotAttr(key, value);
 	},
 	/**
 	 * Equal attrs
 	 */
-	equalAttrs: function(ctx, search)
+	equalAttrs: function(search)
 	{
-		return (ctx, item) => 
+		return (item) => 
 		{
-			var fields = search.keys(ctx);
-			for (var i = 0;i < fields.count(ctx);i++)
+			var fields = search.keys();
+			for (var i = 0;i < fields.count();i++)
 			{
-				var field_name = Runtime.rtl.get(ctx, fields, i);
-				if (Runtime.rtl.get(ctx, search, field_name) != Runtime.rtl.get(ctx, item, field_name))
+				var field_name = Runtime.rtl.get(fields, i);
+				if (Runtime.rtl.get(search, field_name) != Runtime.rtl.get(item, field_name))
 				{
 					return false;
 				}
@@ -143,71 +143,71 @@ Object.assign(Runtime.lib,
 	/**
 	 * Equal two struct by key
 	 */
-	equalMethod: function(ctx, method_name, value)
+	equalMethod: function(method_name, value)
 	{
-		return (ctx, item1) => 
+		return (item1) => 
 		{
 			if (item1 == null)
 			{
 				return false;
 			}
-			var __v0 = use("Runtime.rtl");
+			var __v0 = Runtime.rtl;
 			var f = __v0.method(item1, method_name);
-			return f(ctx) == value;
+			return f() == value;
 		};
 	},
 	/**
 	 * Returns key value of obj
 	 */
-	get: function(ctx, key, def_value)
+	get: function(key, def_value)
 	{
-		return (ctx, obj) => 
+		return (obj) => 
 		{
-			var __v0 = use("Runtime.rtl");
-			return __v0.attr(ctx, obj, use("Runtime.Collection").from([key]), def_value);
+			var __v0 = Runtime.rtl;
+			return __v0.attr(obj, Runtime.Collection.from([key]), def_value);
 		};
 	},
 	/**
 	 * Set value
 	 */
-	set: function(ctx, key, value)
+	set: function(key, value)
 	{
-		return (ctx, obj) => 
+		return (obj) => 
 		{
-			var __v0 = use("Runtime.rtl");
-			return __v0.setAttr(ctx, obj, use("Runtime.Collection").from([key]), value);
+			var __v0 = Runtime.rtl;
+			return __v0.setAttr(obj, Runtime.Collection.from([key]), value);
 		};
 	},
 	/**
 	 * Returns attr of item
 	 */
-	attr: function(ctx, path, def_value)
+	attr: function(path, def_value)
 	{
 		if (def_value == undefined) def_value = null;
-		return (ctx, obj) => 
+		return (obj) => 
 		{
-			var __v0 = use("Runtime.rtl");
-			return __v0.attr(ctx, obj, path, def_value);
+			var __v0 = Runtime.rtl;
+			return __v0.attr(obj, path, def_value);
 		};
 	},
 	/**
 	 * Set dict attr
 	 */
-	setAttr: function(ctx, path, value)
+	setAttr: function(path, value)
 	{
-		return (ctx, obj) => 
+		return (obj) => 
 		{
-			var __v0 = use("Runtime.rtl");
-			return __v0.setAttr(ctx, obj, path, value);
+			var __v0 = Runtime.rtl;
+			return __v0.setAttr(obj, path, value);
 		};
 	},
 	/**
 	 * Returns max id from items
 	 */
-	getMaxIdFromItems: function(ctx, items, start)
+	getMaxIdFromItems: function(items, start)
 	{
 		if (start == undefined) start = 0;
-		return items.reduce(ctx, (ctx, value, item) => 
+		return items.reduce((value, item) => 
 		{
 			return (item.id > value) ? (item.id) : (value);
 		}, start);
@@ -215,96 +215,96 @@ Object.assign(Runtime.lib,
 	/**
 	 * Copy object
 	 */
-	copy: function(ctx, d)
+	copy: function(d)
 	{
-		return (ctx, item) => 
+		return (item) => 
 		{
-			return item.copy(ctx, d);
+			return item.copy(d);
 		};
 	},
 	/**
 	 * Take dict
 	 */
-	takeDict: function(ctx, fields)
+	takeDict: function(fields)
 	{
-		return (ctx, item) => 
+		return (item) => 
 		{
-			return item.takeDict(ctx, fields);
+			return item.takeDict(fields);
 		};
 	},
 	/**
 	 * Map
 	 */
-	map: function(ctx, f)
+	map: function(f)
 	{
-		return (ctx, m) => 
+		return (m) => 
 		{
-			return m.map(ctx, f);
+			return m.map(f);
 		};
 	},
 	/**
 	 * Filter
 	 */
-	filter: function(ctx, f)
+	filter: function(f)
 	{
-		return (ctx, m) => 
+		return (m) => 
 		{
-			return m.filter(ctx, f);
+			return m.filter(f);
 		};
 	},
 	/**
 	 * Intersect
 	 */
-	intersect: function(ctx, arr)
+	intersect: function(arr)
 	{
-		return (ctx, m) => 
+		return (m) => 
 		{
-			return m.intersect(ctx, arr);
+			return m.intersect(arr);
 		};
 	},
 	/**
 	 * Sort
 	 */
-	sort: function(ctx, f)
+	sort: function(f)
 	{
-		return (ctx, m) => 
+		return (m) => 
 		{
-			return m.sortIm(ctx, f);
+			return m.sortIm(f);
 		};
 	},
 	/**
 	 * Transition
 	 */
-	transition: function(ctx, f)
+	transition: function(f)
 	{
-		return (ctx, m) => 
+		return (m) => 
 		{
-			return m.transition(ctx, f);
+			return m.transition(f);
 		};
 	},
 	/**
 	 * Sort asc
 	 */
-	sortAsc: function(ctx, a, b)
+	sortAsc: function(a, b)
 	{
 		return (a > b) ? (1) : ((a < b) ? (-1) : (0));
 	},
 	/**
 	 * Sort desc
 	 */
-	sortDesc: function(ctx, a, b)
+	sortDesc: function(a, b)
 	{
 		return (a > b) ? (-1) : ((a < b) ? (1) : (0));
 	},
 	/**
 	 * Sort attr
 	 */
-	sortAttr: function(ctx, field_name, f)
+	sortAttr: function(field_name, f)
 	{
-		return (ctx, a, b) => 
+		return (a, b) => 
 		{
-			var a = Runtime.rtl.get(ctx, a, field_name);
-			var b = Runtime.rtl.get(ctx, b, field_name);
+			var a = Runtime.rtl.get(a, field_name);
+			var b = Runtime.rtl.get(b, field_name);
 			if (f == "asc")
 			{
 				return (a > b) ? (1) : ((a < b) ? (-1) : (0));
@@ -313,63 +313,63 @@ Object.assign(Runtime.lib,
 			{
 				return (a > b) ? (-1) : ((a < b) ? (1) : (0));
 			}
-			return f(ctx, a, b);
+			return f(a, b);
 		};
 	},
 	/**
 	 * Convert monad by type
 	 */
-	to: function(ctx, type_value, def_value)
+	to: function(type_value, def_value)
 	{
 		if (def_value == undefined) def_value = null;
-		return (ctx, m) => 
+		return (m) => 
 		{
-			var __v0 = use("Runtime.Monad");
-			var __v1 = use("Runtime.rtl");
-			return new __v0(ctx, (m.err == null) ? (__v1.convert(m.value(ctx), type_value, def_value)) : (def_value));
+			var __v0 = Runtime.Monad;
+			var __v1 = Runtime.rtl;
+			return new __v0((m.err == null) ? (__v1.convert(m.value(), type_value, def_value)) : (def_value));
 		};
 	},
 	/**
 	 * Convert monad by type
 	 */
-	default: function(ctx, def_value)
+	default: function(def_value)
 	{
 		if (def_value == undefined) def_value = null;
-		return (ctx, m) => 
+		return (m) => 
 		{
-			var __v0 = use("Runtime.Monad");
-			return (m.err != null || m.val === null) ? (new __v0(ctx, def_value)) : (m);
+			var __v0 = Runtime.Monad;
+			return (m.err != null || m.val === null) ? (new __v0(def_value)) : (m);
 		};
 	},
 	/**
 	 * Set monad new value
 	 */
-	newValue: function(ctx, value, clear_error)
+	newValue: function(value, clear_error)
 	{
 		if (value == undefined) value = null;
 		if (clear_error == undefined) clear_error = false;
-		return (ctx, m) => 
+		return (m) => 
 		{
-			var __v0 = use("Runtime.Monad");
-			var __v1 = use("Runtime.Monad");
-			return (clear_error == true) ? (new __v0(ctx, value)) : ((m.err == null) ? (new __v1(ctx, value)) : (m));
+			var __v0 = Runtime.Monad;
+			var __v1 = Runtime.Monad;
+			return (clear_error == true) ? (new __v0(value)) : ((m.err == null) ? (new __v1(value)) : (m));
 		};
 	},
 	/**
 	 * Clear error
 	 */
-	clearError: function(ctx)
+	clearError: function()
 	{
-		return (ctx, m) => 
+		return (m) => 
 		{
-			var __v0 = use("Runtime.Monad");
-			return new __v0(ctx, m.val);
+			var __v0 = Runtime.Monad;
+			return new __v0(m.val);
 		};
 	},
 	/**
 	 * Returns monad
 	 */
-	monad: function(ctx, m)
+	monad: function(m)
 	{
 		return m;
 	},
@@ -377,78 +377,74 @@ Object.assign(Runtime.lib,
 	 * Get method from class
 	 * @return fn
 	 */
-	method: function(ctx, method_name)
+	method: function(method_name)
 	{
-		return (ctx, class_name) => 
+		return (class_name) => 
 		{
-			var __v0 = use("Runtime.rtl");
-			return __v0.method(ctx, class_name, method_name);
+			var __v0 = Runtime.rtl;
+			return __v0.method(class_name, method_name);
 		};
 	},
 	/**
 	 * Apply function
 	 * @return fn
 	 */
-	applyMethod: function(ctx, method_name, args)
+	applyMethod: function(method_name, args)
 	{
 		if (args == undefined) args = null;
-		return (ctx, class_name) => 
+		return (class_name) => 
 		{
-			var __v0 = use("Runtime.rtl");
-			var f = __v0.method(ctx, class_name, method_name);
-			var __v1 = use("Runtime.rtl");
-			return __v1.apply(ctx, f, args);
+			var __v0 = Runtime.rtl;
+			var f = __v0.method(class_name, method_name);
+			var __v1 = Runtime.rtl;
+			return __v1.apply(f, args);
 		};
 	},
 	/**
 	 * Apply async function
 	 * @return fn
 	 */
-	applyMethodAsync: function(ctx, method_name, args)
+	applyMethodAsync: function(method_name, args)
 	{
 		if (args == undefined) args = null;
-		return async (ctx, class_name) => 
+		return async (class_name) => 
 		{
-			var __v0 = use("Runtime.rtl");
-			var f = __v0.method(ctx, class_name, method_name);
-			var __v1 = use("Runtime.rtl");
-			return Promise.resolve(__v1.apply(ctx, f, args));
+			var __v0 = Runtime.rtl;
+			var f = __v0.method(class_name, method_name);
+			var __v1 = Runtime.rtl;
+			return Promise.resolve(await __v1.applyAsync(f, args));
 		};
 	},
 	/**
 	 * Apply function
 	 * @return fn
 	 */
-	apply: function(ctx, args)
+	apply: function(f)
 	{
-		if (args == undefined) args = null;
-		return (ctx, f) => 
+		return (value) => 
 		{
-			var __v0 = use("Runtime.rtl");
-			return __v0.apply(ctx, f, args);
+			return f(value);
 		};
 	},
 	/**
-	 * Apply async function
+	 * Apply function
 	 * @return fn
 	 */
-	applyAsync: function(ctx, args)
+	applyAsync: function(f)
 	{
-		if (args == undefined) args = null;
-		return async (ctx, f) => 
+		return async (value) => 
 		{
-			var __v0 = use("Runtime.rtl");
-			return await __v0.applyAsync(ctx, f, args);
+			return await f(value);
 		};
 	},
 	/**
 	 * Log message
 	 * @return fn
 	 */
-	log: function(ctx, message)
+	log: function(message)
 	{
 		if (message == undefined) message = "";
-		return (ctx, value) => 
+		return (value) => 
 		{
 			if (message == "")
 			{
@@ -464,14 +460,14 @@ Object.assign(Runtime.lib,
 	/**
 	 * Function or
 	 */
-	or: function(ctx, arr)
+	or: function(arr)
 	{
-		return (ctx, item) => 
+		return (item) => 
 		{
-			for (var i = 0;i < arr.count(ctx);i++)
+			for (var i = 0;i < arr.count();i++)
 			{
-				var f = Runtime.rtl.get(ctx, arr, i);
-				var res = f(ctx, item);
+				var f = Runtime.rtl.get(arr, i);
+				var res = f(item);
 				if (res)
 				{
 					return true;
@@ -483,31 +479,31 @@ Object.assign(Runtime.lib,
 	/**
 	 * Function and
 	 */
-	and: function(ctx, arr)
+	and: function(arr)
 	{
-		return (ctx, item) => 
+		return (item) => 
 		{
-			for (var i = 0;i < arr.count(ctx);i++)
+			for (var i = 0;i < arr.count();i++)
 			{
-				var f = Runtime.rtl.get(ctx, arr, i);
-				var res = f(ctx, item);
-				if (res)
+				var f = Runtime.rtl.get(arr, i);
+				var res = f(item);
+				if (!res)
 				{
-					return true;
+					return false;
 				}
 			}
-			return false;
+			return true;
 		};
 	},
 	/**
 	 * Join
 	 */
-	join: function(ctx, ch)
+	join: function(ch)
 	{
-		return (ctx, items) => 
+		return (items) => 
 		{
-			var __v0 = use("Runtime.rs");
-			return __v0.join(ctx, ch, items);
+			var __v0 = Runtime.rs;
+			return __v0.join(ch, items);
 		};
 	},
 	/* ======================= Class Init Functions ======================= */
@@ -523,41 +519,36 @@ Object.assign(Runtime.lib,
 	{
 		return "";
 	},
-	getClassInfo: function(ctx)
+	getClassInfo: function()
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
-		return new IntrospectionInfo(ctx, {
-			"kind": IntrospectionInfo.ITEM_CLASS,
-			"class_name": "Runtime.lib",
-			"name": "Runtime.lib",
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		return Dict.from({
 			"annotations": Collection.from([
 			]),
 		});
 	},
-	getFieldsList: function(ctx, f)
+	getFieldsList: function(f)
 	{
 		var a = [];
 		if (f==undefined) f=0;
-		return use("Runtime.Collection").from(a);
+		return Runtime.Collection.from(a);
 	},
-	getFieldInfoByName: function(ctx,field_name)
+	getFieldInfoByName: function(field_name)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
 		return null;
 	},
-	getMethodsList: function(ctx,f)
+	getMethodsList: function(f)
 	{
 		if (f==undefined) f=0;
 		var a = [];
 		if ((f&4)==4) a=[
 		];
-		return use("Runtime.Collection").from(a);
+		return Runtime.Collection.from(a);
 	},
-	getMethodInfoByName: function(ctx,field_name)
+	getMethodInfoByName: function(field_name)
 	{
 		return null;
 	},

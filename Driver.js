@@ -18,32 +18,28 @@ var use = require('bayrell').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-Runtime.Mutex = function(ctx)
+Runtime.Driver = function()
 {
+	Runtime.Entity.apply(this, arguments);
 };
-Object.assign(Runtime.Mutex.prototype,
+Runtime.Driver.prototype = Object.create(Runtime.Entity.prototype);
+Runtime.Driver.prototype.constructor = Runtime.Driver;
+Object.assign(Runtime.Driver.prototype,
 {
-	lock: function(ctx)
+	_init: function()
 	{
+		var defProp = use('Runtime.rtl').defProp;
+		var a = Object.getOwnPropertyNames(this);
+		this.global = false;
+		Runtime.Entity.prototype._init.call(this);
 	},
-	unLock: function(ctx)
+	getClassName: function()
 	{
-	},
-	isLocked: function(ctx)
-	{
-	},
-	wait: async function(ctx)
-	{
-	},
-	waitAndLock: async function(ctx)
-	{
-	},
-	getClassName: function(ctx)
-	{
-		return "Runtime.Mutex";
+		return "Runtime.Driver";
 	},
 });
-Object.assign(Runtime.Mutex,
+Object.assign(Runtime.Driver, Runtime.Entity);
+Object.assign(Runtime.Driver,
 {
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
@@ -52,49 +48,53 @@ Object.assign(Runtime.Mutex,
 	},
 	getCurrentClassName: function()
 	{
-		return "Runtime.Mutex";
+		return "Runtime.Driver";
 	},
 	getParentClassName: function()
 	{
-		return "";
+		return "Runtime.Entity";
 	},
-	getClassInfo: function(ctx)
+	getClassInfo: function()
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
-		return new IntrospectionInfo(ctx, {
-			"kind": IntrospectionInfo.ITEM_CLASS,
-			"class_name": "Runtime.Mutex",
-			"name": "Runtime.Mutex",
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		return Dict.from({
 			"annotations": Collection.from([
 			]),
 		});
 	},
-	getFieldsList: function(ctx, f)
+	getFieldsList: function(f)
 	{
 		var a = [];
 		if (f==undefined) f=0;
-		return use("Runtime.Collection").from(a);
+		if ((f&3)==3)
+		{
+			a.push("global");
+		}
+		return Runtime.Collection.from(a);
 	},
-	getFieldInfoByName: function(ctx,field_name)
+	getFieldInfoByName: function(field_name)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		if (field_name == "global") return Dict.from({
+			"t": "bool",
+			"annotations": Collection.from([
+			]),
+		});
 		return null;
 	},
-	getMethodsList: function(ctx,f)
+	getMethodsList: function(f)
 	{
 		if (f==undefined) f=0;
 		var a = [];
 		if ((f&4)==4) a=[
 		];
-		return use("Runtime.Collection").from(a);
+		return Runtime.Collection.from(a);
 	},
-	getMethodInfoByName: function(ctx,field_name)
+	getMethodInfoByName: function(field_name)
 	{
 		return null;
 	},
-});use.add(Runtime.Mutex);
-module.exports = Runtime.Mutex;
+});use.add(Runtime.Driver);
+module.exports = Runtime.Driver;

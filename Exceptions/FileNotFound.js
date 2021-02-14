@@ -19,23 +19,23 @@ var use = require('bayrell').use;
  */
 if (typeof Runtime == 'undefined') Runtime = {};
 if (typeof Runtime.Exceptions == 'undefined') Runtime.Exceptions = {};
-Runtime.Exceptions.FileNotFound = function(ctx, name, object, code, prev)
+Runtime.Exceptions.FileNotFound = function(name, object, code, prev)
 {
 	if (object == undefined) object = "File";
 	if (code == undefined) code = -5;
 	if (prev == undefined) prev = null;
-	use("Runtime.Exceptions.RuntimeException").call(this, ctx, ctx.constructor.translate(ctx, "Runtime", "%object% '%name%' not found", use("Runtime.Dict").from({"name":name,"object":object})), code, prev);
+	Runtime.Exceptions.RuntimeException.call(this, ctx.constructor.translate("Runtime", "%object% '%name%' not found", Runtime.Dict.from({"name":name,"object":object})), code, prev);
 };
-Runtime.Exceptions.FileNotFound.prototype = Object.create(use("Runtime.Exceptions.RuntimeException").prototype);
+Runtime.Exceptions.FileNotFound.prototype = Object.create(Runtime.Exceptions.RuntimeException.prototype);
 Runtime.Exceptions.FileNotFound.prototype.constructor = Runtime.Exceptions.FileNotFound;
 Object.assign(Runtime.Exceptions.FileNotFound.prototype,
 {
-	getClassName: function(ctx)
+	getClassName: function()
 	{
 		return "Runtime.Exceptions.FileNotFound";
 	},
 });
-Object.assign(Runtime.Exceptions.FileNotFound, use("Runtime.Exceptions.RuntimeException"));
+Object.assign(Runtime.Exceptions.FileNotFound, Runtime.Exceptions.RuntimeException);
 Object.assign(Runtime.Exceptions.FileNotFound,
 {
 	/* ======================= Class Init Functions ======================= */
@@ -51,41 +51,36 @@ Object.assign(Runtime.Exceptions.FileNotFound,
 	{
 		return "Runtime.Exceptions.RuntimeException";
 	},
-	getClassInfo: function(ctx)
+	getClassInfo: function()
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
-		return new IntrospectionInfo(ctx, {
-			"kind": IntrospectionInfo.ITEM_CLASS,
-			"class_name": "Runtime.Exceptions.FileNotFound",
-			"name": "Runtime.Exceptions.FileNotFound",
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		return Dict.from({
 			"annotations": Collection.from([
 			]),
 		});
 	},
-	getFieldsList: function(ctx, f)
+	getFieldsList: function(f)
 	{
 		var a = [];
 		if (f==undefined) f=0;
-		return use("Runtime.Collection").from(a);
+		return Runtime.Collection.from(a);
 	},
-	getFieldInfoByName: function(ctx,field_name)
+	getFieldInfoByName: function(field_name)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
 		return null;
 	},
-	getMethodsList: function(ctx,f)
+	getMethodsList: function(f)
 	{
 		if (f==undefined) f=0;
 		var a = [];
 		if ((f&4)==4) a=[
 		];
-		return use("Runtime.Collection").from(a);
+		return Runtime.Collection.from(a);
 	},
-	getMethodInfoByName: function(ctx,field_name)
+	getMethodInfoByName: function(field_name)
 	{
 		return null;
 	},

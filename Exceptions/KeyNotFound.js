@@ -19,22 +19,22 @@ var use = require('bayrell').use;
  */
 if (typeof Runtime == 'undefined') Runtime = {};
 if (typeof Runtime.Exceptions == 'undefined') Runtime.Exceptions = {};
-Runtime.Exceptions.KeyNotFound = function(ctx, key, prev)
+Runtime.Exceptions.KeyNotFound = function(key, prev)
 {
 	if (prev == undefined) prev = null;
-	var __v0 = use("Runtime.rtl");
-	use("Runtime.Exceptions.RuntimeException").call(this, ctx, ctx.constructor.translate(ctx, "Runtime", "Key '%key%' not found", use("Runtime.Dict").from({"key":key})), __v0.ERROR_KEY_NOT_FOUND, prev);
+	var __v0 = Runtime.rtl;
+	Runtime.Exceptions.RuntimeException.call(this, ctx.constructor.translate("Runtime", "Key '%key%' not found", Runtime.Dict.from({"key":key})), __v0.ERROR_KEY_NOT_FOUND, prev);
 };
-Runtime.Exceptions.KeyNotFound.prototype = Object.create(use("Runtime.Exceptions.RuntimeException").prototype);
+Runtime.Exceptions.KeyNotFound.prototype = Object.create(Runtime.Exceptions.RuntimeException.prototype);
 Runtime.Exceptions.KeyNotFound.prototype.constructor = Runtime.Exceptions.KeyNotFound;
 Object.assign(Runtime.Exceptions.KeyNotFound.prototype,
 {
-	getClassName: function(ctx)
+	getClassName: function()
 	{
 		return "Runtime.Exceptions.KeyNotFound";
 	},
 });
-Object.assign(Runtime.Exceptions.KeyNotFound, use("Runtime.Exceptions.RuntimeException"));
+Object.assign(Runtime.Exceptions.KeyNotFound, Runtime.Exceptions.RuntimeException);
 Object.assign(Runtime.Exceptions.KeyNotFound,
 {
 	/* ======================= Class Init Functions ======================= */
@@ -50,41 +50,36 @@ Object.assign(Runtime.Exceptions.KeyNotFound,
 	{
 		return "Runtime.Exceptions.RuntimeException";
 	},
-	getClassInfo: function(ctx)
+	getClassInfo: function()
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
-		return new IntrospectionInfo(ctx, {
-			"kind": IntrospectionInfo.ITEM_CLASS,
-			"class_name": "Runtime.Exceptions.KeyNotFound",
-			"name": "Runtime.Exceptions.KeyNotFound",
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		return Dict.from({
 			"annotations": Collection.from([
 			]),
 		});
 	},
-	getFieldsList: function(ctx, f)
+	getFieldsList: function(f)
 	{
 		var a = [];
 		if (f==undefined) f=0;
-		return use("Runtime.Collection").from(a);
+		return Runtime.Collection.from(a);
 	},
-	getFieldInfoByName: function(ctx,field_name)
+	getFieldInfoByName: function(field_name)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
 		return null;
 	},
-	getMethodsList: function(ctx,f)
+	getMethodsList: function(f)
 	{
 		if (f==undefined) f=0;
 		var a = [];
 		if ((f&4)==4) a=[
 		];
-		return use("Runtime.Collection").from(a);
+		return Runtime.Collection.from(a);
 	},
-	getMethodInfoByName: function(ctx,field_name)
+	getMethodInfoByName: function(field_name)
 	{
 		return null;
 	},

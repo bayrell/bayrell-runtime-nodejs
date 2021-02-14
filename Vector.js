@@ -18,21 +18,21 @@ var use = require('bayrell').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-Runtime.Vector = function(ctx)
+Runtime.Vector = function()
 {
-	use("Runtime.Collection").apply(this, arguments);
+	Runtime.Collection.apply(this, arguments);
 };
-Runtime.Vector.prototype = Object.create(use("Runtime.Collection").prototype);
+Runtime.Vector.prototype = Object.create(Runtime.Collection.prototype);
 Runtime.Vector.prototype.constructor = Runtime.Vector;
 Object.assign(Runtime.Vector.prototype,
 {
 	/**
-	 * Returns new Collection
+	 * Returns new Vector
 	 * @param int offset
 	 * @param int lenght
 	 * @return Collection<T>
 	 */
-	slice: function(ctx, offset, length)
+	vectorSlice: function(offset, length)
 	{
 		if (length == undefined) length = null;
 		if (offset == undefined) offset = 0;
@@ -54,7 +54,7 @@ Object.assign(Runtime.Vector.prototype,
 	 * Append value to the end of array
 	 * @param T value
 	 */
-	push: function(ctx, value)
+	pushValue: function(value)
 	{
 		Array.prototype.push.call(this, value);
 		return this;
@@ -63,7 +63,7 @@ Object.assign(Runtime.Vector.prototype,
 	 * Insert first value size_to array
 	 * @return T value
 	 */
-	unshift: function(ctx, value)
+	unshiftValue: function(value)
 	{
 		Array.prototype.unshift.call(this, value);
 		return this;
@@ -72,7 +72,7 @@ Object.assign(Runtime.Vector.prototype,
 	 * Extract last value from array
 	 * @return T value
 	 */
-	pop: function(ctx)
+	popValue: function()
 	{
 		return Array.prototype.pop.call(this);
 	},
@@ -80,7 +80,7 @@ Object.assign(Runtime.Vector.prototype,
 	 * Extract first value from array
 	 * @return T value
 	 */
-	shift: function(ctx)
+	shiftValue: function()
 	{
 		return Array.prototype.shift.call(this);
 	},
@@ -89,7 +89,7 @@ Object.assign(Runtime.Vector.prototype,
 	 * @param T value
 	 * @param int pos - position
 	 */
-	insert: function(ctx, pos, value)
+	insertValue: function(pos, value)
 	{
 		Array.prototype.splice.call(this, pos, 0, value);
 		return this;
@@ -99,10 +99,33 @@ Object.assign(Runtime.Vector.prototype,
 	 * @param int pos - position
 	 * @param int count - count remove items
 	 */
-	remove: function(ctx, pos, count)
+	removePosition: function(pos, count)
 	{
 		if (count == undefined) count = 1;
 		Array.prototype.splice.call(this, pos, count);
+		return this;
+	},
+	/**
+	 * Remove value
+	 */
+	removeValue: function(value)
+	{
+		var index = this.indexOf(value);
+		if (index != -1)
+		{
+			this.removePosition(index, 1);
+		}
+		return this;
+	},
+	/**
+	 * Remove value
+	 */
+	removeValues: function(values)
+	{
+		for (var i = 0;i < values.count();i++)
+		{
+			this.removeValue(values.item(i));
+		}
 		return this;
 	},
 	/**
@@ -110,7 +133,7 @@ Object.assign(Runtime.Vector.prototype,
 	 * @param int pos_begin - start position
 	 * @param int pos_end - end position
 	 */
-	removeRange: function(ctx, pos_begin, pos_end)
+	removeRangeValues: function(pos_begin, pos_end)
 	{
 		Array.prototype.splice.call(this, pos_begin, pos_end - pos_begin + 1);
 		return this;
@@ -120,7 +143,7 @@ Object.assign(Runtime.Vector.prototype,
 	 * @param int pos - position
 	 * @param T value 
 	 */
-	set: function(ctx, pos, value)
+	setValue: function(pos, value)
 	{
 		if (pos < 0 || pos >= this.length)
 		{
@@ -133,7 +156,7 @@ Object.assign(Runtime.Vector.prototype,
 	/**
 	 * Clear all values from vector
 	 */
-	clear: function(ctx)
+	clear: function()
 	{
 		Array.prototype.splice.call(this, 0, this.length);
 		return this;
@@ -142,25 +165,25 @@ Object.assign(Runtime.Vector.prototype,
 	 * Append value to the end of the vector
 	 * @param T value
 	 */
-	append: function(ctx, value)
+	appendValue: function(value)
 	{
-		this.push(ctx, value);
+		this.push(value);
 		return this;
 	},
 	/**
 	 * Insert first value to begin of the vector
 	 * @return T value
 	 */
-	prepend: function(ctx, value)
+	prependValue: function(value)
 	{
-		this.unshift(ctx, value);
+		this.unshift(value);
 		return this;
 	},
 	/**
 	 * Append vector to the end of the vector
 	 * @param Vector<T> arr
 	 */
-	appendVector: function(ctx, arr)
+	appendVector: function(arr)
 	{
 		if (!arr) return this;
 		for (var i=0; i<arr.length; i++) Array.prototype.push.call(this, arr[i]);
@@ -170,57 +193,27 @@ Object.assign(Runtime.Vector.prototype,
 	 * Prepend vector to the begin of the vector
 	 * @param Vector<T> arr
 	 */
-	prependVector: function(ctx, arr)
+	prependVector: function(arr)
 	{
 		for (var i=0; i<arr.length; i++) Array.prototype.unshift.call(this, arr[i]);
 		return this;
 	},
-	/**
-	 * Remove value
-	 */
-	removeValue: function(ctx, value)
-	{
-		var index = this.indexOf(ctx, value);
-		if (index != -1)
-		{
-			this.remove(ctx, index, 1);
-		}
-		return this;
-	},
-	/**
-	 * Remove value
-	 */
-	removeItem: function(ctx, value)
-	{
-		return this.removeValue(ctx, value);
-	},
-	/**
-	 * Remove value
-	 */
-	removeItems: function(ctx, values)
-	{
-		for (var i = 0;i < values.count(ctx);i++)
-		{
-			this.removeValue(ctx, values.item(ctx, i));
-		}
-		return this;
-	},
-	getClassName: function(ctx)
+	getClassName: function()
 	{
 		return "Runtime.Vector";
 	},
 });
-Object.assign(Runtime.Vector, use("Runtime.Collection"));
+Object.assign(Runtime.Vector, Runtime.Collection);
 Object.assign(Runtime.Vector,
 {
 	/**
 	 * Returns new Instance
 	 * @return Object
 	 */
-	Instance: function(ctx)
+	Instance: function()
 	{
-		var __v0 = use("Runtime.Vector");
-		return new __v0(ctx);
+		var __v0 = Runtime.Vector;
+		return new __v0();
 	},
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
@@ -235,41 +228,36 @@ Object.assign(Runtime.Vector,
 	{
 		return "Runtime.Collection";
 	},
-	getClassInfo: function(ctx)
+	getClassInfo: function()
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
-		return new IntrospectionInfo(ctx, {
-			"kind": IntrospectionInfo.ITEM_CLASS,
-			"class_name": "Runtime.Vector",
-			"name": "Runtime.Vector",
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		return Dict.from({
 			"annotations": Collection.from([
 			]),
 		});
 	},
-	getFieldsList: function(ctx, f)
+	getFieldsList: function(f)
 	{
 		var a = [];
 		if (f==undefined) f=0;
-		return use("Runtime.Collection").from(a);
+		return Runtime.Collection.from(a);
 	},
-	getFieldInfoByName: function(ctx,field_name)
+	getFieldInfoByName: function(field_name)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
 		return null;
 	},
-	getMethodsList: function(ctx,f)
+	getMethodsList: function(f)
 	{
 		if (f==undefined) f=0;
 		var a = [];
 		if ((f&4)==4) a=[
 		];
-		return use("Runtime.Collection").from(a);
+		return Runtime.Collection.from(a);
 	},
-	getMethodInfoByName: function(ctx,field_name)
+	getMethodInfoByName: function(field_name)
 	{
 		return null;
 	},

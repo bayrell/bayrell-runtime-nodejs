@@ -18,7 +18,7 @@ var use = require('bayrell').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-Runtime.SerializeInterface = function(ctx)
+Runtime.SerializeInterface = function()
 {
 };
 Object.assign(Runtime.SerializeInterface.prototype,
@@ -28,11 +28,11 @@ Object.assign(Runtime.SerializeInterface.prototype,
 	 * @param string variable_name
 	 * @return var
 	 */
-	takeValue: function(ctx, variable_name, default_value)
+	get: function(variable_name, default_value)
 	{
 		if (default_value == undefined) default_value = null;
 	},
-	getClassName: function(ctx)
+	getClassName: function()
 	{
 		return "Runtime.SerializeInterface";
 	},

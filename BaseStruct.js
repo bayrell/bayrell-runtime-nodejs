@@ -18,15 +18,15 @@ var use = require('bayrell').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-Runtime.BaseStruct = function(ctx, obj)
+Runtime.BaseStruct = function(obj)
 {
 	if (obj == undefined) obj = null;
-	use("Runtime.BaseObject").call(this, ctx);
-	this.constructor._assign(ctx, this, null, obj);
+	Runtime.BaseObject.call(this);
+	this.constructor._assign(this, null, obj);
 	if (this.__uq__ == undefined || this.__uq__ == null) this.__uq__ = Symbol();
 		Object.freeze(this);
 };
-Runtime.BaseStruct.prototype = Object.create(use("Runtime.BaseObject").prototype);
+Runtime.BaseStruct.prototype = Object.create(Runtime.BaseObject.prototype);
 Runtime.BaseStruct.prototype.constructor = Runtime.BaseStruct;
 Object.assign(Runtime.BaseStruct.prototype,
 {
@@ -35,7 +35,7 @@ Object.assign(Runtime.BaseStruct.prototype,
 	 * @param Map obj = null
 	 * @return BaseStruct
 	 */
-	copy: function(ctx, obj)
+	copy: function(obj)
 	{
 		if (obj == undefined) obj = null;
 		if (obj == null)
@@ -46,7 +46,7 @@ Object.assign(Runtime.BaseStruct.prototype,
 		var item = Object.create(proto); /* item._init(); */
 		item = Object.assign(item, this);
 		
-		this.constructor._assign(ctx, item, this, obj);
+		this.constructor._assign(item, this, obj);
 		
 		Object.freeze(item);
 		
@@ -58,32 +58,32 @@ Object.assign(Runtime.BaseStruct.prototype,
 	 * @param Map obj = null
 	 * @return BaseStruct
 	 */
-	clone: function(ctx, obj)
+	clone: function(obj)
 	{
 		if (obj == undefined) obj = null;
-		return this.copy(ctx, obj);
+		return this.copy(obj);
 	},
 	/**
 	 * Clone this struct with fields
 	 * @param Collection fields = null
 	 * @return BaseStruct
 	 */
-	intersect: function(ctx, fields)
+	intersect: function(fields)
 	{
 		if (fields == undefined) fields = null;
 		if (fields == null)
 		{
-			return use("Runtime.Dict").from({});
+			return Runtime.Dict.from({});
 		}
-		var __v0 = use("Runtime.Map");
-		var obj = new __v0(ctx);
-		fields.each(ctx, (ctx, field_name) => 
+		var __v0 = Runtime.Map;
+		var obj = new __v0();
+		fields.each((field_name) => 
 		{
-			obj.set(ctx, field_name, this.takeValue(ctx, field_name));
+			obj.setValue(field_name, this.takeValue(field_name));
 		});
 		/* Return object */
-		var __v1 = use("Runtime.rtl");
-		var res = __v1.newInstance(ctx, this.getClassName(ctx), use("Runtime.Collection").from([obj.toDict(ctx)]));
+		var __v1 = Runtime.rtl;
+		var res = __v1.newInstance(this.getClassName(), Runtime.Collection.from([obj.toDict()]));
 		return res;
 	},
 	/**
@@ -92,89 +92,90 @@ Object.assign(Runtime.BaseStruct.prototype,
 	 * @param fn f
 	 * @return BaseStruct
 	 */
-	map: function(ctx, field_name, f)
+	map: function(field_name, f)
 	{
-		var __v0 = use("Runtime.Map");
-		return this.copy(ctx, (new __v0(ctx)).set(ctx, field_name, f(ctx, this.takeValue(ctx, field_name))).toDict(ctx));
+		var __v0 = Runtime.Map;
+		return this.copy((new __v0()).setValue(field_name, f(this.takeValue(field_name))).toDict());
 	},
 	/**
 	 * Returns struct as Dict
 	 * @return Dict
 	 */
-	takeDict: function(ctx)
+	takeDict: function()
 	{
-		var __v0 = use("Runtime.Map");
-		var values = new __v0(ctx);
-		var __v1 = use("Runtime.RuntimeUtils");
-		var names = __v1.getVariablesNames(ctx, this.getClassName(ctx), 1);
-		for (var i = 0;i < names.count(ctx);i++)
+		var __v0 = Runtime.Map;
+		var values = new __v0();
+		var __v1 = Runtime.rtl;
+		var names = __v1.getFields(this.getClassName());
+		for (var i = 0;i < names.count();i++)
 		{
-			var variable_name = names.item(ctx, i);
-			var value = this.get(ctx, variable_name, null);
-			values.set(ctx, variable_name, value);
+			var variable_name = names.item(i);
+			var value = this.get(variable_name, null);
+			values.setValue(variable_name, value);
 		}
-		return values.toDict(ctx);
+		return values.toDict();
 	},
 	/**
 	 * Returns struct as Dict
 	 * @return Dict
 	 */
-	toDict: function(ctx)
+	toDict: function()
 	{
-		return this.takeDict(ctx);
+		return this.takeDict();
 	},
-	getClassName: function(ctx)
+	getClassName: function()
 	{
 		return "Runtime.BaseStruct";
 	},
 });
-Object.assign(Runtime.BaseStruct, use("Runtime.BaseObject"));
+Object.assign(Runtime.BaseStruct, Runtime.BaseObject);
 Object.assign(Runtime.BaseStruct,
 {
 	/**
 	 * Returns field value
 	 */
-	_initDataGet: function(ctx, old, changed, field_name)
+	_initDataGet: function(old, changed, field_name)
 	{
-		return (changed != null && changed.has(ctx, field_name)) ? (Runtime.rtl.get(ctx, changed, field_name)) : (Runtime.rtl.get(ctx, old, field_name));
+		return (changed != null && changed.has(field_name)) ? (Runtime.rtl.get(changed, field_name)) : (Runtime.rtl.get(old, field_name));
 	},
 	/**
 	 * Init struct data
 	 */
-	_initData: function(ctx, old, changed)
+	_initData: function(old, changed)
 	{
 		return changed;
 	},
 	/**
 	 * Assign
 	 */
-	_assign: function(ctx, new_item, old_item, obj)
+	_assign: function(new_item, old_item, obj)
 	{
-		var __v0 = use("Runtime.rtl");
-		obj = __v0.convert(ctx, obj, "Runtime.Dict");
-		obj = new_item.constructor._initData(ctx, old_item, obj);
+		var __v0 = Runtime.rtl;
+		obj = __v0.convert(obj, "Runtime.Dict");
+		obj = new_item.constructor._initData(old_item, obj);
 		if (obj == null)
 		{
 			return ;
 		}
 		var check_types = false;
-		var class_name = this.getCurrentClassName(ctx);
+		var class_name = new_item.getClassName();
 		var _Dict = use("Runtime.Dict");
-		var RuntimeUtils = use("Runtime.RuntimeUtils");
+		var rtl = use("Runtime.rtl");
 		if (obj instanceof _Dict)
 		{
 			for (var key in obj._map)
 			{
+				var real_key = key.substring(1);
 				var value = obj._map[key];
 				if (check_types)
 				{
-					info = RuntimeUtils.getFieldInfo(ctx, new_item.getClassName(), key);
+					info = rtl.getFieldInfo(class_name, real_key);
 					if (info)
 					{
-						value = rtl.convert(ctx, value, info.t, null);
+						value = rtl.convert(value, info.get("t"), null);
 					}
 				}
-				new_item[key.substring(1)] = value;
+				new_item[real_key] = value;
 			}
 		}
 		else
@@ -184,10 +185,10 @@ Object.assign(Runtime.BaseStruct,
 				var value = obj[key];
 				if (check_types)
 				{
-					info = RuntimeUtils.getFieldInfo(ctx, new_item.getClassName(), key);
+					info = rtl.getFieldInfo(new_item.getClassName(), key);
 					if (info)
 					{
-						value = rtl.convert(ctx, value, info.t, null);
+						value = rtl.convert(value, info.get("t"), null);
 					}
 				}
 				new_item[key] = value;
@@ -197,9 +198,9 @@ Object.assign(Runtime.BaseStruct,
 	/**
 	 * Returns new instance
 	 */
-	newInstance: function(ctx, items)
+	newInstance: function(items)
 	{
-		return new (Function.prototype.bind.apply(this, [null, ctx, items]));
+		return new (Function.prototype.bind.apply(this, (typeof ctx != "undefined") ? [null, ctx, items] : [null, items]));
 	},
 	/**
 	 * Update struct
@@ -207,9 +208,9 @@ Object.assign(Runtime.BaseStruct,
 	 * @param var value
 	 * @return BaseStruct
 	 */
-	update: function(ctx, item, items)
+	update: function(item, items)
 	{
-		return item.copy(ctx, items);
+		return item.copy(items);
 	},
 	/**
 	 * Update struct
@@ -217,10 +218,10 @@ Object.assign(Runtime.BaseStruct,
 	 * @param var value
 	 * @return BaseStruct
 	 */
-	setAttr: function(ctx, item, path, value)
+	setAttr: function(item, path, value)
 	{
-		var __v0 = use("Runtime.rtl");
-		return __v0.setAttr(ctx, item, path, value);
+		var __v0 = Runtime.rtl;
+		return __v0.setAttr(item, path, value);
 	},
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
@@ -235,48 +236,44 @@ Object.assign(Runtime.BaseStruct,
 	{
 		return "Runtime.BaseObject";
 	},
-	getClassInfo: function(ctx)
+	getClassInfo: function()
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
-		return new IntrospectionInfo(ctx, {
-			"kind": IntrospectionInfo.ITEM_CLASS,
-			"class_name": "Runtime.BaseStruct",
-			"name": "Runtime.BaseStruct",
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		return Dict.from({
 			"annotations": Collection.from([
 			]),
 		});
 	},
-	getFieldsList: function(ctx, f)
+	getFieldsList: function(f)
 	{
 		var a = [];
 		if (f==undefined) f=0;
-		return use("Runtime.Collection").from(a);
+		return Runtime.Collection.from(a);
 	},
-	getFieldInfoByName: function(ctx,field_name)
+	getFieldInfoByName: function(field_name)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
 		return null;
 	},
-	getMethodsList: function(ctx,f)
+	getMethodsList: function(f)
 	{
 		if (f==undefined) f=0;
 		var a = [];
 		if ((f&4)==4) a=[
 		];
-		return use("Runtime.Collection").from(a);
+		return Runtime.Collection.from(a);
 	},
-	getMethodInfoByName: function(ctx,field_name)
+	getMethodInfoByName: function(field_name)
 	{
 		return null;
 	},
 	__implements__:
 	[
-		use("Runtime.SerializeInterface"),
+		Runtime.SerializeInterface,
 	],
 });use.add(Runtime.BaseStruct);
 module.exports = Runtime.BaseStruct;
-Runtime.BaseStruct.prototype.get = function(ctx, k, v){ return this[k] != undefined ? this[k] : v; };
+Runtime.BaseStruct.prototype.get = function(k, v)
+{ if (v == undefined) v = null; return this[k] != undefined ? this[k] : v; };

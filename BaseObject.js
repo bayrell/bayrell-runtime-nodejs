@@ -18,28 +18,20 @@ var use = require('bayrell').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-Runtime.BaseObject = function(ctx)
+Runtime.BaseObject = function()
 {
 	/* Init object */
-	this._init(ctx);
+	this._init();
 };
 Object.assign(Runtime.BaseObject.prototype,
 {
 	/**
 	 * Init function
 	 */
-	_init: function(ctx)
+	_init: function()
 	{
 	},
-	/* Old functions */
-	assignValue: function(ctx, k, v)
-	{
-	},
-	takeValue: function(ctx, k, v)
-	{
-		if (v == undefined) v = null;
-	},
-	getClassName: function(ctx)
+	getClassName: function()
 	{
 		return "Runtime.BaseObject";
 	},
@@ -49,13 +41,13 @@ Object.assign(Runtime.BaseObject,
 	/**
 	 * Returns new instance
 	 */
-	newInstance: function(ctx, items)
+	newInstance: function(items)
 	{
 		return null;
 	},
-	createInstance: function(ctx, items)
+	createInstance: function(items)
 	{
-		return this.newInstance(ctx, items);
+		return this.newInstance(items);
 	},
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
@@ -70,41 +62,36 @@ Object.assign(Runtime.BaseObject,
 	{
 		return "";
 	},
-	getClassInfo: function(ctx)
+	getClassInfo: function()
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
-		return new IntrospectionInfo(ctx, {
-			"kind": IntrospectionInfo.ITEM_CLASS,
-			"class_name": "Runtime.BaseObject",
-			"name": "Runtime.BaseObject",
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		return Dict.from({
 			"annotations": Collection.from([
 			]),
 		});
 	},
-	getFieldsList: function(ctx, f)
+	getFieldsList: function(f)
 	{
 		var a = [];
 		if (f==undefined) f=0;
-		return use("Runtime.Collection").from(a);
+		return Runtime.Collection.from(a);
 	},
-	getFieldInfoByName: function(ctx,field_name)
+	getFieldInfoByName: function(field_name)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
 		return null;
 	},
-	getMethodsList: function(ctx,f)
+	getMethodsList: function(f)
 	{
 		if (f==undefined) f=0;
 		var a = [];
 		if ((f&4)==4) a=[
 		];
-		return use("Runtime.Collection").from(a);
+		return Runtime.Collection.from(a);
 	},
-	getMethodInfoByName: function(ctx,field_name)
+	getMethodInfoByName: function(field_name)
 	{
 		return null;
 	},

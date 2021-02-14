@@ -20,7 +20,7 @@ var use = require('bayrell').use;
 if (typeof Runtime == 'undefined') Runtime = {};
 if (typeof Runtime == 'undefined') Runtime = {};
 
-Runtime._Map = function(ctx, map)
+Runtime._Map = function(map)
 {
 	this._map = {};
 	if (map != undefined && typeof map == 'object')
@@ -32,7 +32,7 @@ Runtime._Map = function(ctx, map)
 				this._map[i] = map._map[i];
 			}
 		}
-		else
+		else if (typeof map == "object" && !(map instanceof Runtime._Collection))
 		{
 			for (var i in map)
 			{
@@ -66,11 +66,8 @@ Object.assign(Runtime._Map,
 {
 	from: function(map)
 	{
-		var res = this.Instance(null);
-		for (var i in map)
-		{
-			res._map["|" + i] = map[i];
-		}
+		var ctx = null;
+		var res = this.Instance(map);
 		return res;
 	},
 	getCurrentNamespace: function(){ return "Runtime"; },
@@ -78,20 +75,20 @@ Object.assign(Runtime._Map,
 	getParentClassName: function(){ return ""; },
 });
 use.add(Runtime._Map);
-Runtime.Dict = function(ctx)
+Runtime.Dict = function()
 {
-	use("Runtime._Map").apply(this, arguments);
+	Runtime._Map.apply(this, arguments);
 };
-Runtime.Dict.prototype = Object.create(use("Runtime._Map").prototype);
+Runtime.Dict.prototype = Object.create(Runtime._Map.prototype);
 Runtime.Dict.prototype.constructor = Runtime.Dict;
 Object.assign(Runtime.Dict.prototype,
 {
 	/**
 	 * Copy instance
 	 */
-	cp: function(ctx)
+	cp: function()
 	{
-		var new_obj = this.constructor.Instance(ctx);
+		var new_obj = this.constructor.Instance();
 		new_obj._map = Object.assign({}, this._map);
 		return new_obj;
 	},
@@ -100,14 +97,14 @@ Object.assign(Runtime.Dict.prototype,
 	 * @param Collection fields = null
 	 * @return Dict<T>
 	 */
-	clone: function(ctx, fields)
+	clone: function(fields)
 	{
 		if (fields == undefined) fields = null;
 		if (fields == null)
 		{
 			return this;
 		}
-		var new_obj = this.constructor.Instance(ctx);
+		var new_obj = this.constructor.Instance();
 		if (fields != null)
 		{
 			for (var key in fields)
@@ -122,14 +119,14 @@ Object.assign(Runtime.Dict.prototype,
 	 * Returns copy of Dict
 	 * @param int pos - position
 	 */
-	copy: function(ctx, obj)
+	copy: function(obj)
 	{
 		if (obj == undefined) obj = null;
 		if (obj == null)
 		{
 			return this;
 		}
-		var new_obj = this.constructor.Instance(ctx);
+		var new_obj = this.constructor.Instance();
 		new_obj._map = Object.assign({}, this._map);
 		if (obj != null)
 		{
@@ -155,25 +152,25 @@ Object.assign(Runtime.Dict.prototype,
 	/**
 	 * Convert to dict
 	 */
-	toDict: function(ctx)
+	toDict: function()
 	{
 		var Dict = use ("Runtime.Dict");
-		return new Dict(ctx, this);
+		return new Dict(this);
 	},
 	/**
 	 * Convert to dict
 	 */
-	toMap: function(ctx)
+	toMap: function()
 	{
 		var Map = use ("Runtime.Map");
-		return new Map(ctx, this);
+		return new Map(this);
 	},
 	/**
 	 * Return true if key exists
 	 * @param string key
 	 * @return bool var
 	 */
-	contains: function(ctx, key)
+	contains: function(key)
 	{
 		key = this.toStr(key);
 		return typeof this._map["|" + key] != "undefined";
@@ -183,9 +180,9 @@ Object.assign(Runtime.Dict.prototype,
 	 * @param string key
 	 * @return bool var
 	 */
-	has: function(ctx, key)
+	has: function(key)
 	{
-		return this.contains(ctx, key);
+		return this.contains(key);
 	},
 	/**
 	 * Returns value from position
@@ -193,7 +190,7 @@ Object.assign(Runtime.Dict.prototype,
 	 * @param T default_value
 	 * @return T
 	 */
-	get: function(ctx, key, default_value)
+	get: function(key, default_value)
 	{
 		key = this.toStr(key);
 		var val = this._map["|" + key];
@@ -206,23 +203,23 @@ Object.assign(Runtime.Dict.prototype,
 	 * @param T default_value
 	 * @return T
 	 */
-	attr: function(ctx, items, default_value)
+	attr: function(items, default_value)
 	{
-		var __v0 = use("Runtime.rtl");
-		return __v0.attr(ctx, this, items, default_value);
+		var __v0 = Runtime.rtl;
+		return __v0.attr(this, items, default_value);
 	},
 	/**
 	 * Returns value from position. Throw exception, if position does not exists
 	 * @param string key - position
 	 * @return T
 	 */
-	item: function(ctx, key)
+	item: function(key)
 	{
 		key = this.toStr(key);
 		if (typeof this._map["|" + key] == "undefined")
 		{
 			var _KeyNotFound = use("Runtime.Exceptions.KeyNotFound");
-			throw new _KeyNotFound(ctx, key);
+			throw new _KeyNotFound(key);
 		}
 		var val = this._map["|" + key];
 		if (val === null || typeof val == "undefined") return null;
@@ -234,19 +231,23 @@ Object.assign(Runtime.Dict.prototype,
 	 * @param T value 
 	 * @return self
 	 */
-	setIm: function(ctx, key, value)
+	setIm: function(key, value)
 	{
-		var res = this.cp(ctx);
+		var res = this.cp();
 		key = this.toStr(key);
 		res._map["|" + key] = value;
 		return res;
+	},
+	set1: function(key, value)
+	{
+		return this.setIm(key, value);
 	},
 	/**
 	 * Remove value from position
 	 * @param string key
 	 * @return self
 	 */
-	removeIm: function(ctx, key)
+	removeIm: function(key)
 	{
 		key = this.toStr(key);
 		if (typeof this._map["|" + key] != "undefined")
@@ -257,35 +258,39 @@ Object.assign(Runtime.Dict.prototype,
 		}
 		return this;
 	},
+	remove1: function(key)
+	{
+		return this.removeIm(key);
+	},
 	/**
 	 * Remove value from position
 	 * @param string key
 	 * @return self
 	 */
-	removeKeys: function(ctx, keys)
+	removeKeys: function(keys)
 	{
-		return (keys != null) ? (keys.reduce(ctx, (ctx, item, key) => 
+		return (keys != null) ? (keys.reduce((item, key) => 
 		{
-			return item.removeIm(ctx, key);
+			return item.removeIm(key);
 		}, this)) : (this);
 	},
 	/**
 	 * Returns vector of the keys
 	 * @return Collection<string>
 	 */
-	keys: function(ctx)
+	keys: function()
 	{
-		var res = new Runtime.Collection(ctx);
-		for (var key in this._map) res.push(key.substring(1));
-		return res;
+		var res = new Runtime.Vector();
+		for (var key in this._map) res.pushValue(key.substring(1));
+		return res.toCollection();
 	},
 	/**
 	 * Returns vector of the values
 	 * @return Collection<T>
 	 */
-	values: function(ctx)
+	values: function()
 	{
-		var res = new Runtime.Collection(ctx);
+		var res = new Runtime.Collection();
 		for (var key in this._map) res.push( this._map[key] );
 		return res;
 	},
@@ -294,13 +299,13 @@ Object.assign(Runtime.Dict.prototype,
 	 * @param fn f
 	 * @return Dict
 	 */
-	map: function(ctx, f)
+	map: function(f)
 	{
-		var obj = this.constructor.Instance(ctx);
+		var obj = this.constructor.Instance();
 		for (var key in this._map)
 		{
 			var new_key = key.substring(1);
-			var new_val = f(ctx, this._map[key], new_key);
+			var new_val = f(this._map[key], new_key);
 			obj._map[key] = new_val;
 		}
 		return obj;
@@ -310,14 +315,14 @@ Object.assign(Runtime.Dict.prototype,
 	 * @param fn f
 	 * @return Collection
 	 */
-	filter: function(ctx, f)
+	filter: function(f)
 	{
-		var obj = this.constructor.Instance(ctx);
+		var obj = this.constructor.Instance();
 		for (var key in this._map)
 		{
 			var new_key = key.substring(1);
 			var value = this._map[key];
-			var flag = f(ctx, value, new_key);
+			var flag = f(value, new_key);
 			if (flag) obj._map[key] = value;
 		}
 		return obj;
@@ -326,13 +331,13 @@ Object.assign(Runtime.Dict.prototype,
 	 * Call function for each item
 	 * @param fn f
 	 */
-	each: function(ctx, f)
+	each: function(f)
 	{
 		for (var key in this._map)
 		{
 			var new_key = key.substring(1);
 			var value = this._map[key];
-			f(ctx, value, new_key);
+			f(value, new_key);
 		}
 	},
 	/**
@@ -340,13 +345,13 @@ Object.assign(Runtime.Dict.prototype,
 	 * @param fn f
 	 * @return Collection
 	 */
-	transition: function(ctx, f)
+	transition: function(f)
 	{
 		var Collection = use("Runtime.Collection");
-		var arr = new Collection(ctx);
+		var arr = new Collection();
 		for (var key in this._map)
 		{
-			var new_value = f(ctx, this._map[key], key.substring(1));
+			var new_value = f(this._map[key], key.substring(1));
 			Array.prototype.push.call(arr, new_value);
 		}
 		return arr;
@@ -357,11 +362,11 @@ Object.assign(Runtime.Dict.prototype,
 	 * @param var init_value
 	 * @return init_value
 	 */
-	reduce: function(ctx, f, init_value)
+	reduce: function(f, init_value)
 	{
 		for (var key in this._map)
 		{
-			init_value = f(ctx, init_value, this._map[key], key.substring(1));
+			init_value = f(init_value, this._map[key], key.substring(1));
 		}
 		return init_value;
 	},
@@ -370,18 +375,23 @@ Object.assign(Runtime.Dict.prototype,
 	 * @param Dict<T> map
 	 * @return self
 	 */
-	concat: function(ctx, map)
+	concat: function(map)
 	{
 		if (map == undefined) map = null;
+		if (map == null)
+		{
+			return this;
+		}
 		var _map = {};
+		var f = false;
 		var Dict = use("Runtime.Dict");
 		if (map == null) return this;
 		if (map instanceof Dict) _map = map._map;
-		else if (typeof map == "object") _map = map;
-		var res = this.cp(ctx);
+		else if (typeof map == "object") { _map = map; f = true; }
+		var res = this.cp();
 		for (var key in _map)
 		{
-			res._map[key] = _map[key];
+			res._map[(f ? "|" : "") + key] = _map[key];
 		}
 		return res;
 	},
@@ -390,48 +400,78 @@ Object.assign(Runtime.Dict.prototype,
 	 * @param Collection fields = null
 	 * @return BaseStruct
 	 */
-	intersect: function(ctx, fields, skip_empty)
+	intersect: function(fields, skip_empty)
 	{
 		if (fields == undefined) fields = null;
 		if (skip_empty == undefined) skip_empty = true;
 		if (fields == null)
 		{
-			return use("Runtime.Dict").from({});
+			return Runtime.Dict.from({});
 		}
-		var __v0 = use("Runtime.Map");
-		var obj = new __v0(ctx);
-		fields.each(ctx, (ctx, field_name) => 
+		var __v0 = Runtime.Map;
+		var obj = new __v0();
+		fields.each((field_name) => 
 		{
-			if (skip_empty && !this.has(ctx, field_name))
+			if (skip_empty && !this.has(field_name))
 			{
 				return ;
 			}
-			obj.set(ctx, field_name, this.get(ctx, field_name, null));
+			obj.setValue(field_name, this.get(field_name, null));
 		});
-		return obj.toDict(ctx);
+		return obj.toDict();
 	},
-	getClassName: function(ctx)
+	/**
+	 * Check equal
+	 */
+	equal: function(item)
+	{
+		if (item == null)
+		{
+			return false;
+		}
+		var __v0 = Runtime.Collection;
+		var keys = (new __v0()).concat(this.keys()).concat(item.keys()).removeDuplicatesIm();
+		for (var i = 0;i < keys.count();i++)
+		{
+			var key = Runtime.rtl.get(keys, i);
+			if (!this.has(key))
+			{
+				return false;
+			}
+			if (!item.has(key))
+			{
+				return false;
+			}
+			if (this.get(key) != item.get(key))
+			{
+				return false;
+			}
+		}
+		return true;
+	},
+	getClassName: function()
 	{
 		return "Runtime.Dict";
 	},
 });
-Object.assign(Runtime.Dict, use("Runtime._Map"));
+Object.assign(Runtime.Dict, Runtime._Map);
 Object.assign(Runtime.Dict,
 {
 	/**
 	 * Returns new Instance
 	 * @return Object
 	 */
-	Instance: function(ctx)
+	Instance: function(val)
 	{
-		var __v0 = use("Runtime.Dict");
-		return new __v0(ctx);
+		if (val == undefined) val = null;
+		var __v0 = Runtime.Dict;
+		return new __v0(val);
 	},
 	/**
 	 * Returns new Instance
 	 * @return Object
 	 */
-	create: function(ctx, obj)
+	create: function(obj)
 	{
 		return new (Function.prototype.bind.apply(this, [null, ctx, obj]));
 	},
@@ -448,41 +488,36 @@ Object.assign(Runtime.Dict,
 	{
 		return "Runtime._Map";
 	},
-	getClassInfo: function(ctx)
+	getClassInfo: function()
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
-		return new IntrospectionInfo(ctx, {
-			"kind": IntrospectionInfo.ITEM_CLASS,
-			"class_name": "Runtime.Dict",
-			"name": "Runtime.Dict",
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		return Dict.from({
 			"annotations": Collection.from([
 			]),
 		});
 	},
-	getFieldsList: function(ctx, f)
+	getFieldsList: function(f)
 	{
 		var a = [];
 		if (f==undefined) f=0;
-		return use("Runtime.Collection").from(a);
+		return Runtime.Collection.from(a);
 	},
-	getFieldInfoByName: function(ctx,field_name)
+	getFieldInfoByName: function(field_name)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
 		return null;
 	},
-	getMethodsList: function(ctx,f)
+	getMethodsList: function(f)
 	{
 		if (f==undefined) f=0;
 		var a = [];
 		if ((f&4)==4) a=[
 		];
-		return use("Runtime.Collection").from(a);
+		return Runtime.Collection.from(a);
 	},
-	getMethodInfoByName: function(ctx,field_name)
+	getMethodInfoByName: function(field_name)
 	{
 		return null;
 	},

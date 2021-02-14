@@ -18,52 +18,34 @@ var use = require('bayrell').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-Runtime.re = function()
+Runtime.LambdaChainDeclare = function()
 {
+	Runtime.BaseStruct.apply(this, arguments);
 };
-Object.assign(Runtime.re.prototype,
+Runtime.LambdaChainDeclare.prototype = Object.create(Runtime.BaseStruct.prototype);
+Runtime.LambdaChainDeclare.prototype.constructor = Runtime.LambdaChainDeclare;
+Object.assign(Runtime.LambdaChainDeclare.prototype,
 {
+	logName: function()
+	{
+		return this.getClassName() + Runtime.rtl.toStr(" -> ") + Runtime.rtl.toStr(this.name);
+	},
+	_init: function()
+	{
+		var defProp = use('Runtime.rtl').defProp;
+		var a = Object.getOwnPropertyNames(this);
+		this.name = "";
+		this.is_await = false;
+		Runtime.BaseStruct.prototype._init.call(this);
+	},
 	getClassName: function()
 	{
-		return "Runtime.re";
+		return "Runtime.LambdaChainDeclare";
 	},
 });
-Object.assign(Runtime.re,
+Object.assign(Runtime.LambdaChainDeclare, Runtime.BaseStruct);
+Object.assign(Runtime.LambdaChainDeclare,
 {
-	/**
-	 * Search regular expression
-	 * @param string r regular expression
-	 * @param string s string
-	 * @return bool
-	 */
-	match: function(r, s)
-	{
-		return s.match( new RegExp(r, "g") ) != null;
-	},
-	/**
-	 * Search regular expression
-	 * @param string r regular expression
-	 * @param string s string
-	 * @return Vector result
-	 */
-	matchAll: function(r, s)
-	{
-		var arr = [...s.matchAll( new RegExp(r, "g") )];
-		if (arr.length == 0) return null;
-		return Runtime.Collection.from( arr.map( (v) => Runtime.Collection.from(v) ) );
-		return null;
-	},
-	/**
-	 * Replace with regular expression
-	 * @param string r - regular expression
-	 * @param string replace - new value
-	 * @param string s - replaceable string
-	 * @return string
-	 */
-	replace: function(r, replace, s)
-	{
-		return s.replace(new RegExp(r, "g"), replace);
-	},
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
 	{
@@ -71,11 +53,11 @@ Object.assign(Runtime.re,
 	},
 	getCurrentClassName: function()
 	{
-		return "Runtime.re";
+		return "Runtime.LambdaChainDeclare";
 	},
 	getParentClassName: function()
 	{
-		return "";
+		return "Runtime.BaseStruct";
 	},
 	getClassInfo: function()
 	{
@@ -90,12 +72,27 @@ Object.assign(Runtime.re,
 	{
 		var a = [];
 		if (f==undefined) f=0;
+		if ((f&3)==3)
+		{
+			a.push("name");
+			a.push("is_await");
+		}
 		return Runtime.Collection.from(a);
 	},
 	getFieldInfoByName: function(field_name)
 	{
 		var Collection = Runtime.Collection;
 		var Dict = Runtime.Dict;
+		if (field_name == "name") return Dict.from({
+			"t": "string",
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "is_await") return Dict.from({
+			"t": "bool",
+			"annotations": Collection.from([
+			]),
+		});
 		return null;
 	},
 	getMethodsList: function(f)
@@ -110,5 +107,5 @@ Object.assign(Runtime.re,
 	{
 		return null;
 	},
-});use.add(Runtime.re);
-module.exports = Runtime.re;
+});use.add(Runtime.LambdaChainDeclare);
+module.exports = Runtime.LambdaChainDeclare;

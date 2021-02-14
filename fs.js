@@ -30,12 +30,12 @@ const unlink = promisify(fs.unlink);
 const lstat = promisify(fs.lstat);
 const mkdir = promisify(fs.mkdir);
 const readdir = promisify(fs.readdir);
-Runtime.fs = function(ctx)
+Runtime.fs = function()
 {
 };
 Object.assign(Runtime.fs.prototype,
 {
-	getClassName: function(ctx)
+	getClassName: function()
 	{
 		return "Runtime.fs";
 	},
@@ -46,46 +46,46 @@ Object.assign(Runtime.fs,
 	/**
 	 * Add first slash
 	 */
-	addFirstSlash: function(ctx, s)
+	addFirstSlash: function(s)
 	{
-		var __v0 = use("Runtime.re");
-		return __v0.replace(ctx, "//", "/", this.DIRECTORY_SEPARATOR + use("Runtime.rtl").toStr(s));
+		var __v0 = Runtime.re;
+		return __v0.replace("//", "/", this.DIRECTORY_SEPARATOR + Runtime.rtl.toStr(s));
 	},
 	/**
 	 * Add last slash
 	 */
-	addLastSlash: function(ctx, s)
+	addLastSlash: function(s)
 	{
-		var __v0 = use("Runtime.re");
-		return __v0.replace(ctx, "//", "/", s + use("Runtime.rtl").toStr(this.DIRECTORY_SEPARATOR));
+		var __v0 = Runtime.re;
+		return __v0.replace("//", "/", s + Runtime.rtl.toStr(this.DIRECTORY_SEPARATOR));
 	},
 	/**
 	 * Concat
 	 */
-	concat: function(ctx)
+	concat: function()
 	{
-		var arr = use("Runtime.Collection").from([]);
+		var arr = Runtime.Collection.from([]);
 		var Collection = use("Runtime.Collection");
 		for (var i=1; i<arguments.length; i++) arr.push( arguments[i] );
 		arr = Collection.from(arr);
-		return this.concatArr(ctx, arr);
+		return this.concatArr(arr);
 	},
 	/**
 	 * Concat array
 	 */
-	concatArr: function(ctx, arr)
+	concatArr: function(arr)
 	{
-		var res = arr.reduce(ctx, (ctx, res, item) => 
+		var res = arr.reduce((res, item) => 
 		{
-			return res + use("Runtime.rtl").toStr(this.DIRECTORY_SEPARATOR) + use("Runtime.rtl").toStr(item);
+			return res + Runtime.rtl.toStr(this.DIRECTORY_SEPARATOR) + Runtime.rtl.toStr(item);
 		}, "");
-		var __v0 = use("Runtime.re");
-		return __v0.replace(ctx, "//", "/", res);
+		var __v0 = Runtime.re;
+		return __v0.replace("\\/\\/", "/", res);
 	},
 	/**
 	 * Relative
 	 */
-	relative: function(ctx, path, to)
+	relative: function(path, to)
 	{
 		var mpath = require("path");
 		return mpath.relative(path, to);
@@ -94,15 +94,15 @@ Object.assign(Runtime.fs,
 	/**
 	 * Exists
 	 */
-	exists: async function(ctx, path, chroot)
+	exists: async function(path, chroot)
 	{
 		if (chroot == undefined) chroot = "";
-		var __v0 = use("Runtime.rs");
-		if (chroot != "" && __v0.substr(ctx, chroot, -1) != "/")
+		var __v0 = Runtime.rs;
+		if (chroot != "" && __v0.substr(chroot, -1) != "/")
 		{
-			chroot += use("Runtime.rtl").toStr("/");
+			chroot += Runtime.rtl.toStr("/");
 		}
-		var filepath = chroot + use("Runtime.rtl").toStr(path);
+		var filepath = chroot + Runtime.rtl.toStr(path);
 		var res = await fileExists(filepath);
 		return Promise.resolve( res );
 		return Promise.resolve(false);
@@ -110,50 +110,65 @@ Object.assign(Runtime.fs,
 	/**
 	 * Save local file
 	 */
-	saveFile: async function(ctx, path, content, ch, chroot)
+	saveFile: async function(path, content, chroot, ch)
 	{
 		if (content == undefined) content = "";
-		if (ch == undefined) ch = "utf8";
 		if (chroot == undefined) chroot = "";
-		var __v0 = use("Runtime.rs");
-		if (chroot != "" && __v0.substr(ctx, chroot, -1) != "/")
+		if (ch == undefined) ch = "utf8";
+		var __v0 = Runtime.rs;
+		if (chroot != "" && __v0.substr(chroot, -1) != "/")
 		{
-			chroot += use("Runtime.rtl").toStr("/");
+			chroot += Runtime.rtl.toStr("/");
 		}
-		var filepath = chroot + use("Runtime.rtl").toStr(path);
+		var filepath = chroot + Runtime.rtl.toStr(path);
 		await writeFile( resolve(filepath), content, { "encoding": ch } );
 		return Promise.resolve("");
 	},
 	/**
 	 * Read local file
 	 */
-	readFile: async function(ctx, path, ch, chroot)
+	readFile: async function(path, chroot, ch)
 	{
-		if (ch == undefined) ch = "utf8";
 		if (chroot == undefined) chroot = "";
-		var __v0 = use("Runtime.rs");
-		if (chroot != "" && __v0.substr(ctx, chroot, -1) != "/")
+		if (ch == undefined) ch = "utf8";
+		var __v0 = Runtime.rs;
+		if (chroot != "" && __v0.substr(chroot, -1) != "/")
 		{
-			chroot += use("Runtime.rtl").toStr("/");
+			chroot += Runtime.rtl.toStr("/");
 		}
-		var filepath = chroot + use("Runtime.rtl").toStr(path);
+		var filepath = chroot + Runtime.rtl.toStr(path);
 		var content = await readFile( resolve(filepath), { "encoding": ch } );
 		return Promise.resolve( content );
 		return Promise.resolve("");
 	},
 	/**
-	 * Make dir
+	 * Rename file
 	 */
-	mkdir: async function(ctx, path, chroot, mode)
+	renameFile: async function(path, new_path, chroot)
 	{
 		if (chroot == undefined) chroot = "";
-		if (mode == undefined) mode = "0755";
-		var __v0 = use("Runtime.rs");
-		if (chroot != "" && __v0.substr(ctx, chroot, -1) != "/")
+		var __v0 = Runtime.rs;
+		if (chroot != "" && __v0.substr(chroot, -1) != "/")
 		{
-			chroot += use("Runtime.rtl").toStr("/");
+			chroot += Runtime.rtl.toStr("/");
 		}
-		var filepath = chroot + use("Runtime.rtl").toStr(path);
+		var filepath = chroot + Runtime.rtl.toStr(path);
+		var filepath_new = chroot + Runtime.rtl.toStr(new_path);
+		return Promise.resolve("");
+	},
+	/**
+	 * Make dir
+	 */
+	mkdir: async function(path, chroot, mode)
+	{
+		if (chroot == undefined) chroot = "";
+		if (mode == undefined) mode = "755";
+		var __v0 = Runtime.rs;
+		if (chroot != "" && __v0.substr(chroot, -1) != "/")
+		{
+			chroot += Runtime.rtl.toStr("/");
+		}
+		var filepath = chroot + Runtime.rtl.toStr(path);
 		filepath = resolve(filepath);
 		var exists = await fileExists(filepath);
 		if (!exists)
@@ -165,25 +180,25 @@ Object.assign(Runtime.fs,
 	/**
 	 * Synlink
 	 */
-	symlink: async function(ctx, target, link_name, chroot)
+	symlink: async function(target, link_name, chroot)
 	{
 		if (chroot == undefined) chroot = "";
-		var __v0 = use("Runtime.rs");
-		if (chroot != "" && __v0.substr(ctx, chroot, -1) != "/")
+		var __v0 = Runtime.rs;
+		if (chroot != "" && __v0.substr(chroot, -1) != "/")
 		{
-			chroot += use("Runtime.rtl").toStr("/");
+			chroot += Runtime.rtl.toStr("/");
 		}
 		var target_path = target;
 		var link_name_path = link_name;
-		var __v0 = use("Runtime.rs");
-		if (__v0.substr(ctx, target_path, 0, 2) != "..")
+		var __v0 = Runtime.rs;
+		if (__v0.substr(target_path, 0, 2) != "..")
 		{
-			target_path = chroot + use("Runtime.rtl").toStr(target);
+			target_path = chroot + Runtime.rtl.toStr(target);
 		}
-		var __v0 = use("Runtime.rs");
-		if (__v0.substr(ctx, link_name_path, 0, 2) != "..")
+		var __v0 = Runtime.rs;
+		if (__v0.substr(link_name_path, 0, 2) != "..")
 		{
-			link_name_path = chroot + use("Runtime.rtl").toStr(link_name);
+			link_name_path = chroot + Runtime.rtl.toStr(link_name);
 		}
 		if (target_path.substr(0, 2) != "..") target_path = resolve(target_path);
 		if (link_name_path.substr(0, 2) != "..") link_name_path = resolve(link_name_path);
@@ -191,17 +206,17 @@ Object.assign(Runtime.fs,
 		return Promise.resolve("");
 	},
 	/**
-	 * Unlink
+	 * Remove
 	 */
-	unlink: async function(ctx, path, chroot)
+	remove: async function(path, chroot)
 	{
 		if (chroot == undefined) chroot = "";
-		var __v0 = use("Runtime.rs");
-		if (chroot != "" && __v0.substr(ctx, chroot, -1) != "/")
+		var __v0 = Runtime.rs;
+		if (chroot != "" && __v0.substr(chroot, -1) != "/")
 		{
-			chroot += use("Runtime.rtl").toStr("/");
+			chroot += Runtime.rtl.toStr("/");
 		}
-		var filepath = chroot + use("Runtime.rtl").toStr(path);
+		var filepath = chroot + Runtime.rtl.toStr(path);
 		filepath = resolve(filepath);
 		var exists = await fileExists(filepath);
 		if (exists)
@@ -210,20 +225,25 @@ Object.assign(Runtime.fs,
 		}
 		return Promise.resolve("");
 	},
+	unlink: async function(path, chroot)
+	{
+		if (chroot == undefined) chroot = "";
+		return this.remove(path, chroot);
+	},
 	/**
 	 * Return true if path is folder
 	 * @param string path
 	 * @param boolean
 	 */
-	isDir: async function(ctx, path, chroot)
+	isDir: async function(path, chroot)
 	{
 		if (chroot == undefined) chroot = "";
-		var __v0 = use("Runtime.rs");
-		if (chroot != "" && __v0.substr(ctx, chroot, -1) != "/")
+		var __v0 = Runtime.rs;
+		if (chroot != "" && __v0.substr(chroot, -1) != "/")
 		{
-			chroot += use("Runtime.rtl").toStr("/");
+			chroot += Runtime.rtl.toStr("/");
 		}
-		var dirpath = chroot + use("Runtime.rtl").toStr(path);
+		var dirpath = chroot + Runtime.rtl.toStr(path);
 		dirpath = resolve(dirpath);
 		var stat = await lstat(dirpath);
 		return Promise.resolve( stat.isDirectory() );
@@ -231,15 +251,15 @@ Object.assign(Runtime.fs,
 	/**
 	 * Scan directory
 	 */
-	readDir: async function(ctx, dirname, chroot)
+	readDir: async function(dirname, chroot)
 	{
 		if (chroot == undefined) chroot = "";
-		var __v0 = use("Runtime.rs");
-		if (chroot != "" && __v0.substr(ctx, chroot, -1) != "/")
+		var __v0 = Runtime.rs;
+		if (chroot != "" && __v0.substr(chroot, -1) != "/")
 		{
-			chroot += use("Runtime.rtl").toStr("/");
+			chroot += Runtime.rtl.toStr("/");
 		}
-		var dirpath = chroot + use("Runtime.rtl").toStr(dirname);
+		var dirpath = chroot + Runtime.rtl.toStr(dirname);
 		dirpath = resolve(dirpath);
 		var Collection = use("Runtime.Collection");
 		var arr = await readdir(dirpath);
@@ -251,32 +271,32 @@ Object.assign(Runtime.fs,
 	/**
 	 * Scan directory recursive
 	 */
-	readDirectoryRecursive: async function(ctx, dirname, chroot, parent_name)
+	readDirectoryRecursive: async function(dirname, chroot, parent_name)
 	{
 		if (chroot == undefined) chroot = "";
 		if (parent_name == undefined) parent_name = "";
-		var __v0 = use("Runtime.Vector");
-		var res = new __v0(ctx);
-		var items = await this.readDir(ctx, dirname, chroot);
-		for (var i = 0;i < items.count(ctx);i++)
+		var __v0 = Runtime.Vector;
+		var res = new __v0();
+		var items = await this.readDir(dirname, chroot);
+		for (var i = 0;i < items.count();i++)
 		{
-			var item_name = items.item(ctx, i);
-			var item_path = this.concat(ctx, dirname, item_name);
-			var __v1 = use("Runtime.fs");
-			var item_name2 = __v1.concat(ctx, parent_name, item_name);
+			var item_name = items.item(i);
+			var item_path = this.concat(dirname, item_name);
+			var __v1 = Runtime.fs;
+			var item_name2 = __v1.concat(parent_name, item_name);
 			if (item_name == "." || item_name == "..")
 			{
 				continue;
 			}
-			res.push(ctx, item_name2);
-			var is_dir = await this.isDir(ctx, item_path, chroot);
+			res.push(item_name2);
+			var is_dir = await this.isDir(item_path, chroot);
 			if (is_dir)
 			{
-				var sub_items = await this.readDirectoryRecursive(ctx, item_path, chroot, item_name2);
-				res.appendVector(ctx, sub_items);
+				var sub_items = await this.readDirectoryRecursive(item_path, chroot, item_name2);
+				res.appendVector(sub_items);
 			}
 		}
-		return Promise.resolve(res.toCollection(ctx));
+		return Promise.resolve(res.toCollection());
 	},
 	/* ======================= Class Init Functions ======================= */
 	getCurrentNamespace: function()
@@ -291,58 +311,41 @@ Object.assign(Runtime.fs,
 	{
 		return "";
 	},
-	getClassInfo: function(ctx)
+	getClassInfo: function()
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
-		return new IntrospectionInfo(ctx, {
-			"kind": IntrospectionInfo.ITEM_CLASS,
-			"class_name": "Runtime.fs",
-			"name": "Runtime.fs",
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		return Dict.from({
 			"annotations": Collection.from([
 			]),
 		});
 	},
-	getFieldsList: function(ctx, f)
+	getFieldsList: function(f)
 	{
 		var a = [];
 		if (f==undefined) f=0;
-		return use("Runtime.Collection").from(a);
+		return Runtime.Collection.from(a);
 	},
-	getFieldInfoByName: function(ctx,field_name)
+	getFieldInfoByName: function(field_name)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
-		if (field_name == "DIRECTORY_SEPARATOR") return new IntrospectionInfo(ctx, {
-			"kind": IntrospectionInfo.ITEM_FIELD,
-			"class_name": "Runtime.fs",
-			"name": field_name,
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		if (field_name == "DIRECTORY_SEPARATOR") return Dict.from({
 			"t": "string",
 			"annotations": Collection.from([
 			]),
 		});
 		return null;
 	},
-	getMethodsList: function(ctx,f)
+	getMethodsList: function(f)
 	{
 		if (f==undefined) f=0;
 		var a = [];
 		if ((f&4)==4) a=[
-			"exists",
-			"saveFile",
-			"readFile",
-			"mkdir",
-			"symlink",
-			"unlink",
-			"isDir",
-			"readDir",
-			"readDirectoryRecursive",
 		];
-		return use("Runtime.Collection").from(a);
+		return Runtime.Collection.from(a);
 	},
-	getMethodInfoByName: function(ctx,field_name)
+	getMethodInfoByName: function(field_name)
 	{
 		return null;
 	},

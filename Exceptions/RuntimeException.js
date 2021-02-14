@@ -40,69 +40,69 @@ Object.assign(Runtime.Exceptions.ClassException,
 	getParentClassName: function(){ return ""; },
 });
 use.add(Runtime.Exceptions.ClassException);
-Runtime.Exceptions.RuntimeException = function(ctx, message, code, prev)
+Runtime.Exceptions.RuntimeException = function(message, code, prev)
 {
 	if (message == undefined) message = "";
 	if (code == undefined) code = -1;
 	if (prev == undefined) prev = null;
 	Runtime.Exceptions.ClassException.call(this, message, code, prev);
-	this._init(ctx);
+	this._init();
 	this.error_str = message;
 	this.error_code = code;
 	this.prev = prev;
-	this.updateError(ctx);
+	this.updateError();
 };
-Runtime.Exceptions.RuntimeException.prototype = Object.create(use("Runtime.Exceptions.ClassException").prototype);
+Runtime.Exceptions.RuntimeException.prototype = Object.create(Runtime.Exceptions.ClassException.prototype);
 Runtime.Exceptions.RuntimeException.prototype.constructor = Runtime.Exceptions.RuntimeException;
 Object.assign(Runtime.Exceptions.RuntimeException.prototype,
 {
-	getPreviousException: function(ctx)
+	getPreviousException: function()
 	{
 		return this.prev;
 	},
-	getErrorMessage: function(ctx)
+	getErrorMessage: function()
 	{
 		return this.error_message;
 	},
-	getErrorString: function(ctx)
+	getErrorString: function()
 	{
 		return this.error_str;
 	},
-	getErrorCode: function(ctx)
+	getErrorCode: function()
 	{
 		return this.error_code;
 	},
-	getFileName: function(ctx)
+	getFileName: function()
 	{
 		return this.error_file;
 	},
-	getErrorLine: function(ctx)
+	getErrorLine: function()
 	{
 		return this.error_line;
 	},
-	getErrorPos: function(ctx)
+	getErrorPos: function()
 	{
 		return this.error_pos;
 	},
-	toString: function(ctx)
+	toString: function()
 	{
-		return this.buildMessage(ctx);
+		return this.buildMessage();
 	},
-	buildMessage: function(ctx)
+	buildMessage: function()
 	{
 		return this.error_str;
 	},
-	updateError: function(ctx)
+	updateError: function()
 	{
-		this.error_message = this.buildMessage(ctx);
+		this.error_message = this.buildMessage();
 	},
 	/**
 	 * Returns trace
 	 */
-	getTraceStr: function(ctx)
+	getTraceStr: function()
 	{
 	},
-	_init: function(ctx)
+	_init: function()
 	{
 		this.prev = null;
 		this.error_message = "";
@@ -111,14 +111,14 @@ Object.assign(Runtime.Exceptions.RuntimeException.prototype,
 		this.error_file = "";
 		this.error_line = -1;
 		this.error_pos = -1;
-		use("Runtime.Exceptions.ClassException").prototype._init.call(this,ctx);
+		Runtime.Exceptions.ClassException.prototype._init.call(this);
 	},
-	getClassName: function(ctx)
+	getClassName: function()
 	{
 		return "Runtime.Exceptions.RuntimeException";
 	},
 });
-Object.assign(Runtime.Exceptions.RuntimeException, use("Runtime.Exceptions.ClassException"));
+Object.assign(Runtime.Exceptions.RuntimeException, Runtime.Exceptions.ClassException);
 Object.assign(Runtime.Exceptions.RuntimeException,
 {
 	/* ======================= Class Init Functions ======================= */
@@ -134,20 +134,16 @@ Object.assign(Runtime.Exceptions.RuntimeException,
 	{
 		return "Runtime.Exceptions.ClassException";
 	},
-	getClassInfo: function(ctx)
+	getClassInfo: function()
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
-		return new IntrospectionInfo(ctx, {
-			"kind": IntrospectionInfo.ITEM_CLASS,
-			"class_name": "Runtime.Exceptions.RuntimeException",
-			"name": "Runtime.Exceptions.RuntimeException",
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		return Dict.from({
 			"annotations": Collection.from([
 			]),
 		});
 	},
-	getFieldsList: function(ctx, f)
+	getFieldsList: function(f)
 	{
 		var a = [];
 		if (f==undefined) f=0;
@@ -161,80 +157,58 @@ Object.assign(Runtime.Exceptions.RuntimeException,
 			a.push("error_line");
 			a.push("error_pos");
 		}
-		return use("Runtime.Collection").from(a);
+		return Runtime.Collection.from(a);
 	},
-	getFieldInfoByName: function(ctx,field_name)
+	getFieldInfoByName: function(field_name)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		var IntrospectionInfo = use("Runtime.IntrospectionInfo");
-		if (field_name == "prev") return new IntrospectionInfo(ctx, {
-			"kind": IntrospectionInfo.ITEM_FIELD,
-			"class_name": "Runtime.Exceptions.RuntimeException",
-			"name": field_name,
+		var Collection = Runtime.Collection;
+		var Dict = Runtime.Dict;
+		if (field_name == "prev") return Dict.from({
 			"t": "Object",
 			"annotations": Collection.from([
 			]),
 		});
-		if (field_name == "error_message") return new IntrospectionInfo(ctx, {
-			"kind": IntrospectionInfo.ITEM_FIELD,
-			"class_name": "Runtime.Exceptions.RuntimeException",
-			"name": field_name,
+		if (field_name == "error_message") return Dict.from({
 			"t": "string",
 			"annotations": Collection.from([
 			]),
 		});
-		if (field_name == "error_str") return new IntrospectionInfo(ctx, {
-			"kind": IntrospectionInfo.ITEM_FIELD,
-			"class_name": "Runtime.Exceptions.RuntimeException",
-			"name": field_name,
+		if (field_name == "error_str") return Dict.from({
 			"t": "string",
 			"annotations": Collection.from([
 			]),
 		});
-		if (field_name == "error_code") return new IntrospectionInfo(ctx, {
-			"kind": IntrospectionInfo.ITEM_FIELD,
-			"class_name": "Runtime.Exceptions.RuntimeException",
-			"name": field_name,
+		if (field_name == "error_code") return Dict.from({
 			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
-		if (field_name == "error_file") return new IntrospectionInfo(ctx, {
-			"kind": IntrospectionInfo.ITEM_FIELD,
-			"class_name": "Runtime.Exceptions.RuntimeException",
-			"name": field_name,
+		if (field_name == "error_file") return Dict.from({
 			"t": "string",
 			"annotations": Collection.from([
 			]),
 		});
-		if (field_name == "error_line") return new IntrospectionInfo(ctx, {
-			"kind": IntrospectionInfo.ITEM_FIELD,
-			"class_name": "Runtime.Exceptions.RuntimeException",
-			"name": field_name,
+		if (field_name == "error_line") return Dict.from({
 			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
-		if (field_name == "error_pos") return new IntrospectionInfo(ctx, {
-			"kind": IntrospectionInfo.ITEM_FIELD,
-			"class_name": "Runtime.Exceptions.RuntimeException",
-			"name": field_name,
+		if (field_name == "error_pos") return Dict.from({
 			"t": "int",
 			"annotations": Collection.from([
 			]),
 		});
 		return null;
 	},
-	getMethodsList: function(ctx,f)
+	getMethodsList: function(f)
 	{
 		if (f==undefined) f=0;
 		var a = [];
 		if ((f&4)==4) a=[
 		];
-		return use("Runtime.Collection").from(a);
+		return Runtime.Collection.from(a);
 	},
-	getMethodInfoByName: function(ctx,field_name)
+	getMethodInfoByName: function(field_name)
 	{
 		return null;
 	},

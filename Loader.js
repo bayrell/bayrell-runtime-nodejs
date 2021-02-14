@@ -18,26 +18,3 @@ var use = require('bayrell').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-if (typeof Runtime.Interfaces == 'undefined') Runtime.Interfaces = {};
-Runtime.Interfaces.ModuleDescriptionInterface = function(ctx)
-{
-};
-Object.assign(Runtime.Interfaces.ModuleDescriptionInterface.prototype,
-{
-	getClassName: function(ctx)
-	{
-		return "Runtime.Interfaces.ModuleDescriptionInterface";
-	},
-});
-Object.assign(Runtime.Interfaces.ModuleDescriptionInterface,
-{
-	getCurrentNamespace: function()
-	{
-		return "Runtime.Interfaces";
-	},
-	getCurrentClassName: function()
-	{
-		return "Runtime.Interfaces.ModuleDescriptionInterface";
-	},
-});use.add(Runtime.Interfaces.ModuleDescriptionInterface);
-module.exports = Runtime.Interfaces.ModuleDescriptionInterface;

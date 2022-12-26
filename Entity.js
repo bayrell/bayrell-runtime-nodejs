@@ -1,9 +1,9 @@
 "use strict;"
-var use = require('bayrell').use;
+var use = require('bay-lang').use;
 /*!
  *  Bayrell Runtime Library
  *
- *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2016-2021 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,46 +18,81 @@ var use = require('bayrell').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-Runtime.Entity = function()
+Runtime.Entity = function(ctx)
 {
-	Runtime.BaseStruct.apply(this, arguments);
+	use("Runtime.BaseStruct").apply(this, arguments);
 };
-Runtime.Entity.prototype = Object.create(Runtime.BaseStruct.prototype);
+Runtime.Entity.prototype = Object.create(use("Runtime.BaseStruct").prototype);
 Runtime.Entity.prototype.constructor = Runtime.Entity;
 Object.assign(Runtime.Entity.prototype,
 {
-	/* Functions */
-	className: function()
+	/* Task output */
+	taskOutput: function(ctx)
 	{
-		return (this.name != "") ? ((this.value != "") ? (this.value) : (this.name)) : ("");
+		return this.getClassName(ctx) + use("Runtime.rtl").toStr(" -> ") + use("Runtime.rtl").toStr(this.name) + use("Runtime.rtl").toStr(((this.value != "") ? (" -> " + use("Runtime.rtl").toStr(this.value)) : ("")));
 	},
-	logName: function()
+	/* Add class info in Context::getRequiredEntities */
+	addClassInfo: function(ctx, class_name)
 	{
-		return this.getClassName() + Runtime.rtl.toStr(" -> ") + Runtime.rtl.toStr(((this.value != "") ? (this.name + Runtime.rtl.toStr(" -> ") + Runtime.rtl.toStr(this.value)) : (this.name)));
+		return this;
 	},
-	_init: function()
+	/* Add class info in Context::getSubEntities */
+	addMethodInfo: function(ctx, class_name, class_method_name, class_entity, method_info)
 	{
-		var defProp = use('Runtime.rtl').defProp;
-		var a = Object.getOwnPropertyNames(this);
+		return this;
+	},
+	/* Extend entities */
+	extendEntities: function(ctx, entities)
+	{
+		return entities;
+	},
+	/* Returns entity class name */
+	entityClassName: function(ctx)
+	{
+		return (this.value != "") ? (this.value) : (this.name);
+	},
+	_init: function(ctx)
+	{
+		use("Runtime.BaseStruct").prototype._init.call(this,ctx);
 		this.name = "";
 		this.value = "";
-		this.params = Runtime.Dict.from({});
-		Runtime.BaseStruct.prototype._init.call(this);
+		this.params = use("Runtime.Dict").from({});
 	},
-	getClassName: function()
+	assignObject: function(ctx,o)
 	{
-		return "Runtime.Entity";
+		if (o instanceof use("Runtime.Entity"))
+		{
+			this.name = o.name;
+			this.value = o.value;
+			this.params = o.params;
+		}
+		use("Runtime.BaseStruct").prototype.assignObject.call(this,ctx,o);
+	},
+	assignValue: function(ctx,k,v)
+	{
+		if (k == "name")this.name = v;
+		else if (k == "value")this.value = v;
+		else if (k == "params")this.params = v;
+		else use("Runtime.BaseStruct").prototype.assignValue.call(this,ctx,k,v);
+	},
+	takeValue: function(ctx,k,d)
+	{
+		if (d == undefined) d = null;
+		if (k == "name")return this.name;
+		else if (k == "value")return this.value;
+		else if (k == "params")return this.params;
+		return use("Runtime.BaseStruct").prototype.takeValue.call(this,ctx,k,d);
 	},
 });
-Object.assign(Runtime.Entity, Runtime.BaseStruct);
+Object.assign(Runtime.Entity, use("Runtime.BaseStruct"));
 Object.assign(Runtime.Entity,
 {
 	/* ======================= Class Init Functions ======================= */
-	getCurrentNamespace: function()
+	getNamespace: function()
 	{
 		return "Runtime";
 	},
-	getCurrentClassName: function()
+	getClassName: function()
 	{
 		return "Runtime.Entity";
 	},
@@ -65,16 +100,16 @@ Object.assign(Runtime.Entity,
 	{
 		return "Runtime.BaseStruct";
 	},
-	getClassInfo: function()
+	getClassInfo: function(ctx)
 	{
-		var Collection = Runtime.Collection;
-		var Dict = Runtime.Dict;
+		var Collection = use("Runtime.Collection");
+		var Dict = use("Runtime.Dict");
 		return Dict.from({
 			"annotations": Collection.from([
 			]),
 		});
 	},
-	getFieldsList: function(f)
+	getFieldsList: function(ctx, f)
 	{
 		var a = [];
 		if (f==undefined) f=0;
@@ -84,12 +119,12 @@ Object.assign(Runtime.Entity,
 			a.push("value");
 			a.push("params");
 		}
-		return Runtime.Collection.from(a);
+		return use("Runtime.Collection").from(a);
 	},
-	getFieldInfoByName: function(field_name)
+	getFieldInfoByName: function(ctx,field_name)
 	{
-		var Collection = Runtime.Collection;
-		var Dict = Runtime.Dict;
+		var Collection = use("Runtime.Collection");
+		var Dict = use("Runtime.Dict");
 		if (field_name == "name") return Dict.from({
 			"t": "string",
 			"annotations": Collection.from([
@@ -107,15 +142,15 @@ Object.assign(Runtime.Entity,
 		});
 		return null;
 	},
-	getMethodsList: function(f)
+	getMethodsList: function(ctx,f)
 	{
 		if (f==undefined) f=0;
 		var a = [];
 		if ((f&4)==4) a=[
 		];
-		return Runtime.Collection.from(a);
+		return use("Runtime.Collection").from(a);
 	},
-	getMethodInfoByName: function(field_name)
+	getMethodInfoByName: function(ctx,field_name)
 	{
 		return null;
 	},

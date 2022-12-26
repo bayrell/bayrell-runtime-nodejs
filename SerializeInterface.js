@@ -1,9 +1,9 @@
 "use strict;"
-var use = require('bayrell').use;
+var use = require('bay-lang').use;
 /*!
  *  Bayrell Runtime Library
  *
- *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2016-2021 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ var use = require('bayrell').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-Runtime.SerializeInterface = function()
+Runtime.SerializeInterface = function(ctx)
 {
 };
 Object.assign(Runtime.SerializeInterface.prototype,
@@ -28,22 +28,18 @@ Object.assign(Runtime.SerializeInterface.prototype,
 	 * @param string variable_name
 	 * @return var
 	 */
-	get: function(variable_name, default_value)
+	get: function(ctx, variable_name, default_value)
 	{
 		if (default_value == undefined) default_value = null;
-	},
-	getClassName: function()
-	{
-		return "Runtime.SerializeInterface";
 	},
 });
 Object.assign(Runtime.SerializeInterface,
 {
-	getCurrentNamespace: function()
+	getNamespace: function()
 	{
 		return "Runtime";
 	},
-	getCurrentClassName: function()
+	getClassName: function()
 	{
 		return "Runtime.SerializeInterface";
 	},

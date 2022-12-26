@@ -1,9 +1,9 @@
 "use strict;"
-var use = require('bayrell').use;
+var use = require('bay-lang').use;
 /*!
  *  Bayrell Runtime Library
  *
- *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2016-2021 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,15 +18,11 @@ var use = require('bayrell').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-Runtime.re = function()
+Runtime.re = function(ctx)
 {
 };
 Object.assign(Runtime.re.prototype,
 {
-	getClassName: function()
-	{
-		return "Runtime.re";
-	},
 });
 Object.assign(Runtime.re,
 {
@@ -36,7 +32,7 @@ Object.assign(Runtime.re,
 	 * @param string s string
 	 * @return bool
 	 */
-	match: function(r, s)
+	match: function(ctx, r, s)
 	{
 		return s.match( new RegExp(r, "g") ) != null;
 	},
@@ -46,7 +42,7 @@ Object.assign(Runtime.re,
 	 * @param string s string
 	 * @return Vector result
 	 */
-	matchAll: function(r, s)
+	matchAll: function(ctx, r, s)
 	{
 		var arr = [...s.matchAll( new RegExp(r, "g") )];
 		if (arr.length == 0) return null;
@@ -60,16 +56,16 @@ Object.assign(Runtime.re,
 	 * @param string s - replaceable string
 	 * @return string
 	 */
-	replace: function(r, replace, s)
+	replace: function(ctx, r, replace, s)
 	{
 		return s.replace(new RegExp(r, "g"), replace);
 	},
 	/* ======================= Class Init Functions ======================= */
-	getCurrentNamespace: function()
+	getNamespace: function()
 	{
 		return "Runtime";
 	},
-	getCurrentClassName: function()
+	getClassName: function()
 	{
 		return "Runtime.re";
 	},
@@ -77,36 +73,36 @@ Object.assign(Runtime.re,
 	{
 		return "";
 	},
-	getClassInfo: function()
+	getClassInfo: function(ctx)
 	{
-		var Collection = Runtime.Collection;
-		var Dict = Runtime.Dict;
+		var Collection = use("Runtime.Collection");
+		var Dict = use("Runtime.Dict");
 		return Dict.from({
 			"annotations": Collection.from([
 			]),
 		});
 	},
-	getFieldsList: function(f)
+	getFieldsList: function(ctx, f)
 	{
 		var a = [];
 		if (f==undefined) f=0;
-		return Runtime.Collection.from(a);
+		return use("Runtime.Collection").from(a);
 	},
-	getFieldInfoByName: function(field_name)
+	getFieldInfoByName: function(ctx,field_name)
 	{
-		var Collection = Runtime.Collection;
-		var Dict = Runtime.Dict;
+		var Collection = use("Runtime.Collection");
+		var Dict = use("Runtime.Dict");
 		return null;
 	},
-	getMethodsList: function(f)
+	getMethodsList: function(ctx,f)
 	{
 		if (f==undefined) f=0;
 		var a = [];
 		if ((f&4)==4) a=[
 		];
-		return Runtime.Collection.from(a);
+		return use("Runtime.Collection").from(a);
 	},
-	getMethodInfoByName: function(field_name)
+	getMethodInfoByName: function(ctx,field_name)
 	{
 		return null;
 	},

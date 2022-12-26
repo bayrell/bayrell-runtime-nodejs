@@ -1,9 +1,9 @@
 "use strict;"
-var use = require('bayrell').use;
+var use = require('bay-lang').use;
 /*!
  *  Bayrell Runtime Library
  *
- *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2016-2021 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,11 +18,11 @@ var use = require('bayrell').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-Runtime.Map = function()
+Runtime.Map = function(ctx)
 {
-	Runtime.Dict.apply(this, arguments);
+	use("Runtime.Dict").apply(this, arguments);
 };
-Runtime.Map.prototype = Object.create(Runtime.Dict.prototype);
+Runtime.Map.prototype = Object.create(use("Runtime.Dict").prototype);
 Runtime.Map.prototype.constructor = Runtime.Map;
 Object.assign(Runtime.Map.prototype,
 {
@@ -32,7 +32,7 @@ Object.assign(Runtime.Map.prototype,
 	 * @param T value 
 	 * @return self
 	 */
-	setValue: function(key, value)
+	setValue: function(ctx, key, value)
 	{
 		key = this.toStr(key);
 		this._map["|" + key] = value;
@@ -43,7 +43,7 @@ Object.assign(Runtime.Map.prototype,
 	 * @param string key
 	 * @return self
 	 */
-	removeValue: function(key)
+	removeValue: function(ctx, key)
 	{
 		key = this.toStr(key);
 		if (typeof this._map["|" + key] != "undefined")
@@ -56,35 +56,31 @@ Object.assign(Runtime.Map.prototype,
 	 * Clear all values from vector
 	 * @return self
 	 */
-	clear: function()
+	clear: function(ctx)
 	{
 		this._map = {};
 		return this;
 	},
-	getClassName: function()
-	{
-		return "Runtime.Map";
-	},
 });
-Object.assign(Runtime.Map, Runtime.Dict);
+Object.assign(Runtime.Map, use("Runtime.Dict"));
 Object.assign(Runtime.Map,
 {
 	/**
 	 * Returns new Instance
 	 * @return Object
 	 */
-	Instance: function(val)
+	Instance: function(ctx, val)
 	{
 		if (val == undefined) val = null;
-		var __v0 = Runtime.Map;
-		return new __v0(val);
+		var __v0 = use("Runtime.Map");
+		return new __v0(ctx, val);
 	},
 	/* ======================= Class Init Functions ======================= */
-	getCurrentNamespace: function()
+	getNamespace: function()
 	{
 		return "Runtime";
 	},
-	getCurrentClassName: function()
+	getClassName: function()
 	{
 		return "Runtime.Map";
 	},
@@ -92,36 +88,36 @@ Object.assign(Runtime.Map,
 	{
 		return "Runtime.Dict";
 	},
-	getClassInfo: function()
+	getClassInfo: function(ctx)
 	{
-		var Collection = Runtime.Collection;
-		var Dict = Runtime.Dict;
+		var Collection = use("Runtime.Collection");
+		var Dict = use("Runtime.Dict");
 		return Dict.from({
 			"annotations": Collection.from([
 			]),
 		});
 	},
-	getFieldsList: function(f)
+	getFieldsList: function(ctx, f)
 	{
 		var a = [];
 		if (f==undefined) f=0;
-		return Runtime.Collection.from(a);
+		return use("Runtime.Collection").from(a);
 	},
-	getFieldInfoByName: function(field_name)
+	getFieldInfoByName: function(ctx,field_name)
 	{
-		var Collection = Runtime.Collection;
-		var Dict = Runtime.Dict;
+		var Collection = use("Runtime.Collection");
+		var Dict = use("Runtime.Dict");
 		return null;
 	},
-	getMethodsList: function(f)
+	getMethodsList: function(ctx,f)
 	{
 		if (f==undefined) f=0;
 		var a = [];
 		if ((f&4)==4) a=[
 		];
-		return Runtime.Collection.from(a);
+		return use("Runtime.Collection").from(a);
 	},
-	getMethodInfoByName: function(field_name)
+	getMethodInfoByName: function(ctx,field_name)
 	{
 		return null;
 	},

@@ -18,7 +18,7 @@
 
 
 var exports = {
-	VERSION: '0.10.6',
+	VERSION: '0.11.0',
 	MODULE_NAME: 'Runtime',
 }
 
@@ -44,26 +44,19 @@ add("Runtime.Collection");
 add("Runtime.Dict");
 add("Runtime.Map");
 add("Runtime.Monad");
-add("Runtime.Mutex");
 add("Runtime.Vector");
 add("Runtime.BaseObject");
 add("Runtime.BaseStruct");
+add("Runtime.Context");
+add("Runtime.Date");
 add("Runtime.DateTime");
-add("Runtime.PathInfo");
 add("Runtime.Reference");
-add("Runtime.IntrospectionClass");
-add("Runtime.IntrospectionInfo");
-add("Runtime.RuntimeUtils");
 add("Runtime.Exceptions.RuntimeException");
 add("Runtime.Exceptions.ApiException");
 add("Runtime.Exceptions.AssignStructValueError");
 add("Runtime.Exceptions.IndexOutOfRange");
 add("Runtime.Exceptions.KeyNotFound");
 add("Runtime.Exceptions.UnknownError");
-add("Runtime.Interfaces.AssetsInterface");
-add("Runtime.Interfaces.ContextInterface");
-add("Runtime.Interfaces.ModuleDescriptionInterface");
-add("Runtime.Interfaces.StringInterface");
 add("Runtime.ModuleDescription");
 
 module.exports = exports;

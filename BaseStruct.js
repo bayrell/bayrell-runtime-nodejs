@@ -1,9 +1,9 @@
 "use strict;"
-var use = require('bayrell').use;
+var use = require('bay-lang').use;
 /*!
  *  Bayrell Runtime Library
  *
- *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2016-2021 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,15 +18,15 @@ var use = require('bayrell').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-Runtime.BaseStruct = function(obj)
+Runtime.BaseStruct = function(ctx, obj)
 {
 	if (obj == undefined) obj = null;
-	Runtime.BaseObject.call(this);
-	this.constructor._assign(this, null, obj);
+	use("Runtime.BaseObject").call(this, ctx);
+	this.constructor._assign(ctx, this, null, obj);
 	if (this.__uq__ == undefined || this.__uq__ == null) this.__uq__ = Symbol();
 		Object.freeze(this);
 };
-Runtime.BaseStruct.prototype = Object.create(Runtime.BaseObject.prototype);
+Runtime.BaseStruct.prototype = Object.create(use("Runtime.BaseObject").prototype);
 Runtime.BaseStruct.prototype.constructor = Runtime.BaseStruct;
 Object.assign(Runtime.BaseStruct.prototype,
 {
@@ -35,7 +35,7 @@ Object.assign(Runtime.BaseStruct.prototype,
 	 * @param Map obj = null
 	 * @return BaseStruct
 	 */
-	copy: function(obj)
+	copy: function(ctx, obj)
 	{
 		if (obj == undefined) obj = null;
 		if (obj == null)
@@ -46,7 +46,7 @@ Object.assign(Runtime.BaseStruct.prototype,
 		var item = Object.create(proto); /* item._init(); */
 		item = Object.assign(item, this);
 		
-		this.constructor._assign(item, this, obj);
+		this.constructor._assign(ctx, item, this, obj);
 		
 		Object.freeze(item);
 		
@@ -58,149 +58,68 @@ Object.assign(Runtime.BaseStruct.prototype,
 	 * @param Map obj = null
 	 * @return BaseStruct
 	 */
-	clone: function(obj)
+	clone: function(ctx, obj)
 	{
 		if (obj == undefined) obj = null;
-		return this.copy(obj);
+		return this.copy(ctx, obj);
 	},
 	/**
 	 * Clone this struct with fields
 	 * @param Collection fields = null
 	 * @return BaseStruct
 	 */
-	intersect: function(fields)
+	intersect: function(ctx, fields)
 	{
 		if (fields == undefined) fields = null;
 		if (fields == null)
 		{
-			return Runtime.Dict.from({});
+			return use("Runtime.Dict").from({});
 		}
-		var __v0 = Runtime.Map;
-		var obj = new __v0();
-		fields.each((field_name) => 
+		var __v0 = use("Runtime.Map");
+		var obj = new __v0(ctx);
+		for (var i = 0;i < fields.count(ctx);i++)
 		{
-			obj.setValue(field_name, this.takeValue(field_name));
-		});
+			var field_name = Runtime.rtl.get(ctx, fields, i);
+			obj.setValue(ctx, field_name, this.get(ctx, field_name));
+		}
 		/* Return object */
-		var __v1 = Runtime.rtl;
-		var res = __v1.newInstance(this.getClassName(), Runtime.Collection.from([obj.toDict()]));
+		var __v1 = use("Runtime.rtl");
+		var res = __v1.newInstance(ctx, this.getClassName(ctx), use("Runtime.Collection").from([obj.toDict(ctx)]));
 		return res;
 	},
 	/**
-	 * Create new struct with new value
-	 * @param string field_name
-	 * @param fn f
-	 * @return BaseStruct
-	 */
-	map: function(field_name, f)
-	{
-		var __v0 = Runtime.Map;
-		return this.copy((new __v0()).setValue(field_name, f(this.takeValue(field_name))).toDict());
-	},
-	/**
 	 * Returns struct as Dict
 	 * @return Dict
 	 */
-	takeDict: function()
+	toDict: function(ctx)
 	{
-		var __v0 = Runtime.Map;
-		var values = new __v0();
-		var __v1 = Runtime.rtl;
-		var names = __v1.getFields(this.getClassName());
-		for (var i = 0;i < names.count();i++)
+		var __v0 = use("Runtime.Map");
+		var values = new __v0(ctx);
+		var __v1 = use("Runtime.rtl");
+		var names = __v1.getFields(ctx, this.getClassName(ctx));
+		for (var i = 0;i < names.count(ctx);i++)
 		{
-			var variable_name = names.item(i);
-			var value = this.get(variable_name, null);
-			values.setValue(variable_name, value);
+			var variable_name = names.item(ctx, i);
+			var value = this.get(ctx, variable_name, null);
+			values.setValue(ctx, variable_name, value);
 		}
-		return values.toDict();
-	},
-	/**
-	 * Returns struct as Dict
-	 * @return Dict
-	 */
-	toDict: function()
-	{
-		return this.takeDict();
-	},
-	getClassName: function()
-	{
-		return "Runtime.BaseStruct";
+		return values.toDict(ctx);
 	},
 });
-Object.assign(Runtime.BaseStruct, Runtime.BaseObject);
+Object.assign(Runtime.BaseStruct, use("Runtime.BaseObject"));
 Object.assign(Runtime.BaseStruct,
 {
 	/**
-	 * Returns field value
-	 */
-	_initDataGet: function(old, changed, field_name)
-	{
-		return (changed != null && changed.has(field_name)) ? (Runtime.rtl.get(changed, field_name)) : (Runtime.rtl.get(old, field_name));
-	},
-	/**
-	 * Init struct data
-	 */
-	_initData: function(old, changed)
-	{
-		return changed;
-	},
-	/**
-	 * Assign
-	 */
-	_assign: function(new_item, old_item, obj)
-	{
-		var __v0 = Runtime.rtl;
-		obj = __v0.convert(obj, "Runtime.Dict");
-		obj = new_item.constructor._initData(old_item, obj);
-		if (obj == null)
-		{
-			return ;
-		}
-		var check_types = false;
-		var class_name = new_item.getClassName();
-		var _Dict = use("Runtime.Dict");
-		var rtl = use("Runtime.rtl");
-		if (obj instanceof _Dict)
-		{
-			for (var key in obj._map)
-			{
-				var real_key = key.substring(1);
-				var value = obj._map[key];
-				if (check_types)
-				{
-					info = rtl.getFieldInfo(class_name, real_key);
-					if (info)
-					{
-						value = rtl.convert(value, info.get("t"), null);
-					}
-				}
-				new_item[real_key] = value;
-			}
-		}
-		else
-		{
-			for (var key in obj)
-			{
-				var value = obj[key];
-				if (check_types)
-				{
-					info = rtl.getFieldInfo(new_item.getClassName(), key);
-					if (info)
-					{
-						value = rtl.convert(value, info.get("t"), null);
-					}
-				}
-				new_item[key] = value;
-			}
-		}
-	},
-	/**
 	 * Returns new instance
 	 */
-	newInstance: function(items)
+	newInstance: function(ctx, items)
 	{
-		return new (Function.prototype.bind.apply(this, (typeof ctx != "undefined") ? [null, ctx, items] : [null, items]));
+		return new (
+			Function.prototype.bind.apply(
+				this,
+				(typeof ctx != "undefined") ? [null, ctx, items] : [null, items]
+			)
+		);
 	},
 	/**
 	 * Update struct
@@ -208,27 +127,17 @@ Object.assign(Runtime.BaseStruct,
 	 * @param var value
 	 * @return BaseStruct
 	 */
-	update: function(item, items)
+	set: function(ctx, item, path, value)
 	{
-		return item.copy(items);
-	},
-	/**
-	 * Update struct
-	 * @param Collection<string> path
-	 * @param var value
-	 * @return BaseStruct
-	 */
-	setAttr: function(item, path, value)
-	{
-		var __v0 = Runtime.rtl;
-		return __v0.setAttr(item, path, value);
+		var __v0 = use("Runtime.rtl");
+		return __v0.setAttr(ctx, item, path, value);
 	},
 	/* ======================= Class Init Functions ======================= */
-	getCurrentNamespace: function()
+	getNamespace: function()
 	{
 		return "Runtime";
 	},
-	getCurrentClassName: function()
+	getClassName: function()
 	{
 		return "Runtime.BaseStruct";
 	},
@@ -236,44 +145,47 @@ Object.assign(Runtime.BaseStruct,
 	{
 		return "Runtime.BaseObject";
 	},
-	getClassInfo: function()
+	getClassInfo: function(ctx)
 	{
-		var Collection = Runtime.Collection;
-		var Dict = Runtime.Dict;
+		var Collection = use("Runtime.Collection");
+		var Dict = use("Runtime.Dict");
 		return Dict.from({
 			"annotations": Collection.from([
 			]),
 		});
 	},
-	getFieldsList: function(f)
+	getFieldsList: function(ctx, f)
 	{
 		var a = [];
 		if (f==undefined) f=0;
-		return Runtime.Collection.from(a);
+		return use("Runtime.Collection").from(a);
 	},
-	getFieldInfoByName: function(field_name)
+	getFieldInfoByName: function(ctx,field_name)
 	{
-		var Collection = Runtime.Collection;
-		var Dict = Runtime.Dict;
+		var Collection = use("Runtime.Collection");
+		var Dict = use("Runtime.Dict");
 		return null;
 	},
-	getMethodsList: function(f)
+	getMethodsList: function(ctx,f)
 	{
 		if (f==undefined) f=0;
 		var a = [];
 		if ((f&4)==4) a=[
 		];
-		return Runtime.Collection.from(a);
+		return use("Runtime.Collection").from(a);
 	},
-	getMethodInfoByName: function(field_name)
+	getMethodInfoByName: function(ctx,field_name)
 	{
 		return null;
 	},
 	__implements__:
 	[
-		Runtime.SerializeInterface,
+		use("Runtime.SerializeInterface"),
 	],
 });use.add(Runtime.BaseStruct);
 module.exports = Runtime.BaseStruct;
-Runtime.BaseStruct.prototype.get = function(k, v)
-{ if (v == undefined) v = null; return this[k] != undefined ? this[k] : v; };
+Runtime.BaseStruct.prototype.get = function(ctx, k, v)
+{
+	if (v == undefined) v = null;
+	return this[k] != undefined ? this[k] : v;
+};

@@ -1,9 +1,9 @@
 "use strict;"
-var use = require('bayrell').use;
+var use = require('bay-lang').use;
 /*!
  *  Bayrell Runtime Library
  *
- *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2016-2021 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,30 +19,26 @@ var use = require('bayrell').use;
  */
 if (typeof Runtime == 'undefined') Runtime = {};
 if (typeof Runtime.Exceptions == 'undefined') Runtime.Exceptions = {};
-Runtime.Exceptions.UnknownError = function(prev)
+Runtime.Exceptions.UnknownError = function(ctx, prev)
 {
 	if (prev == undefined) prev = null;
-	var __v0 = Runtime.rtl;
-	Runtime.Exceptions.RuntimeException.call(this, ctx.constructor.translate("Runtime", "Unknown error"), __v0.ERROR_UNKNOWN, prev);
+	var __v0 = use("Runtime.rtl");
+	use("Runtime.Exceptions.RuntimeException").call(this, ctx, ctx.constructor.translate(ctx, "Runtime", "Unknown error"), __v0.ERROR_UNKNOWN, prev);
 };
-Runtime.Exceptions.UnknownError.prototype = Object.create(Runtime.Exceptions.RuntimeException.prototype);
+Runtime.Exceptions.UnknownError.prototype = Object.create(use("Runtime.Exceptions.RuntimeException").prototype);
 Runtime.Exceptions.UnknownError.prototype.constructor = Runtime.Exceptions.UnknownError;
 Object.assign(Runtime.Exceptions.UnknownError.prototype,
 {
-	getClassName: function()
-	{
-		return "Runtime.Exceptions.UnknownError";
-	},
 });
-Object.assign(Runtime.Exceptions.UnknownError, Runtime.Exceptions.RuntimeException);
+Object.assign(Runtime.Exceptions.UnknownError, use("Runtime.Exceptions.RuntimeException"));
 Object.assign(Runtime.Exceptions.UnknownError,
 {
 	/* ======================= Class Init Functions ======================= */
-	getCurrentNamespace: function()
+	getNamespace: function()
 	{
 		return "Runtime.Exceptions";
 	},
-	getCurrentClassName: function()
+	getClassName: function()
 	{
 		return "Runtime.Exceptions.UnknownError";
 	},
@@ -50,36 +46,36 @@ Object.assign(Runtime.Exceptions.UnknownError,
 	{
 		return "Runtime.Exceptions.RuntimeException";
 	},
-	getClassInfo: function()
+	getClassInfo: function(ctx)
 	{
-		var Collection = Runtime.Collection;
-		var Dict = Runtime.Dict;
+		var Collection = use("Runtime.Collection");
+		var Dict = use("Runtime.Dict");
 		return Dict.from({
 			"annotations": Collection.from([
 			]),
 		});
 	},
-	getFieldsList: function(f)
+	getFieldsList: function(ctx, f)
 	{
 		var a = [];
 		if (f==undefined) f=0;
-		return Runtime.Collection.from(a);
+		return use("Runtime.Collection").from(a);
 	},
-	getFieldInfoByName: function(field_name)
+	getFieldInfoByName: function(ctx,field_name)
 	{
-		var Collection = Runtime.Collection;
-		var Dict = Runtime.Dict;
+		var Collection = use("Runtime.Collection");
+		var Dict = use("Runtime.Dict");
 		return null;
 	},
-	getMethodsList: function(f)
+	getMethodsList: function(ctx,f)
 	{
 		if (f==undefined) f=0;
 		var a = [];
 		if ((f&4)==4) a=[
 		];
-		return Runtime.Collection.from(a);
+		return use("Runtime.Collection").from(a);
 	},
-	getMethodInfoByName: function(field_name)
+	getMethodInfoByName: function(ctx,field_name)
 	{
 		return null;
 	},

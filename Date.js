@@ -1,9 +1,9 @@
 "use strict;"
-var use = require('bayrell').use;
+var use = require('bay-lang').use;
 /*!
  *  Bayrell Runtime Library
  *
- *  (c) Copyright 2016-2020 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2016-2021 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,11 +18,11 @@ var use = require('bayrell').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-Runtime.Date = function()
+Runtime.Date = function(ctx)
 {
-	Runtime.BaseStruct.apply(this, arguments);
+	use("Runtime.BaseStruct").apply(this, arguments);
 };
-Runtime.Date.prototype = Object.create(Runtime.BaseStruct.prototype);
+Runtime.Date.prototype = Object.create(use("Runtime.BaseStruct").prototype);
 Runtime.Date.prototype.constructor = Runtime.Date;
 Object.assign(Runtime.Date.prototype,
 {
@@ -30,33 +30,59 @@ Object.assign(Runtime.Date.prototype,
 	 * Return date
 	 * @return string
 	 */
-	getDate: function()
+	getDate: function(ctx)
 	{
-		return this.y + Runtime.rtl.toStr("-") + Runtime.rtl.toStr(this.m) + Runtime.rtl.toStr("-") + Runtime.rtl.toStr(this.d);
+		return this.y + use("Runtime.rtl").toStr("-") + use("Runtime.rtl").toStr(this.m) + use("Runtime.rtl").toStr("-") + use("Runtime.rtl").toStr(this.d);
 	},
-	_init: function()
+	/**
+	 * Normalize date time
+	 */
+	normalize: function(ctx)
 	{
-		var defProp = use('Runtime.rtl').defProp;
-		var a = Object.getOwnPropertyNames(this);
+		return this;
+	},
+	_init: function(ctx)
+	{
+		use("Runtime.BaseStruct").prototype._init.call(this,ctx);
 		this.y = 0;
 		this.m = 0;
 		this.d = 0;
-		Runtime.BaseStruct.prototype._init.call(this);
 	},
-	getClassName: function()
+	assignObject: function(ctx,o)
 	{
-		return "Runtime.Date";
+		if (o instanceof use("Runtime.Date"))
+		{
+			this.y = o.y;
+			this.m = o.m;
+			this.d = o.d;
+		}
+		use("Runtime.BaseStruct").prototype.assignObject.call(this,ctx,o);
+	},
+	assignValue: function(ctx,k,v)
+	{
+		if (k == "y")this.y = v;
+		else if (k == "m")this.m = v;
+		else if (k == "d")this.d = v;
+		else use("Runtime.BaseStruct").prototype.assignValue.call(this,ctx,k,v);
+	},
+	takeValue: function(ctx,k,d)
+	{
+		if (d == undefined) d = null;
+		if (k == "y")return this.y;
+		else if (k == "m")return this.m;
+		else if (k == "d")return this.d;
+		return use("Runtime.BaseStruct").prototype.takeValue.call(this,ctx,k,d);
 	},
 });
-Object.assign(Runtime.Date, Runtime.BaseStruct);
+Object.assign(Runtime.Date, use("Runtime.BaseStruct"));
 Object.assign(Runtime.Date,
 {
 	/* ======================= Class Init Functions ======================= */
-	getCurrentNamespace: function()
+	getNamespace: function()
 	{
 		return "Runtime";
 	},
-	getCurrentClassName: function()
+	getClassName: function()
 	{
 		return "Runtime.Date";
 	},
@@ -64,16 +90,16 @@ Object.assign(Runtime.Date,
 	{
 		return "Runtime.BaseStruct";
 	},
-	getClassInfo: function()
+	getClassInfo: function(ctx)
 	{
-		var Collection = Runtime.Collection;
-		var Dict = Runtime.Dict;
+		var Collection = use("Runtime.Collection");
+		var Dict = use("Runtime.Dict");
 		return Dict.from({
 			"annotations": Collection.from([
 			]),
 		});
 	},
-	getFieldsList: function(f)
+	getFieldsList: function(ctx, f)
 	{
 		var a = [];
 		if (f==undefined) f=0;
@@ -83,12 +109,12 @@ Object.assign(Runtime.Date,
 			a.push("m");
 			a.push("d");
 		}
-		return Runtime.Collection.from(a);
+		return use("Runtime.Collection").from(a);
 	},
-	getFieldInfoByName: function(field_name)
+	getFieldInfoByName: function(ctx,field_name)
 	{
-		var Collection = Runtime.Collection;
-		var Dict = Runtime.Dict;
+		var Collection = use("Runtime.Collection");
+		var Dict = use("Runtime.Dict");
 		if (field_name == "y") return Dict.from({
 			"t": "int",
 			"annotations": Collection.from([
@@ -106,26 +132,26 @@ Object.assign(Runtime.Date,
 		});
 		return null;
 	},
-	getMethodsList: function(f)
+	getMethodsList: function(ctx,f)
 	{
 		if (f==undefined) f=0;
 		var a = [];
 		if ((f&4)==4) a=[
 		];
-		return Runtime.Collection.from(a);
+		return use("Runtime.Collection").from(a);
 	},
-	getMethodInfoByName: function(field_name)
+	getMethodInfoByName: function(ctx,field_name)
 	{
 		return null;
 	},
 });use.add(Runtime.Date);
 module.exports = Runtime.Date;
-Runtime.Date.prototype.toObject = function()
+Runtime.Date.prototype.toObject = function(ctx)
 {
 	var dt = new Date(this.y, this.m - 1, this.d);
 	return dt;
 }
-Runtime.Date.fromObject = function(dt)
+Runtime.Date.fromObject = function(ctx, dt)
 {
 	var Dict = use("Runtime.Dict");
 	var y = Number(dt.getFullYear());

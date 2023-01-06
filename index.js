@@ -18,7 +18,7 @@
 
 
 var exports = {
-	VERSION: '0.11.0',
+	VERSION: '0.11.1',
 	MODULE_NAME: 'Runtime',
 }
 
@@ -36,6 +36,7 @@ function add(name)
 }
 
 add("Runtime.lib");
+add("Runtime.io");
 add("Runtime.re");
 add("Runtime.rtl");
 add("Runtime.rs");
@@ -46,10 +47,13 @@ add("Runtime.Map");
 add("Runtime.Monad");
 add("Runtime.Vector");
 add("Runtime.BaseObject");
+add("Runtime.BaseProvider");
 add("Runtime.BaseStruct");
 add("Runtime.Context");
 add("Runtime.Date");
 add("Runtime.DateTime");
+add("Runtime.Entity");
+add("Runtime.Provider");
 add("Runtime.Reference");
 add("Runtime.Exceptions.RuntimeException");
 add("Runtime.Exceptions.ApiException");
@@ -57,6 +61,8 @@ add("Runtime.Exceptions.AssignStructValueError");
 add("Runtime.Exceptions.IndexOutOfRange");
 add("Runtime.Exceptions.KeyNotFound");
 add("Runtime.Exceptions.UnknownError");
+add("Runtime.Hooks.AppHook");
+add("Runtime.Providers.OutputProvider");
 add("Runtime.ModuleDescription");
 
 module.exports = exports;

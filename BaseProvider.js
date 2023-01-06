@@ -18,49 +18,36 @@ var use = require('bay-lang').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-Runtime.Entity = function(ctx)
+Runtime.BaseProvider = function(ctx)
 {
-	use("Runtime.BaseStruct").apply(this, arguments);
+	use("Runtime.BaseObject").apply(this, arguments);
 };
-Runtime.Entity.prototype = Object.create(use("Runtime.BaseStruct").prototype);
-Runtime.Entity.prototype.constructor = Runtime.Entity;
-Object.assign(Runtime.Entity.prototype,
+Runtime.BaseProvider.prototype = Object.create(use("Runtime.BaseObject").prototype);
+Runtime.BaseProvider.prototype.constructor = Runtime.BaseProvider;
+Object.assign(Runtime.BaseProvider.prototype,
 {
+	/**
+	 * Init provider
+	 */
+	init: async function(ctx, c)
+	{
+		return Promise.resolve(c);
+	},
+	/**
+	 * Start provider
+	 */
+	start: async function(ctx)
+	{
+		this.started = true;
+	},
 	_init: function(ctx)
 	{
-		use("Runtime.BaseStruct").prototype._init.call(this,ctx);
-		this.name = "";
-		this.value = "";
-		this.params = use("Runtime.Dict").from({});
-	},
-	assignObject: function(ctx,o)
-	{
-		if (o instanceof use("Runtime.Entity"))
-		{
-			this.name = o.name;
-			this.value = o.value;
-			this.params = o.params;
-		}
-		use("Runtime.BaseStruct").prototype.assignObject.call(this,ctx,o);
-	},
-	assignValue: function(ctx,k,v)
-	{
-		if (k == "name")this.name = v;
-		else if (k == "value")this.value = v;
-		else if (k == "params")this.params = v;
-		else use("Runtime.BaseStruct").prototype.assignValue.call(this,ctx,k,v);
-	},
-	takeValue: function(ctx,k,d)
-	{
-		if (d == undefined) d = null;
-		if (k == "name")return this.name;
-		else if (k == "value")return this.value;
-		else if (k == "params")return this.params;
-		return use("Runtime.BaseStruct").prototype.takeValue.call(this,ctx,k,d);
+		use("Runtime.BaseObject").prototype._init.call(this,ctx);
+		this.started = false;
 	},
 });
-Object.assign(Runtime.Entity, use("Runtime.BaseStruct"));
-Object.assign(Runtime.Entity,
+Object.assign(Runtime.BaseProvider, use("Runtime.BaseObject"));
+Object.assign(Runtime.BaseProvider,
 {
 	/* ======================= Class Init Functions ======================= */
 	getNamespace: function()
@@ -69,11 +56,11 @@ Object.assign(Runtime.Entity,
 	},
 	getClassName: function()
 	{
-		return "Runtime.Entity";
+		return "Runtime.BaseProvider";
 	},
 	getParentClassName: function()
 	{
-		return "Runtime.BaseStruct";
+		return "Runtime.BaseObject";
 	},
 	getClassInfo: function(ctx)
 	{
@@ -88,11 +75,9 @@ Object.assign(Runtime.Entity,
 	{
 		var a = [];
 		if (f==undefined) f=0;
-		if ((f&3)==3)
+		if ((f&2)==2)
 		{
-			a.push("name");
-			a.push("value");
-			a.push("params");
+			a.push("started");
 		}
 		return use("Runtime.Collection").from(a);
 	},
@@ -100,18 +85,8 @@ Object.assign(Runtime.Entity,
 	{
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
-		if (field_name == "name") return Dict.from({
-			"t": "string",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "value") return Dict.from({
-			"t": "string",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "params") return Dict.from({
-			"t": "Runtime.Dict",
+		if (field_name == "started") return Dict.from({
+			"t": "bool",
 			"annotations": Collection.from([
 			]),
 		});
@@ -129,5 +104,5 @@ Object.assign(Runtime.Entity,
 	{
 		return null;
 	},
-});use.add(Runtime.Entity);
-module.exports = Runtime.Entity;
+});use.add(Runtime.BaseProvider);
+module.exports = Runtime.BaseProvider;

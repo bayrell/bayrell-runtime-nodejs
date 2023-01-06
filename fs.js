@@ -3,7 +3,7 @@ var use = require('bay-lang').use;
 /*!
  *  Bayrell Runtime Library
  *
- *  (c) Copyright 2016-2021 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2016-2023 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -39,223 +39,84 @@ Object.assign(Runtime.fs.prototype,
 Object.assign(Runtime.fs,
 {
 	DIRECTORY_SEPARATOR: "/",
-	/**
-	 * Add first slash
-	 */
-	addFirstSlash: function(ctx, s)
+	removeFirstSlash: function(ctx, path)
 	{
 		var __v0 = use("Runtime.re");
-		return __v0.replace(ctx, "//", "/", this.DIRECTORY_SEPARATOR + use("Runtime.rtl").toStr(s));
+		return __v0.replace(ctx, "^/+", "", path);
 	},
-	/**
-	 * Add last slash
-	 */
-	addLastSlash: function(ctx, s)
+	removeLastSlash: function(ctx, path)
 	{
 		var __v0 = use("Runtime.re");
-		return __v0.replace(ctx, "//", "/", s + use("Runtime.rtl").toStr(this.DIRECTORY_SEPARATOR));
+		return __v0.replace(ctx, "/+$", "", path);
 	},
 	/**
-	 * Concat
+	 * Join
 	 */
-	concat: function(ctx)
+	join: function(ctx, arr)
 	{
-		var arr = use("Runtime.Collection").from([]);
-		var Collection = use("Runtime.Collection");
-		for (var i=1; i<arguments.length; i++) arr.push( arguments[i] );
-		arr = Collection.from(arr);
-		return this.concatArr(ctx, arr);
-	},
-	/**
-	 * Concat array
-	 */
-	concatArr: function(ctx, arr)
-	{
-		var res = arr.reduce(ctx, (ctx, res, item) => 
-		{
-			return res + use("Runtime.rtl").toStr(this.DIRECTORY_SEPARATOR) + use("Runtime.rtl").toStr(item);
-		}, "");
-		var __v0 = use("Runtime.re");
-		return __v0.replace(ctx, "\\/\\/", "/", res);
-	},
-	/**
-	 * Relative
-	 */
-	relative: function(ctx, path, to)
-	{
-		var mpath = require("path");
-		return mpath.relative(path, to);
-		return "";
-	},
-	/**
-	 * Exists
-	 */
-	exists: async function(ctx, path, chroot)
-	{
-		if (chroot == undefined) chroot = "";
 		var __v0 = use("Runtime.rs");
-		if (chroot != "" && __v0.substr(ctx, chroot, -1) != "/")
-		{
-			chroot += use("Runtime.rtl").toStr("/");
-		}
-		var filepath = chroot + use("Runtime.rtl").toStr(path);
-		var res = await fileExists(filepath);
-		return Promise.resolve( res );
-		return Promise.resolve(false);
-	},
-	/**
-	 * Save local file
-	 */
-	saveFile: async function(ctx, path, content, chroot, ch)
-	{
-		if (content == undefined) content = "";
-		if (chroot == undefined) chroot = "";
-		if (ch == undefined) ch = "utf8";
-		var __v0 = use("Runtime.rs");
-		if (chroot != "" && __v0.substr(ctx, chroot, -1) != "/")
-		{
-			chroot += use("Runtime.rtl").toStr("/");
-		}
-		var filepath = chroot + use("Runtime.rtl").toStr(path);
-		await writeFile( resolve(filepath), content, { "encoding": ch } );
-		return Promise.resolve("");
-	},
-	/**
-	 * Read local file
-	 */
-	readFile: async function(ctx, path, chroot, ch)
-	{
-		if (chroot == undefined) chroot = "";
-		if (ch == undefined) ch = "utf8";
-		var __v0 = use("Runtime.rs");
-		if (chroot != "" && __v0.substr(ctx, chroot, -1) != "/")
-		{
-			chroot += use("Runtime.rtl").toStr("/");
-		}
-		var filepath = chroot + use("Runtime.rtl").toStr(path);
-		var content = await readFile( resolve(filepath), { "encoding": ch } );
-		return Promise.resolve( content );
-		return Promise.resolve("");
-	},
-	/**
-	 * Rename file
-	 */
-	renameFile: async function(ctx, path, new_path, chroot)
-	{
-		if (chroot == undefined) chroot = "";
-		var __v0 = use("Runtime.rs");
-		if (chroot != "" && __v0.substr(ctx, chroot, -1) != "/")
-		{
-			chroot += use("Runtime.rtl").toStr("/");
-		}
-		var filepath = chroot + use("Runtime.rtl").toStr(path);
-		var filepath_new = chroot + use("Runtime.rtl").toStr(new_path);
-		return Promise.resolve("");
-	},
-	/**
-	 * Make dir
-	 */
-	mkdir: async function(ctx, path, chroot, mode)
-	{
-		if (chroot == undefined) chroot = "";
-		if (mode == undefined) mode = "755";
-		var __v0 = use("Runtime.rs");
-		if (chroot != "" && __v0.substr(ctx, chroot, -1) != "/")
-		{
-			chroot += use("Runtime.rtl").toStr("/");
-		}
-		var filepath = chroot + use("Runtime.rtl").toStr(path);
-		filepath = resolve(filepath);
-		var exists = await fileExists(filepath);
-		if (!exists)
-		{
-			await mkdir(filepath, { "mode": mode, "recursive": true });
-		}
-		return Promise.resolve("");
-	},
-	/**
-	 * Synlink
-	 */
-	symlink: async function(ctx, target, link_name, chroot)
-	{
-		if (chroot == undefined) chroot = "";
-		var __v0 = use("Runtime.rs");
-		if (chroot != "" && __v0.substr(ctx, chroot, -1) != "/")
-		{
-			chroot += use("Runtime.rtl").toStr("/");
-		}
-		var target_path = target;
-		var link_name_path = link_name;
-		var __v0 = use("Runtime.rs");
-		if (__v0.substr(ctx, target_path, 0, 2) != "..")
-		{
-			target_path = chroot + use("Runtime.rtl").toStr(target);
-		}
-		var __v0 = use("Runtime.rs");
-		if (__v0.substr(ctx, link_name_path, 0, 2) != "..")
-		{
-			link_name_path = chroot + use("Runtime.rtl").toStr(link_name);
-		}
-		if (target_path.substr(0, 2) != "..") target_path = resolve(target_path);
-		if (link_name_path.substr(0, 2) != "..") link_name_path = resolve(link_name_path);
-		await symlink(target_path, link_name_path);
-		return Promise.resolve("");
-	},
-	/**
-	 * Remove
-	 */
-	remove: async function(ctx, path, chroot)
-	{
-		if (chroot == undefined) chroot = "";
-		var __v0 = use("Runtime.rs");
-		if (chroot != "" && __v0.substr(ctx, chroot, -1) != "/")
-		{
-			chroot += use("Runtime.rtl").toStr("/");
-		}
-		var filepath = chroot + use("Runtime.rtl").toStr(path);
-		filepath = resolve(filepath);
-		var exists = await fileExists(filepath);
-		if (exists)
-		{
-			await unlink(filepath);
-		}
-		return Promise.resolve("");
-	},
-	unlink: async function(ctx, path, chroot)
-	{
-		if (chroot == undefined) chroot = "";
-		return this.remove(ctx, path, chroot);
+		var path = __v0.join(ctx, this.DIRECTORY_SEPARATOR, arr);
+		var __v1 = use("Runtime.re");
+		path = __v1.replace(ctx, "//", "/", path);
+		var __v2 = use("Runtime.re");
+		path = __v2.replace(ctx, "/\\./", "/", path);
+		var __v3 = use("Runtime.re");
+		path = __v3.replace(ctx, "/+$", "", path);
+		return path;
 	},
 	/**
 	 * Return true if path is folder
 	 * @param string path
 	 * @param boolean
 	 */
-	isDir: async function(ctx, path, chroot)
+	isDir: async function(ctx, dirpath)
 	{
-		if (chroot == undefined) chroot = "";
-		var __v0 = use("Runtime.rs");
-		if (chroot != "" && __v0.substr(ctx, chroot, -1) != "/")
-		{
-			chroot += use("Runtime.rtl").toStr("/");
-		}
-		var dirpath = chroot + use("Runtime.rtl").toStr(path);
+		var is_exists = await fileExists(dirpath);
+		if (!is_exists) return Promise.resolve( false );
+		
 		dirpath = resolve(dirpath);
 		var stat = await lstat(dirpath);
 		return Promise.resolve( stat.isDirectory() );
 	},
 	/**
+	 * Return true if path is folder
+	 * @param string path
+	 * @param boolean
+	 */
+	isFile: async function(ctx, filepath)
+	{
+		var is_exists = await fileExists(filepath);
+		if (!is_exists) return Promise.resolve( false );
+		
+		filepath = resolve(filepath);
+		var stat = await lstat(filepath);
+		return Promise.resolve( stat.isFile() );
+	},
+	/**
+	 * Read local file
+	 */
+	readFile: async function(ctx, filepath, ch)
+	{
+		if (ch == undefined) ch = "utf8";
+		var content = await readFile( resolve(filepath), { "encoding": ch } );
+		return Promise.resolve( content );
+		return Promise.resolve("");
+	},
+	/**
+	 * Save local file
+	 */
+	saveFile: async function(ctx, filepath, content, ch)
+	{
+		if (content == undefined) content = "";
+		if (ch == undefined) ch = "utf8";
+		await writeFile( resolve(filepath), content, { "encoding": ch } );
+		return Promise.resolve("");
+	},
+	/**
 	 * Scan directory
 	 */
-	readDir: async function(ctx, dirname, chroot)
+	listDir: async function(ctx, dirpath)
 	{
-		if (chroot == undefined) chroot = "";
-		var __v0 = use("Runtime.rs");
-		if (chroot != "" && __v0.substr(ctx, chroot, -1) != "/")
-		{
-			chroot += use("Runtime.rtl").toStr("/");
-		}
-		var dirpath = chroot + use("Runtime.rtl").toStr(dirname);
 		dirpath = resolve(dirpath);
 		var Collection = use("Runtime.Collection");
 		var arr = await readdir(dirpath);
@@ -267,32 +128,45 @@ Object.assign(Runtime.fs,
 	/**
 	 * Scan directory recursive
 	 */
-	readDirectoryRecursive: async function(ctx, dirname, chroot, parent_name)
+	listDirRecursive: async function(ctx, dirpath, parent_name)
 	{
-		if (chroot == undefined) chroot = "";
 		if (parent_name == undefined) parent_name = "";
 		var __v0 = use("Runtime.Vector");
 		var res = new __v0(ctx);
-		var items = await this.readDir(ctx, dirname, chroot);
+		var items = await this.listDir(ctx, dirpath);
 		for (var i = 0;i < items.count(ctx);i++)
 		{
 			var item_name = items.item(ctx, i);
-			var item_path = this.concat(ctx, dirname, item_name);
-			var __v1 = use("Runtime.fs");
-			var item_name2 = __v1.concat(ctx, parent_name, item_name);
+			var item_path = this.join(ctx, use("Runtime.Collection").from([dirpath,item_name]));
+			var item_name2 = this.join(ctx, use("Runtime.Collection").from([parent_name,item_name]));
 			if (item_name == "." || item_name == "..")
 			{
 				continue;
 			}
-			res.push(ctx, item_name2);
-			var is_dir = await this.isDir(ctx, item_path, chroot);
+			item_name2 = this.removeFirstSlash(ctx, item_name2);
+			res.pushValue(ctx, item_name2);
+			var is_dir = await this.isDir(ctx, item_path);
 			if (is_dir)
 			{
-				var sub_items = await this.readDirectoryRecursive(ctx, item_path, chroot, item_name2);
+				var sub_items = await this.listDirRecursive(ctx, item_path, item_name2);
 				res.appendVector(ctx, sub_items);
 			}
 		}
 		return Promise.resolve(res.toCollection(ctx));
+	},
+	/**
+	 * Make dir recursive
+	 */
+	mkdir: async function(ctx, filepath, mode)
+	{
+		if (mode == undefined) mode = "755";
+		filepath = resolve(filepath);
+		var exists = await fileExists(filepath);
+		if (!exists)
+		{
+			await mkdir(filepath, { "mode": mode, "recursive": true });
+		}
+		return Promise.resolve("");
 	},
 	/* ======================= Class Init Functions ======================= */
 	getNamespace: function()

@@ -1,7 +1,7 @@
 "use strict;"
 var use = require('bay-lang').use;
 /*!
- *  Bayrell Runtime Library 
+ *  Bayrell Runtime Library
  *
  *  (c) Copyright 2016-2023 "Ildar Bikmamatov" <support@bayrell.org>
  *
@@ -18,41 +18,68 @@ var use = require('bay-lang').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-if (typeof Runtime.Exceptions == 'undefined') Runtime.Exceptions = {};
-Runtime.Exceptions.ApiException = function(ctx, message, code, response, prev)
+Runtime.io = function(ctx)
 {
-	if (message == undefined) message = "";
-	if (code == undefined) code = -1;
-	if (response == undefined) response = null;
-	if (prev == undefined) prev = null;
-	use("Runtime.Exceptions.RuntimeException").call(this, ctx, message, code, prev);
-	this.response = response;
 };
-Runtime.Exceptions.ApiException.prototype = Object.create(use("Runtime.Exceptions.RuntimeException").prototype);
-Runtime.Exceptions.ApiException.prototype.constructor = Runtime.Exceptions.ApiException;
-Object.assign(Runtime.Exceptions.ApiException.prototype,
+Object.assign(Runtime.io.prototype,
 {
-	_init: function(ctx)
-	{
-		use("Runtime.Exceptions.RuntimeException").prototype._init.call(this,ctx);
-		this.response = null;
-	},
 });
-Object.assign(Runtime.Exceptions.ApiException, use("Runtime.Exceptions.RuntimeException"));
-Object.assign(Runtime.Exceptions.ApiException,
+Object.assign(Runtime.io,
 {
+	/**
+	 * Print message to output
+	 */
+	print: function(ctx, message, new_line, type)
+	{
+		if (new_line == undefined) new_line = true;
+		if (type == undefined) type = "";
+		var output = ctx.provider(ctx, "output");
+		output.print(ctx, message, new_line, type);
+	},
+	/**
+	 * Print error message to output
+	 */
+	print_error: function(ctx, message)
+	{
+		var output = ctx.provider(ctx, "output");
+		output.print_error(ctx, message);
+	},
+	/**
+	 * Color message to output
+	 */
+	color: function(ctx, color, message)
+	{
+		var output = ctx.provider(ctx, "output");
+		return output.color(ctx, color, message);
+	},
+	/**
+	 * Log message
+	 */
+	log: function(ctx, type, message)
+	{
+		var log = ctx.provider(ctx, "log");
+		console.log.log(ctx, type, message);
+	},
+	/**
+	 * Read line from input
+	 */
+	input: function(ctx)
+	{
+		var input = ctx.provider(ctx, "input");
+		return input.input(ctx);
+	},
 	/* ======================= Class Init Functions ======================= */
 	getNamespace: function()
 	{
-		return "Runtime.Exceptions";
+		return "Runtime";
 	},
 	getClassName: function()
 	{
-		return "Runtime.Exceptions.ApiException";
+		return "Runtime.io";
 	},
 	getParentClassName: function()
 	{
-		return "Runtime.Exceptions.RuntimeException";
+		return "";
 	},
 	getClassInfo: function(ctx)
 	{
@@ -67,21 +94,12 @@ Object.assign(Runtime.Exceptions.ApiException,
 	{
 		var a = [];
 		if (f==undefined) f=0;
-		if ((f&2)==2)
-		{
-			a.push("response");
-		}
 		return use("Runtime.Collection").from(a);
 	},
 	getFieldInfoByName: function(ctx,field_name)
 	{
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
-		if (field_name == "response") return Dict.from({
-			"t": "var",
-			"annotations": Collection.from([
-			]),
-		});
 		return null;
 	},
 	getMethodsList: function(ctx,f)
@@ -96,5 +114,5 @@ Object.assign(Runtime.Exceptions.ApiException,
 	{
 		return null;
 	},
-});use.add(Runtime.Exceptions.ApiException);
-module.exports = Runtime.Exceptions.ApiException;
+});use.add(Runtime.io);
+module.exports = Runtime.io;

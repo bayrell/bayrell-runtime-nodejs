@@ -3,7 +3,7 @@ var use = require('bay-lang').use;
 /*!
  *  Bayrell Runtime Library
  *
- *  (c) Copyright 2016-2021 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2016-2023 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -89,6 +89,14 @@ Object.assign(Runtime.rs,
 			return this.substr(ctx, s, pos, 1);
 		}
 		return "";
+	},
+	/**
+	 * Returns ASCII symbol by code
+	 * @param int code
+	 */
+	chr: function(ctx, code)
+	{
+		return String.fromCharCode(code);
 	},
 	/**
 	 * Returns ASCII symbol code
@@ -455,7 +463,7 @@ Object.assign(Runtime.rs,
 	 * @return {variable} Если строка найдена, то возвращает позицию вхождения, начиная с 0.
 	 *                    Если строка не найдена, то вернет -1
 	 */
-	strpos: function(ctx, s, search, offset)
+	indexOf: function(ctx, s, search, offset)
 	{
 		if (offset == undefined) offset = 0;
 		var _rtl = use("Runtime.rtl");
@@ -463,6 +471,11 @@ Object.assign(Runtime.rs,
 		if (!_rtl.exists(offset)) offset = 0;
 		var res = _rtl.toStr(s).indexOf(search);
 		return res;
+	},
+	strpos: function(ctx, s, search, offset)
+	{
+		if (offset == undefined) offset = 0;
+		return this.indexOf(ctx, s, search, offset);
 	},
 	/**
 	 * URL encode

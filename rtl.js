@@ -3,7 +3,7 @@ var use = require('bay-lang').use;
 /*!
  *  Bayrell Runtime Library
  *
- *  (c) Copyright 2016-2021 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2016-2023 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -184,7 +184,7 @@ Object.assign(Runtime.rtl,
 		if (!(obj instanceof Function)) return null;
 		if (args == undefined || args == null){ args = []; } else { args = args.toArray(); }
 		args = args.slice(); 
-		args.unshift(ctx);
+		if (typeof ctx != "undefined") args.unshift(ctx);
 		args.unshift(null);
 		var f = Function.prototype.bind.apply(obj, args);
 		return new f;
@@ -397,7 +397,8 @@ Object.assign(Runtime.rtl,
 				var attr_data = data.get(ctx, attr_name, null);
 				var res = f(ctx, attrs.removeFirstIm(ctx), attr_data, new_value, f);
 				var __v1 = use("Runtime.Map");
-				new_data = data.copy(ctx, (new __v1(ctx)).setValue(ctx, attr_name, res));
+				var d = (new __v1(ctx)).setValue(ctx, attr_name, res);
+				new_data = data.copy(ctx, d);
 			}
 			else if (data instanceof __v2)
 			{
@@ -915,18 +916,7 @@ Object.assign(Runtime.rtl,
 	 */
 	usleep: async function(ctx, time)
 	{
-		setTimeout
-		(
-			(function (__async_t)
-			{
-				return function()
-				{
-					__async_t.resolve(ctx, null);
-				};
-			})(__async_t),
-			Math.round(time / 1000)
-		);
-		return;
+		await new Promise((f, e) => setTimeout(f, Math.round(time / 1000)));
 	},
 	/**
 	 * Returns unique value
@@ -1000,6 +990,48 @@ Object.assign(Runtime.rtl,
 	{
 		use("Runtime.rtl")._global_context = context;
 		return context;
+	},
+	/**
+	 * Run context
+	 * @param Dict d
+	 */
+	createContext: async function(d)
+	{
+		var ctx = null;
+		var __v0 = use("Runtime.Context");
+		var context = __v0.create(ctx, d);
+		/* Init context */
+		context = await context.init();
+		/* Setup global context */
+		this.setContext(context);
+		return Promise.resolve(context);
+	},
+	/**
+	 * Run application
+	 * @param Dict d
+	 */
+	runApp: async function(class_name)
+	{
+		var ctx = null;
+		var __v0 = use("Runtime.rtl");
+		var get_modules = __v0.method(ctx, class_name, "modules");
+		var modules = get_modules();
+		var d = use("Runtime.Dict").from({"entry_point":class_name,"modules":modules});
+		let code = 0;
+	
+		try
+		{
+			let context = await Runtime.rtl.createContext(d);
+			code = await context.run(context);
+		}
+		catch (e)
+		{
+			process.stderr.write("\x1B[0;91m");
+			process.stderr.write(e.stack);
+			process.stderr.write("\x1B[0m\n");
+		}
+
+		process.exit(code);
 	},
 	/* ============================= Runtime Utils Functions ============================= */
 	/**
@@ -1510,30 +1542,30 @@ Object.assign(Runtime.rtl,
 			var _Utils = use("Runtime.RuntimeUtils");
 			var _Collection = use("Runtime.Collection");
 			var _Dict = use("Runtime.Dict");
-			
-			var obj = JSON.parse(obj, function (key, value){
-				if (value == null) return value;
-				if (Array.isArray(value)){
-					return _Collection.from(value);
-				}
-				if (typeof value == 'object'){
-					return _Dict.from(value);
-				}
-				return value;
-			});
-			return this.PrimitiveToObject(ctx, obj);
+			var res = null;
+			try
+			{
+				res = JSON.parse(obj, function (key, value){
+					if (value == null) return value;
+					if (Array.isArray(value)){
+						return _Collection.from(value);
+					}
+					if (typeof value == 'object'){
+						return _Dict.from(value);
+					}
+					return value;
+				});
+			}
+			catch (e)
+			{
+				res = null;
+			}
+			return this.PrimitiveToObject(ctx, res);
 		}
 		catch(e){
 			throw e;
 		}
 		return null;
-	},
-	/**
-	 * Returns module path. For backend only
-	 */
-	getModulePath: function(ctx, module_name)
-	{
-		return "";
 	},
 	/* ======================= Class Init Functions ======================= */
 	getNamespace: function()
@@ -1809,7 +1841,6 @@ Object.assign(Runtime.rtl,
 		if (f==undefined) f=0;
 		var a = [];
 		if ((f&4)==4) a=[
-			"getModulePath",
 		];
 		return use("Runtime.Collection").from(a);
 	},

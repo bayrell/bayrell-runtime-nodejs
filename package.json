@@ -14,11 +14,8 @@
     "*.js"
   ],
   "dependencies": {
-    "path": "^0.12.7",
-    "util": "^0.12.3",
-    "shelljs": "^0.7.0"
   },
   "main": "index.js",
   "name": "bayrell-runtime-nodejs",
-  "version": "0.11.0"
+  "version": "0.11.1"
 }

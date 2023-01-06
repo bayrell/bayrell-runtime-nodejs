@@ -3,7 +3,7 @@ var use = require('bay-lang').use;
 /*!
  *  Bayrell Runtime Library
  *
- *  (c) Copyright 2016-2021 "Ildar Bikmamatov" <support@bayrell.org>
+ *  (c) Copyright 2016-2023 "Ildar Bikmamatov" <support@bayrell.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ Object.assign(Runtime.ModuleDescription,
 	 */
 	getModuleVersion: function(ctx)
 	{
-		return "0.11.0";
+		return "0.11.1";
 	},
 	/**
 	 * Returns required modules
@@ -55,7 +55,11 @@ Object.assign(Runtime.ModuleDescription,
 	 */
 	entities: function(ctx)
 	{
-		return use("Runtime.Collection").from([]);
+		var __v0 = use("Runtime.Provider");
+		var __v1 = use("Runtime.Provider");
+		var __v2 = use("Runtime.Provider");
+		var __v3 = use("Runtime.Provider");
+		return use("Runtime.Collection").from([new __v0(ctx, "input", null),new __v1(ctx, "output", "Runtime.Providers.OutputProvider"),new __v2(ctx, "log", null),new __v3(ctx, "hook", null)]);
 	},
 	/* ======================= Class Init Functions ======================= */
 	getNamespace: function()

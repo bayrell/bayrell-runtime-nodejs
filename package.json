@@ -8,9 +8,9 @@
     }
   ],
   "files": [
-    "Annotations/*.js",
     "Exceptions/*.js",
-    "Interfaces/*.js",
+    "Hooks/*.js",
+    "Providers/*.js",
     "*.js"
   ],
   "dependencies": {

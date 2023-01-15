@@ -38,7 +38,6 @@ Object.assign(Runtime.BaseProvider.prototype,
 	 */
 	start: async function(ctx)
 	{
-		this.started = true;
 	},
 	_init: function(ctx)
 	{

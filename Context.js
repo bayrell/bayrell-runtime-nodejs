@@ -54,7 +54,7 @@ Object.assign(Runtime.Context.prototype,
 		if (!this.providers.has(ctx, provider_name))
 		{
 			var __v0 = use("Runtime.Exceptions.RuntimeException");
-			throw new __v0(ctx, "Provider + '" + provider_name + "' not found")
+			throw new __v0(ctx, "Provider '" + use("Runtime.rtl").toStr(provider_name) + use("Runtime.rtl").toStr("' not found"))
 		}
 		return this.providers.get(ctx, provider_name);
 	},
@@ -64,7 +64,7 @@ Object.assign(Runtime.Context.prototype,
 	env: function(ctx, name)
 	{
 		var value = Runtime.rtl.get(ctx, this.environments, name);
-		var __v0 = use("Runtime.Hooks.AppHook");
+		var __v0 = use("Runtime.Hooks.RuntimeHook");
 		var hook_res = this.callHook(ctx, __v0.ENV, use("Runtime.Dict").from({"name":name,"value":value}));
 		return Runtime.rtl.get(ctx, hook_res, "value");
 	},
@@ -85,46 +85,59 @@ Object.assign(Runtime.Context.prototype,
 		{
 			modules = modules.prependIm(ctx, "Runtime");
 		}
+		/* Extends modules */
+		var modules = this.constructor.getRequiredModules(ctx, modules);
+		c = Runtime.rtl.setAttr(ctx, c, Runtime.Collection.from(["modules"]), modules);
 		/* Get modules entities */
 		var entities = this.constructor.getEntitiesFromModules(ctx, modules);
 		c = Runtime.rtl.setAttr(ctx, c, Runtime.Collection.from(["entities"]), entities);
 		/* Create providers */
 		var __v0 = use("Runtime.lib");
-		var providers = c.entities.filter(ctx, __v0.isInstance(ctx, "Runtime.Provider"));
+		var providers = c.entities.filter(ctx, __v0.isInstance(ctx, "Runtime.Entity.Provider"));
 		for (var i = 0;i < providers.count(ctx);i++)
 		{
 			var info = Runtime.rtl.get(ctx, providers, i);
 			if (info.value)
 			{
-				var __v1 = use("Runtime.rtl");
-				var provider = __v1.newInstance(ctx, info.value);
-				c = c.addProvider(ctx, info.name, provider);
+				var provider = null;
+				var __v1 = use("Runtime.BaseProvider");
+				var __v2 = use("Runtime.rtl");
+				if (info.value instanceof __v1)
+				{
+					provider = info.value;
+				}
+				else if (__v2.isString(ctx, info.value))
+				{
+					var __v3 = use("Runtime.rtl");
+					provider = __v3.newInstance(ctx, info.value);
+				}
+				if (provider)
+				{
+					c = c.addProvider(ctx, info.name, provider);
+				}
+				else if (info.value)
+				{
+					var __v1 = use("Runtime.Exceptions.RuntimeException");
+					throw new __v1(ctx, "Wrong declare provider '" + use("Runtime.rtl").toStr(info.name) + use("Runtime.rtl").toStr("'"))
+				}
 			}
 		}
 		/* Create app */
-		if (this.entry_point != "")
+		if (c.entry_point != "")
 		{
 			var __v1 = use("Runtime.rtl");
-			c = Runtime.rtl.setAttr(ctx, c, Runtime.Collection.from(["app"]), __v1.newInstance(ctx, this.entry_point));
+			c = Runtime.rtl.setAttr(ctx, c, Runtime.Collection.from(["app"]), __v1.newInstance(ctx, c.entry_point));
 		}
-		/* Init hooks */
-		/*
-		var hook = c.provider("hook");
-		if (hook)
-		{
-			await hook.init();
-		}
-		*/
 		/* Init providers */
-		var providers_names = this.providers.keys(ctx);
+		var providers_names = c.providers.keys(ctx);
 		for (var i = 0;i < providers_names.count(ctx);i++)
 		{
 			var provider_name = Runtime.rtl.get(ctx, providers_names, i);
-			var provider = Runtime.rtl.get(ctx, this.providers, provider_name);
+			var provider = Runtime.rtl.get(ctx, c.providers, provider_name);
 			c = await provider.init(ctx, c);
 		}
 		/* Hook init app */
-		var __v1 = use("Runtime.Hooks.AppHook");
+		var __v1 = use("Runtime.Hooks.RuntimeHook");
 		hook_res = await c.callAsyncHook(ctx, __v1.INIT, use("Runtime.Dict").from({"context":c}));
 		c = Runtime.rtl.get(ctx, hook_res, "context");
 		/* Init app */
@@ -138,11 +151,10 @@ Object.assign(Runtime.Context.prototype,
 		return Promise.resolve(c);
 	},
 	/**
-	 * Run context
+	 * Start context
 	 */
-	run: async function(ctx)
+	start: async function(ctx)
 	{
-		var code = 0;
 		/* Start providers */
 		var providers_names = this.providers.keys(ctx);
 		for (var i = 0;i < providers_names.count(ctx);i++)
@@ -152,25 +164,36 @@ Object.assign(Runtime.Context.prototype,
 			if (!provider.started)
 			{
 				await provider.start(ctx);
+				provider.started = true;
 			}
 		}
+		/* Hook start app */
+		var __v0 = use("Runtime.Hooks.RuntimeHook");
+		await this.callAsyncHook(ctx, __v0.START, use("Runtime.Dict").from({}));
+		/* Start app */
+		var __v1 = use("Runtime.rtl");
+		if (this.app && __v1.method_exists(ctx, this.app, "start"))
+		{
+			await this.app.start(ctx);
+		}
+		/* Hook launched app */
+		var __v1 = use("Runtime.Hooks.RuntimeHook");
+		await this.callAsyncHook(ctx, __v1.LAUNCHED, use("Runtime.Dict").from({}));
+	},
+	/**
+	 * Run context
+	 */
+	run: async function(ctx)
+	{
+		var code = 0;
 		/* Run app */
 		if (this.app == null)
 		{
 			return Promise.resolve();
 		}
-		/* Hook start app */
-		var __v0 = use("Runtime.Hooks.AppHook");
-		await this.callAsyncHook(ctx, __v0.START, use("Runtime.Dict").from({}));
-		/* Start app */
-		var __v1 = use("Runtime.rtl");
-		if (__v1.method_exists(ctx, this.app, "start"))
-		{
-			await this.app.start(ctx);
-		}
 		/* Run entry_point */
-		var __v1 = use("Runtime.rtl");
-		if (__v1.method_exists(ctx, this.app, "main"))
+		var __v0 = use("Runtime.rtl");
+		if (__v0.method_exists(ctx, this.app, "main"))
 		{
 			code = await this.app.main(ctx);
 		}
@@ -181,6 +204,15 @@ Object.assign(Runtime.Context.prototype,
 	 */
 	callHook: function(ctx, hook_name, d)
 	{
+		var hook = this.provider(ctx, "hook");
+		var methods_list = hook.getMethods(ctx, hook_name);
+		for (var i = 0;i < methods_list.count(ctx);i++)
+		{
+			var info = Runtime.rtl.get(ctx, methods_list, i);
+			var __v0 = use("Runtime.rtl");
+			var f = __v0.method(ctx, Runtime.rtl.get(ctx, info, "obj"), Runtime.rtl.get(ctx, info, "method_name"));
+			d = f(ctx, d);
+		}
 		return d;
 	},
 	/**
@@ -188,7 +220,24 @@ Object.assign(Runtime.Context.prototype,
 	 */
 	callAsyncHook: async function(ctx, hook_name, d)
 	{
+		var hook = this.provider(ctx, "hook");
+		var methods_list = hook.getMethods(ctx, hook_name);
+		for (var i = 0;i < methods_list.count(ctx);i++)
+		{
+			var info = Runtime.rtl.get(ctx, methods_list, i);
+			var __v0 = use("Runtime.rtl");
+			var f = __v0.method(ctx, Runtime.rtl.get(ctx, info, "obj"), Runtime.rtl.get(ctx, info, "method_name"));
+			d = await f(ctx, d);
+		}
 		return Promise.resolve(d);
+	},
+	/**
+	 * Translate message
+	 */
+	translate: function(ctx, module, s, params)
+	{
+		if (params == undefined) params = null;
+		return s;
 	},
 	_init: function(ctx)
 	{
@@ -205,41 +254,6 @@ Object.assign(Runtime.Context.prototype,
 		this.start_time = 0;
 		this.tz = "UTC";
 		this.initialized = false;
-	},
-	assignObject: function(ctx,o)
-	{
-		if (o instanceof use("Runtime.Context"))
-		{
-			this.app = o.app;
-			this.base_path = o.base_path;
-			this.entry_point = o.entry_point;
-			this.cli_args = o.cli_args;
-			this.environments = o.environments;
-			this.modules = o.modules;
-			this.providers = o.providers;
-			this.entities = o.entities;
-			this.settings = o.settings;
-			this.start_time = o.start_time;
-			this.tz = o.tz;
-			this.initialized = o.initialized;
-		}
-		use("Runtime.BaseStruct").prototype.assignObject.call(this,ctx,o);
-	},
-	assignValue: function(ctx,k,v)
-	{
-		if (k == "app")this.app = v;
-		else if (k == "base_path")this.base_path = v;
-		else if (k == "entry_point")this.entry_point = v;
-		else if (k == "cli_args")this.cli_args = v;
-		else if (k == "environments")this.environments = v;
-		else if (k == "modules")this.modules = v;
-		else if (k == "providers")this.providers = v;
-		else if (k == "entities")this.entities = v;
-		else if (k == "settings")this.settings = v;
-		else if (k == "start_time")this.start_time = v;
-		else if (k == "tz")this.tz = v;
-		else if (k == "initialized")this.initialized = v;
-		else use("Runtime.BaseStruct").prototype.assignValue.call(this,ctx,k,v);
 	},
 	takeValue: function(ctx,k,d)
 	{
@@ -326,6 +340,55 @@ Object.assign(Runtime.Context,
 		var __v0 = use("Runtime.rtl");
 		var instance = __v0.newInstance(ctx, this.getClassName(ctx), use("Runtime.Collection").from([d]));
 		return instance;
+	},
+	/**
+	 * Returns required modules
+	 * @param string class_name
+	 * @return Collection<string>
+	 */
+	_getRequiredModules: function(ctx, res, cache, modules, filter)
+	{
+		if (filter == undefined) filter = null;
+		if (modules == null)
+		{
+			return ;
+		}
+		if (filter)
+		{
+			modules = modules.filter(ctx, filter);
+		}
+		for (var i = 0;i < modules.count(ctx);i++)
+		{
+			var module_name = modules.item(ctx, i);
+			if (cache.get(ctx, module_name, false) == false)
+			{
+				cache.setValue(ctx, module_name, true);
+				var __v0 = use("Runtime.rtl");
+				var f = __v0.method(ctx, module_name + use("Runtime.rtl").toStr(".ModuleDescription"), "requiredModules");
+				var sub_modules = f(ctx);
+				if (sub_modules != null)
+				{
+					var sub_modules = sub_modules.keys(ctx);
+					this._getRequiredModules(ctx, res, cache, sub_modules);
+				}
+				res.pushValue(ctx, module_name);
+			}
+		}
+	},
+	/**
+	 * Returns all modules
+	 * @param Collection<string> modules
+	 * @return Collection<string>
+	 */
+	getRequiredModules: function(ctx, modules)
+	{
+		var __v0 = use("Runtime.Vector");
+		var res = new __v0(ctx);
+		var __v1 = use("Runtime.Map");
+		var cache = new __v1(ctx);
+		this._getRequiredModules(ctx, res, cache, modules);
+		res = res.removeDuplicates(ctx);
+		return res.toCollection(ctx);
 	},
 	/* ======================= Class Init Functions ======================= */
 	getNamespace: function()

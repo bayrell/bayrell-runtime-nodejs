@@ -18,43 +18,36 @@ var use = require('bay-lang').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-Runtime.Entity = function(ctx)
+if (typeof Runtime.Entity == 'undefined') Runtime.Entity = {};
+Runtime.Entity.Hook = function(ctx, name)
 {
-	use("Runtime.BaseStruct").apply(this, arguments);
+	use("Runtime.Entity").call(this, ctx, use("Runtime.Dict").from({"name":name}));
 };
-Runtime.Entity.prototype = Object.create(use("Runtime.BaseStruct").prototype);
-Runtime.Entity.prototype.constructor = Runtime.Entity;
-Object.assign(Runtime.Entity.prototype,
+Runtime.Entity.Hook.prototype = Object.create(use("Runtime.Entity").prototype);
+Runtime.Entity.Hook.prototype.constructor = Runtime.Entity.Hook;
+Object.assign(Runtime.Entity.Hook.prototype,
 {
-	_init: function(ctx)
-	{
-		use("Runtime.BaseStruct").prototype._init.call(this,ctx);
-		this.name = "";
-		this.params = use("Runtime.Dict").from({});
-	},
 	takeValue: function(ctx,k,d)
 	{
 		if (d == undefined) d = null;
-		if (k == "name")return this.name;
-		else if (k == "params")return this.params;
-		return use("Runtime.BaseStruct").prototype.takeValue.call(this,ctx,k,d);
+		return use("Runtime.Entity").prototype.takeValue.call(this,ctx,k,d);
 	},
 });
-Object.assign(Runtime.Entity, use("Runtime.BaseStruct"));
-Object.assign(Runtime.Entity,
+Object.assign(Runtime.Entity.Hook, use("Runtime.Entity"));
+Object.assign(Runtime.Entity.Hook,
 {
 	/* ======================= Class Init Functions ======================= */
 	getNamespace: function()
 	{
-		return "Runtime";
+		return "Runtime.Entity";
 	},
 	getClassName: function()
 	{
-		return "Runtime.Entity";
+		return "Runtime.Entity.Hook";
 	},
 	getParentClassName: function()
 	{
-		return "Runtime.BaseStruct";
+		return "Runtime.Entity";
 	},
 	getClassInfo: function(ctx)
 	{
@@ -69,27 +62,12 @@ Object.assign(Runtime.Entity,
 	{
 		var a = [];
 		if (f==undefined) f=0;
-		if ((f&3)==3)
-		{
-			a.push("name");
-			a.push("params");
-		}
 		return use("Runtime.Collection").from(a);
 	},
 	getFieldInfoByName: function(ctx,field_name)
 	{
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
-		if (field_name == "name") return Dict.from({
-			"t": "string",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "params") return Dict.from({
-			"t": "Runtime.Dict",
-			"annotations": Collection.from([
-			]),
-		});
 		return null;
 	},
 	getMethodsList: function(ctx,f)
@@ -104,5 +82,5 @@ Object.assign(Runtime.Entity,
 	{
 		return null;
 	},
-});use.add(Runtime.Entity);
-module.exports = Runtime.Entity;
+});use.add(Runtime.Entity.Hook);
+module.exports = Runtime.Entity.Hook;

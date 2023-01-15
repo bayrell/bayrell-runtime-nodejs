@@ -18,30 +18,61 @@ var use = require('bay-lang').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-if (typeof Runtime.Hooks == 'undefined') Runtime.Hooks = {};
-Runtime.Hooks.AppHook = function(ctx)
+Runtime.BaseHook = function(ctx)
 {
+	use("Runtime.BaseObject").apply(this, arguments);
 };
-Object.assign(Runtime.Hooks.AppHook.prototype,
+Runtime.BaseHook.prototype = Object.create(use("Runtime.BaseObject").prototype);
+Runtime.BaseHook.prototype.constructor = Runtime.BaseHook;
+Object.assign(Runtime.BaseHook.prototype,
 {
+	/**
+	 * Returns method name by hook name
+	 */
+	getMethodName: function(ctx, hook_name)
+	{
+		return "";
+	},
+	/**
+	 * Register hook
+	 */
+	register: function(ctx, hook_name, priority)
+	{
+		if (priority == undefined) priority = 0;
+		var method_name = this.getMethodName(ctx, hook_name);
+		if (method_name == "")
+		{
+			return ;
+		}
+		this.hook.register(ctx, hook_name, this, method_name, priority);
+	},
+	/**
+	 * Register hooks
+	 */
+	register_hooks: function(ctx)
+	{
+	},
+	_init: function(ctx)
+	{
+		use("Runtime.BaseObject").prototype._init.call(this,ctx);
+		this.hook = null;
+	},
 });
-Object.assign(Runtime.Hooks.AppHook,
+Object.assign(Runtime.BaseHook, use("Runtime.BaseObject"));
+Object.assign(Runtime.BaseHook,
 {
-	INIT: "runtime::app_init",
-	START: "runtime::app_start",
-	ENV: "runtime::app_env",
 	/* ======================= Class Init Functions ======================= */
 	getNamespace: function()
 	{
-		return "Runtime.Hooks";
+		return "Runtime";
 	},
 	getClassName: function()
 	{
-		return "Runtime.Hooks.AppHook";
+		return "Runtime.BaseHook";
 	},
 	getParentClassName: function()
 	{
-		return "";
+		return "Runtime.BaseObject";
 	},
 	getClassInfo: function(ctx)
 	{
@@ -56,24 +87,18 @@ Object.assign(Runtime.Hooks.AppHook,
 	{
 		var a = [];
 		if (f==undefined) f=0;
+		if ((f&2)==2)
+		{
+			a.push("hook");
+		}
 		return use("Runtime.Collection").from(a);
 	},
 	getFieldInfoByName: function(ctx,field_name)
 	{
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
-		if (field_name == "INIT") return Dict.from({
-			"t": "string",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "START") return Dict.from({
-			"t": "string",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "ENV") return Dict.from({
-			"t": "string",
+		if (field_name == "hook") return Dict.from({
+			"t": "Runtime.Providers.HookProvider",
 			"annotations": Collection.from([
 			]),
 		});
@@ -91,5 +116,5 @@ Object.assign(Runtime.Hooks.AppHook,
 	{
 		return null;
 	},
-});use.add(Runtime.Hooks.AppHook);
-module.exports = Runtime.Hooks.AppHook;
+});use.add(Runtime.BaseHook);
+module.exports = Runtime.BaseHook;

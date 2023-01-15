@@ -18,26 +18,38 @@ var use = require('bay-lang').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-Runtime.Provider = function(ctx, name, value)
+if (typeof Runtime.Entity == 'undefined') Runtime.Entity = {};
+Runtime.Entity.Provider = function(ctx, name, value)
 {
 	use("Runtime.Entity").call(this, ctx, use("Runtime.Dict").from({"name":name,"value":value}));
 };
-Runtime.Provider.prototype = Object.create(use("Runtime.Entity").prototype);
-Runtime.Provider.prototype.constructor = Runtime.Provider;
-Object.assign(Runtime.Provider.prototype,
+Runtime.Entity.Provider.prototype = Object.create(use("Runtime.Entity").prototype);
+Runtime.Entity.Provider.prototype.constructor = Runtime.Entity.Provider;
+Object.assign(Runtime.Entity.Provider.prototype,
 {
+	_init: function(ctx)
+	{
+		use("Runtime.Entity").prototype._init.call(this,ctx);
+		this.value = "";
+	},
+	takeValue: function(ctx,k,d)
+	{
+		if (d == undefined) d = null;
+		if (k == "value")return this.value;
+		return use("Runtime.Entity").prototype.takeValue.call(this,ctx,k,d);
+	},
 });
-Object.assign(Runtime.Provider, use("Runtime.Entity"));
-Object.assign(Runtime.Provider,
+Object.assign(Runtime.Entity.Provider, use("Runtime.Entity"));
+Object.assign(Runtime.Entity.Provider,
 {
 	/* ======================= Class Init Functions ======================= */
 	getNamespace: function()
 	{
-		return "Runtime";
+		return "Runtime.Entity";
 	},
 	getClassName: function()
 	{
-		return "Runtime.Provider";
+		return "Runtime.Entity.Provider";
 	},
 	getParentClassName: function()
 	{
@@ -56,12 +68,21 @@ Object.assign(Runtime.Provider,
 	{
 		var a = [];
 		if (f==undefined) f=0;
+		if ((f&3)==3)
+		{
+			a.push("value");
+		}
 		return use("Runtime.Collection").from(a);
 	},
 	getFieldInfoByName: function(ctx,field_name)
 	{
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
+		if (field_name == "value") return Dict.from({
+			"t": "string",
+			"annotations": Collection.from([
+			]),
+		});
 		return null;
 	},
 	getMethodsList: function(ctx,f)
@@ -76,5 +97,5 @@ Object.assign(Runtime.Provider,
 	{
 		return null;
 	},
-});use.add(Runtime.Provider);
-module.exports = Runtime.Provider;
+});use.add(Runtime.Entity.Provider);
+module.exports = Runtime.Entity.Provider;

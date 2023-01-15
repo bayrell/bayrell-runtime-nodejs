@@ -203,33 +203,6 @@ Object.assign(Runtime.DateTime.prototype,
 		this.ms = 0;
 		this.tz = "UTC";
 	},
-	assignObject: function(ctx,o)
-	{
-		if (o instanceof use("Runtime.DateTime"))
-		{
-			this.y = o.y;
-			this.m = o.m;
-			this.d = o.d;
-			this.h = o.h;
-			this.i = o.i;
-			this.s = o.s;
-			this.ms = o.ms;
-			this.tz = o.tz;
-		}
-		use("Runtime.BaseStruct").prototype.assignObject.call(this,ctx,o);
-	},
-	assignValue: function(ctx,k,v)
-	{
-		if (k == "y")this.y = v;
-		else if (k == "m")this.m = v;
-		else if (k == "d")this.d = v;
-		else if (k == "h")this.h = v;
-		else if (k == "i")this.i = v;
-		else if (k == "s")this.s = v;
-		else if (k == "ms")this.ms = v;
-		else if (k == "tz")this.tz = v;
-		else use("Runtime.BaseStruct").prototype.assignValue.call(this,ctx,k,v);
-	},
 	takeValue: function(ctx,k,d)
 	{
 		if (d == undefined) d = null;

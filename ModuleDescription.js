@@ -40,7 +40,7 @@ Object.assign(Runtime.ModuleDescription,
 	 */
 	getModuleVersion: function(ctx)
 	{
-		return "0.11.1";
+		return "0.11.2";
 	},
 	/**
 	 * Returns required modules
@@ -55,11 +55,11 @@ Object.assign(Runtime.ModuleDescription,
 	 */
 	entities: function(ctx)
 	{
-		var __v0 = use("Runtime.Provider");
-		var __v1 = use("Runtime.Provider");
-		var __v2 = use("Runtime.Provider");
-		var __v3 = use("Runtime.Provider");
-		return use("Runtime.Collection").from([new __v0(ctx, "input", null),new __v1(ctx, "output", "Runtime.Providers.OutputProvider"),new __v2(ctx, "log", null),new __v3(ctx, "hook", null)]);
+		var __v0 = use("Runtime.Entity.Provider");
+		var __v1 = use("Runtime.Entity.Provider");
+		var __v2 = use("Runtime.Entity.Provider");
+		var __v3 = use("Runtime.Entity.Provider");
+		return use("Runtime.Collection").from([new __v0(ctx, "input", null),new __v1(ctx, "output", "Runtime.Providers.OutputProvider"),new __v2(ctx, "log", null),new __v3(ctx, "hook", "Runtime.Providers.HookProvider")]);
 	},
 	/* ======================= Class Init Functions ======================= */
 	getNamespace: function()

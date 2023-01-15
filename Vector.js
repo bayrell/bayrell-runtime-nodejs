@@ -156,7 +156,7 @@ Object.assign(Runtime.Vector.prototype,
 		if (pos < 0 || pos >= this.length)
 		{
 			var IndexOutOfRange = use ("Runtime.Exceptions.IndexOutOfRange");
-			throw new IndexOutOfRange();
+			throw new IndexOutOfRange(pos);
 		}
 		this[pos] = value;
 		return this;
@@ -171,7 +171,7 @@ Object.assign(Runtime.Vector.prototype,
 	},
 	/**
 	 * Append vector to the end of the vector
-	 * @param Vector<T> arr
+	 * @param Collection<T> arr
 	 */
 	appendVector: function(ctx, arr)
 	{

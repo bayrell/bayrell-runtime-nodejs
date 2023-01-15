@@ -57,11 +57,11 @@ Object.assign(Runtime.fs,
 		var __v0 = use("Runtime.rs");
 		var path = __v0.join(ctx, this.DIRECTORY_SEPARATOR, arr);
 		var __v1 = use("Runtime.re");
-		path = __v1.replace(ctx, "//", "/", path);
+		path = __v1.replace(ctx, "\\/+", "/", path);
 		var __v2 = use("Runtime.re");
-		path = __v2.replace(ctx, "/\\./", "/", path);
+		path = __v2.replace(ctx, "\\/\\.\\/", "/", path);
 		var __v3 = use("Runtime.re");
-		path = __v3.replace(ctx, "/+$", "", path);
+		path = __v3.replace(ctx, "\\/+$", "", path);
 		return path;
 	},
 	/**

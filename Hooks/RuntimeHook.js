@@ -18,60 +18,79 @@ var use = require('bay-lang').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-Runtime.Date = function(ctx)
+if (typeof Runtime.Hooks == 'undefined') Runtime.Hooks = {};
+Runtime.Hooks.RuntimeHook = function(ctx)
 {
-	use("Runtime.BaseStruct").apply(this, arguments);
+	use("Runtime.BaseHook").apply(this, arguments);
 };
-Runtime.Date.prototype = Object.create(use("Runtime.BaseStruct").prototype);
-Runtime.Date.prototype.constructor = Runtime.Date;
-Object.assign(Runtime.Date.prototype,
+Runtime.Hooks.RuntimeHook.prototype = Object.create(use("Runtime.BaseHook").prototype);
+Runtime.Hooks.RuntimeHook.prototype.constructor = Runtime.Hooks.RuntimeHook;
+Object.assign(Runtime.Hooks.RuntimeHook.prototype,
 {
 	/**
-	 * Return date
-	 * @return string
+	 * Returns method name by hook name
 	 */
-	getDate: function(ctx)
+	getMethodName: function(ctx, hook_name)
 	{
-		return this.y + use("Runtime.rtl").toStr("-") + use("Runtime.rtl").toStr(this.m) + use("Runtime.rtl").toStr("-") + use("Runtime.rtl").toStr(this.d);
+		if (hook_name == this.constructor.INIT)
+		{
+			return "init";
+		}
+		if (hook_name == this.constructor.START)
+		{
+			return "start";
+		}
+		if (hook_name == this.constructor.LAUNCHED)
+		{
+			return "launched";
+		}
+		if (hook_name == this.constructor.ENV)
+		{
+			return "env";
+		}
+		return "";
 	},
 	/**
-	 * Normalize date time
+	 * Init context
 	 */
-	normalize: function(ctx)
+	init: async function(ctx, d)
 	{
-		return this;
+		return Promise.resolve(d);
 	},
-	_init: function(ctx)
+	/**
+	 * Init context
+	 */
+	start: async function(ctx, d)
 	{
-		use("Runtime.BaseStruct").prototype._init.call(this,ctx);
-		this.y = 0;
-		this.m = 0;
-		this.d = 0;
+		return Promise.resolve(d);
 	},
-	takeValue: function(ctx,k,d)
+	/**
+	 * Init context
+	 */
+	env: function(ctx, d)
 	{
-		if (d == undefined) d = null;
-		if (k == "y")return this.y;
-		else if (k == "m")return this.m;
-		else if (k == "d")return this.d;
-		return use("Runtime.BaseStruct").prototype.takeValue.call(this,ctx,k,d);
+		return d;
 	},
 });
-Object.assign(Runtime.Date, use("Runtime.BaseStruct"));
-Object.assign(Runtime.Date,
+Object.assign(Runtime.Hooks.RuntimeHook, use("Runtime.BaseHook"));
+Object.assign(Runtime.Hooks.RuntimeHook,
 {
+	INIT: "runtime::init",
+	START: "runtime::start",
+	LAUNCHED: "runtime::launched",
+	ENV: "runtime::env",
 	/* ======================= Class Init Functions ======================= */
 	getNamespace: function()
 	{
-		return "Runtime";
+		return "Runtime.Hooks";
 	},
 	getClassName: function()
 	{
-		return "Runtime.Date";
+		return "Runtime.Hooks.RuntimeHook";
 	},
 	getParentClassName: function()
 	{
-		return "Runtime.BaseStruct";
+		return "Runtime.BaseHook";
 	},
 	getClassInfo: function(ctx)
 	{
@@ -86,30 +105,29 @@ Object.assign(Runtime.Date,
 	{
 		var a = [];
 		if (f==undefined) f=0;
-		if ((f&3)==3)
-		{
-			a.push("y");
-			a.push("m");
-			a.push("d");
-		}
 		return use("Runtime.Collection").from(a);
 	},
 	getFieldInfoByName: function(ctx,field_name)
 	{
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
-		if (field_name == "y") return Dict.from({
-			"t": "int",
+		if (field_name == "INIT") return Dict.from({
+			"t": "string",
 			"annotations": Collection.from([
 			]),
 		});
-		if (field_name == "m") return Dict.from({
-			"t": "int",
+		if (field_name == "START") return Dict.from({
+			"t": "string",
 			"annotations": Collection.from([
 			]),
 		});
-		if (field_name == "d") return Dict.from({
-			"t": "int",
+		if (field_name == "LAUNCHED") return Dict.from({
+			"t": "string",
+			"annotations": Collection.from([
+			]),
+		});
+		if (field_name == "ENV") return Dict.from({
+			"t": "string",
 			"annotations": Collection.from([
 			]),
 		});
@@ -127,19 +145,5 @@ Object.assign(Runtime.Date,
 	{
 		return null;
 	},
-});use.add(Runtime.Date);
-module.exports = Runtime.Date;
-Runtime.Date.prototype.toObject = function(ctx)
-{
-	var dt = new Date(this.y, this.m - 1, this.d);
-	return dt;
-}
-Runtime.Date.fromObject = function(ctx, dt)
-{
-	var Dict = use("Runtime.Dict");
-	var y = Number(dt.getFullYear());
-	var m = Number(dt.getMonth()) + 1;
-	var d = Number(dt.getDate());
-	var dt = new Runtime.Date( ctx, Dict.from({"y":y,"m":m,"d":d}) );
-	return dt;
-}
+});use.add(Runtime.Hooks.RuntimeHook);
+module.exports = Runtime.Hooks.RuntimeHook;

@@ -390,8 +390,9 @@ Object.assign(Runtime.rtl,
 			var new_data = null;
 			var attr_name = attrs.first(ctx);
 			var __v0 = use("Runtime.BaseStruct");
-			var __v2 = use("Runtime.Dict");
-			var __v3 = use("Runtime.Collection");
+			var __v2 = use("Runtime.BaseObject");
+			var __v3 = use("Runtime.Dict");
+			var __v4 = use("Runtime.Collection");
 			if (data instanceof __v0)
 			{
 				var attr_data = data.get(ctx, attr_name, null);
@@ -402,11 +403,18 @@ Object.assign(Runtime.rtl,
 			}
 			else if (data instanceof __v2)
 			{
+				var attr_data = data.takeValue(ctx, attr_name, null);
+				var res = f(ctx, attrs.removeFirstIm(ctx), attr_data, new_value, f);
+				new_data = data;
+				new_data.assignValue(ctx, attr_name, res);
+			}
+			else if (data instanceof __v3)
+			{
 				var attr_data = data.get(ctx, attr_name, null);
 				var res = f(ctx, attrs.removeFirstIm(ctx), attr_data, new_value, f);
 				new_data = data.setIm(ctx, attr_name, res);
 			}
-			else if (data instanceof __v3)
+			else if (data instanceof __v4)
 			{
 				var attr_data = data.get(ctx, attr_name, null);
 				var res = f(ctx, attrs.removeFirstIm(ctx), attr_data, new_value, f);
@@ -1010,18 +1018,15 @@ Object.assign(Runtime.rtl,
 	 * Run application
 	 * @param Dict d
 	 */
-	runApp: async function(class_name)
+	runApp: async function(module_name, class_name)
 	{
-		var ctx = null;
-		var __v0 = use("Runtime.rtl");
-		var get_modules = __v0.method(ctx, class_name, "modules");
-		var modules = get_modules();
-		var d = use("Runtime.Dict").from({"entry_point":class_name,"modules":modules});
+		var d = use("Runtime.Dict").from({"entry_point":class_name,"modules":use("Runtime.Collection").from([module_name])});
 		let code = 0;
-	
+		
 		try
 		{
 			let context = await Runtime.rtl.createContext(d);
+			await context.start(context);
 			code = await context.run(context);
 		}
 		catch (e)
@@ -1030,7 +1035,7 @@ Object.assign(Runtime.rtl,
 			process.stderr.write(e.stack);
 			process.stderr.write("\x1B[0m\n");
 		}
-
+		
 		process.exit(code);
 	},
 	/* ============================= Runtime Utils Functions ============================= */

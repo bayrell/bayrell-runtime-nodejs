@@ -21,10 +21,13 @@ if (typeof Runtime == 'undefined') Runtime = {};
 if (typeof Runtime.Exceptions == 'undefined') Runtime.Exceptions = {};
 if (typeof Runtime == 'undefined') Runtime = {};
 if (typeof Runtime.Exceptions == 'undefined') Runtime.Exceptions = {};
-Runtime.Exceptions.ClassException = function()
+Runtime.Exceptions.ClassException = function(message, code, prev)
 {
 	Error.call(this);
 	Error.captureStackTrace(this, this.constructor);
+	this.message = message;
+	this.code = code;
+	this.prev = prev;
 }
 Runtime.Exceptions.ClassException.prototype = Object.create(Error.prototype);
 Runtime.Exceptions.ClassException.prototype.constructor = Runtime.Exceptions.ClassException;

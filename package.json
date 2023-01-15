@@ -8,6 +8,7 @@
     }
   ],
   "files": [
+    "Entity/*.js",
     "Exceptions/*.js",
     "Hooks/*.js",
     "Providers/*.js",
@@ -17,5 +18,5 @@
   },
   "main": "index.js",
   "name": "bayrell-runtime-nodejs",
-  "version": "0.11.2"
+  "version": "0.11.2-1"
 }

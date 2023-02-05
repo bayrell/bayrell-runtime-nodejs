@@ -190,6 +190,11 @@ Object.assign(Runtime.Providers.HookProvider,
 		if (f==undefined) f=0;
 		var a = [];
 		if ((f&4)==4) a=[
+			"init",
+			"start",
+			"register",
+			"remove",
+			"getMethods",
 		];
 		return use("Runtime.Collection").from(a);
 	},

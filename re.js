@@ -99,6 +99,9 @@ Object.assign(Runtime.re,
 		if (f==undefined) f=0;
 		var a = [];
 		if ((f&4)==4) a=[
+			"match",
+			"matchAll",
+			"replace",
 		];
 		return use("Runtime.Collection").from(a);
 	},

@@ -75,6 +75,7 @@ Object.assign(Runtime.Entity.Hook,
 		if (f==undefined) f=0;
 		var a = [];
 		if ((f&4)==4) a=[
+			"constructor",
 		];
 		return use("Runtime.Collection").from(a);
 	},

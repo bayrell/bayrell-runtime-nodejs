@@ -107,6 +107,11 @@ Object.assign(Runtime.io,
 		if (f==undefined) f=0;
 		var a = [];
 		if ((f&4)==4) a=[
+			"print",
+			"print_error",
+			"color",
+			"log",
+			"input",
 		];
 		return use("Runtime.Collection").from(a);
 	},

@@ -171,6 +171,13 @@ Object.assign(Runtime.BaseStruct,
 		if (f==undefined) f=0;
 		var a = [];
 		if ((f&4)==4) a=[
+			"constructor",
+			"copy",
+			"clone",
+			"intersect",
+			"newInstance",
+			"set",
+			"toDict",
 		];
 		return use("Runtime.Collection").from(a);
 	},

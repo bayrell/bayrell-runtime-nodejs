@@ -212,6 +212,16 @@ Object.assign(Runtime.fs,
 		if (f==undefined) f=0;
 		var a = [];
 		if ((f&4)==4) a=[
+			"removeFirstSlash",
+			"removeLastSlash",
+			"join",
+			"isDir",
+			"isFile",
+			"readFile",
+			"saveFile",
+			"listDir",
+			"listDirRecursive",
+			"mkdir",
 		];
 		return use("Runtime.Collection").from(a);
 	},

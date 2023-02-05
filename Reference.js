@@ -107,6 +107,8 @@ Object.assign(Runtime.Reference,
 		if (f==undefined) f=0;
 		var a = [];
 		if ((f&4)==4) a=[
+			"constructor",
+			"assignObject1",
 		];
 		return use("Runtime.Collection").from(a);
 	},

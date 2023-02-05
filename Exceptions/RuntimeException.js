@@ -203,6 +203,18 @@ Object.assign(Runtime.Exceptions.RuntimeException,
 		if (f==undefined) f=0;
 		var a = [];
 		if ((f&4)==4) a=[
+			"constructor",
+			"getPreviousException",
+			"getErrorMessage",
+			"getErrorString",
+			"getErrorCode",
+			"getFileName",
+			"getErrorLine",
+			"getErrorPos",
+			"toString",
+			"buildMessage",
+			"updateError",
+			"getTraceStr",
 		];
 		return use("Runtime.Collection").from(a);
 	},

@@ -240,6 +240,23 @@ Object.assign(Runtime.Vector,
 		if (f==undefined) f=0;
 		var a = [];
 		if ((f&4)==4) a=[
+			"Instance",
+			"vectorSlice",
+			"appendValue",
+			"pushValue",
+			"prependValue",
+			"unshiftValue",
+			"popValue",
+			"shiftValue",
+			"insertValue",
+			"removePosition",
+			"removeValue",
+			"removeValues",
+			"removeRangeValues",
+			"setValue",
+			"clear",
+			"appendVector",
+			"prependVector",
 		];
 		return use("Runtime.Collection").from(a);
 	},

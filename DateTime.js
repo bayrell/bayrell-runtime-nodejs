@@ -333,6 +333,19 @@ Object.assign(Runtime.DateTime,
 		if (f==undefined) f=0;
 		var a = [];
 		if ((f&4)==4) a=[
+			"create",
+			"now",
+			"shiftTime",
+			"shift",
+			"setWeekNumber",
+			"getTimestamp",
+			"timestamp",
+			"getDayOfWeek",
+			"getDateTime",
+			"getDate",
+			"getRFC822",
+			"getISO8601",
+			"normalize",
 		];
 		return use("Runtime.Collection").from(a);
 	},

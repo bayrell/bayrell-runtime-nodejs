@@ -137,6 +137,11 @@ Object.assign(Runtime.BaseObject,
 		if (f==undefined) f=0;
 		var a = [];
 		if ((f&4)==4) a=[
+			"constructor",
+			"_init",
+			"newInstance",
+			"_init_data",
+			"_assign",
 		];
 		return use("Runtime.Collection").from(a);
 	},

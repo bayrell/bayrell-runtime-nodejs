@@ -140,6 +140,11 @@ Object.assign(Runtime.Providers.OutputProvider,
 		if (f==undefined) f=0;
 		var a = [];
 		if ((f&4)==4) a=[
+			"constructor",
+			"print",
+			"print_error",
+			"color",
+			"getColor",
 		];
 		return use("Runtime.Collection").from(a);
 	},

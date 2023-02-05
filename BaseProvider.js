@@ -96,6 +96,8 @@ Object.assign(Runtime.BaseProvider,
 		if (f==undefined) f=0;
 		var a = [];
 		if ((f&4)==4) a=[
+			"init",
+			"start",
 		];
 		return use("Runtime.Collection").from(a);
 	},

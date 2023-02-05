@@ -114,6 +114,10 @@ Object.assign(Runtime.Map,
 		if (f==undefined) f=0;
 		var a = [];
 		if ((f&4)==4) a=[
+			"Instance",
+			"setValue",
+			"removeValue",
+			"clear",
 		];
 		return use("Runtime.Collection").from(a);
 	},

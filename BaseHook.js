@@ -109,6 +109,9 @@ Object.assign(Runtime.BaseHook,
 		if (f==undefined) f=0;
 		var a = [];
 		if ((f&4)==4) a=[
+			"getMethodName",
+			"register",
+			"register_hooks",
 		];
 		return use("Runtime.Collection").from(a);
 	},

@@ -138,6 +138,10 @@ Object.assign(Runtime.Hooks.RuntimeHook,
 		if (f==undefined) f=0;
 		var a = [];
 		if ((f&4)==4) a=[
+			"getMethodName",
+			"init",
+			"start",
+			"env",
 		];
 		return use("Runtime.Collection").from(a);
 	},

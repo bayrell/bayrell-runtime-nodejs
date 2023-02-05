@@ -120,6 +120,8 @@ Object.assign(Runtime.Date,
 		if (f==undefined) f=0;
 		var a = [];
 		if ((f&4)==4) a=[
+			"getDate",
+			"normalize",
 		];
 		return use("Runtime.Collection").from(a);
 	},

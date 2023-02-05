@@ -510,6 +510,19 @@ Object.assign(Runtime.Context,
 		if (f==undefined) f=0;
 		var a = [];
 		if ((f&4)==4) a=[
+			"getEntitiesFromModules",
+			"addProvider",
+			"provider",
+			"env",
+			"create",
+			"init",
+			"start",
+			"run",
+			"callHook",
+			"callAsyncHook",
+			"_getRequiredModules",
+			"getRequiredModules",
+			"translate",
 		];
 		return use("Runtime.Collection").from(a);
 	},

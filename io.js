@@ -57,8 +57,8 @@ Object.assign(Runtime.io,
 	 */
 	log: function(ctx, type, message)
 	{
-		var log = ctx.provider(ctx, "log");
-		console.log.log(ctx, type, message);
+		var p = ctx.provider(ctx, "log");
+		p.log(ctx, type, message);
 	},
 	/**
 	 * Read line from input
@@ -90,7 +90,7 @@ Object.assign(Runtime.io,
 			]),
 		});
 	},
-	getFieldsList: function(ctx, f)
+	getFieldsList: function(ctx)
 	{
 		var a = [];
 		if (f==undefined) f=0;
@@ -102,11 +102,9 @@ Object.assign(Runtime.io,
 		var Dict = use("Runtime.Dict");
 		return null;
 	},
-	getMethodsList: function(ctx,f)
+	getMethodsList: function(ctx)
 	{
-		if (f==undefined) f=0;
-		var a = [];
-		if ((f&4)==4) a=[
+		var a=[
 			"print",
 			"print_error",
 			"color",

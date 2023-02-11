@@ -65,15 +65,12 @@ Object.assign(Runtime.Entity,
 			]),
 		});
 	},
-	getFieldsList: function(ctx, f)
+	getFieldsList: function(ctx)
 	{
 		var a = [];
 		if (f==undefined) f=0;
-		if ((f&3)==3)
-		{
-			a.push("name");
-			a.push("params");
-		}
+		a.push("name");
+		a.push("params");
 		return use("Runtime.Collection").from(a);
 	},
 	getFieldInfoByName: function(ctx,field_name)
@@ -92,11 +89,9 @@ Object.assign(Runtime.Entity,
 		});
 		return null;
 	},
-	getMethodsList: function(ctx,f)
+	getMethodsList: function(ctx)
 	{
-		if (f==undefined) f=0;
-		var a = [];
-		if ((f&4)==4) a=[
+		var a=[
 		];
 		return use("Runtime.Collection").from(a);
 	},

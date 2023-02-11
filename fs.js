@@ -190,7 +190,7 @@ Object.assign(Runtime.fs,
 			]),
 		});
 	},
-	getFieldsList: function(ctx, f)
+	getFieldsList: function(ctx)
 	{
 		var a = [];
 		if (f==undefined) f=0;
@@ -200,18 +200,11 @@ Object.assign(Runtime.fs,
 	{
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
-		if (field_name == "DIRECTORY_SEPARATOR") return Dict.from({
-			"t": "string",
-			"annotations": Collection.from([
-			]),
-		});
 		return null;
 	},
-	getMethodsList: function(ctx,f)
+	getMethodsList: function(ctx)
 	{
-		if (f==undefined) f=0;
-		var a = [];
-		if ((f&4)==4) a=[
+		var a=[
 			"removeFirstSlash",
 			"removeLastSlash",
 			"join",

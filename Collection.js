@@ -86,7 +86,7 @@ Runtime.Collection.prototype.constructor = Runtime.Collection;
 Object.assign(Runtime.Collection.prototype,
 {
 	/**
-	 * Returns copy of Collectiom
+	 * Returns copy of Collection
 	 * @param int pos - position
 	 */
 	cp: function(ctx)
@@ -119,6 +119,7 @@ Object.assign(Runtime.Collection.prototype,
 	 */
 	get: function(ctx, pos, default_value)
 	{
+		if (default_value == undefined) default_value = null;
 		if (pos < 0 || pos >= this.length) return default_value;
 		var val = this[pos];
 		return val;
@@ -519,6 +520,30 @@ Object.assign(Runtime.Collection.prototype,
 		}
 	},
 	/**
+	 * flatten Collection
+	 */
+	flatten: function(ctx)
+	{
+		let res = [];
+		
+		for (var i=0; i<this.length; i++)
+		{
+			let item = this[i];
+			if (item instanceof Runtime.Collection)
+			{
+				item = item.flatten();
+				res = res.concat( item );
+			}
+			else
+			{
+				res.push(item);
+			}
+		}
+		
+		Object.setPrototypeOf(res, this.constructor.prototype);
+		return res;
+	},
+	/**
 	 * Returns Collection
 	 * @param Collection<T> arr
 	 * @return Collection<T>
@@ -688,7 +713,7 @@ Object.assign(Runtime.Collection,
 			]),
 		});
 	},
-	getFieldsList: function(ctx, f)
+	getFieldsList: function(ctx)
 	{
 		var a = [];
 		if (f==undefined) f=0;
@@ -700,11 +725,9 @@ Object.assign(Runtime.Collection,
 		var Dict = use("Runtime.Dict");
 		return null;
 	},
-	getMethodsList: function(ctx,f)
+	getMethodsList: function(ctx)
 	{
-		if (f==undefined) f=0;
-		var a = [];
-		if ((f&4)==4) a=[
+		var a=[
 			"Instance",
 			"create",
 			"cp",
@@ -756,6 +779,7 @@ Object.assign(Runtime.Collection,
 			"transition",
 			"reduce",
 			"each",
+			"flatten",
 			"intersect",
 			"slice",
 			"reverseIm",

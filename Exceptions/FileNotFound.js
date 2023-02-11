@@ -56,7 +56,7 @@ Object.assign(Runtime.Exceptions.FileNotFound,
 			]),
 		});
 	},
-	getFieldsList: function(ctx, f)
+	getFieldsList: function(ctx)
 	{
 		var a = [];
 		if (f==undefined) f=0;
@@ -68,11 +68,9 @@ Object.assign(Runtime.Exceptions.FileNotFound,
 		var Dict = use("Runtime.Dict");
 		return null;
 	},
-	getMethodsList: function(ctx,f)
+	getMethodsList: function(ctx)
 	{
-		if (f==undefined) f=0;
-		var a = [];
-		if ((f&4)==4) a=[
+		var a=[
 			"constructor",
 		];
 		return use("Runtime.Collection").from(a);

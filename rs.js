@@ -36,23 +36,6 @@ Object.assign(Runtime.rs,
 		return use("Runtime.rtl").toStr(s).length;
 	},
 	/**
-	 * Search 'search' in s.
-	 */
-	search: function(ctx, s, search, offset)
-	{
-		if (offset == undefined) offset = 0;
-		var _rtl = use("Runtime.rtl");
-		var res = _rtl.toStr(s).indexOf(search);
-		return res;
-	},
-	/**
-	 * Is start
-	 */
-	start: function(ctx, s, search)
-	{
-		return this.search(ctx, s, search) == 0;
-	},
-	/**
 	 * Returns substring
 	 * @param string s The string
 	 * @param int start
@@ -223,41 +206,9 @@ Object.assign(Runtime.rs,
 		if (ch == ""){
 			return s.trim();
 		}
-		return s.replace(new RegExp("^[" + ch + "]+", "g"),"").replace(new RegExp("[" + ch + "]+$", "g"),"");
-	},
-	/**
-	 * json encode scalar values
-	 * @param {mixed} obj - объект
-	 * @param {int} flags - Флаги
-	 * @return {string} json строка
-	 */
-	json_encode_primitive: function(ctx, s, flags)
-	{
-		if (flags & 128 == 128) 
-			return JSON.stringify(obj, null, 2);
-		return JSON.stringify(obj);
-	},
-	/**
-	 * Json encode data
-	 * @param var data
-	 * @return string
-	 */
-	json_encode: function(ctx, data)
-	{
-		var __v0 = use("Runtime.rtl");
-		var f = __v0.method(ctx, "Runtime.RuntimeUtils", "json_encode");
-		return f(ctx, data);
-	},
-	/**
-	 * Json decode to primitive values
-	 * @param string s Encoded string
-	 * @return var
-	 */
-	json_decode: function(ctx, obj)
-	{
-		var __v0 = use("Runtime.rtl");
-		var f = __v0.method(ctx, "Runtime.RuntimeUtils", "json_decode");
-		return f(ctx, obj);
+		return s.replace(new RegExp("^[" + ch + "]+", "g"),"")
+			.replace(new RegExp("[" + ch + "]+$", "g"),"")
+		;
 	},
 	/**
 	 * Escape HTML special chars
@@ -360,50 +311,6 @@ Object.assign(Runtime.rs,
 		return res;
 	},
 	/**
-	 * Returns relative path of the filepath
-	 * @param string filepath
-	 * @param string basepath
-	 * @param string ch - Directory separator
-	 * @return string relative path
-	 */
-	relativePath: function(ctx, filepath, basepath, ch)
-	{
-		if (ch == undefined) ch = "/";
-		var __v0 = use("Runtime.rs");
-		var source = __v0.explode(ctx, ch, filepath);
-		var __v1 = use("Runtime.rs");
-		var base = __v1.explode(ctx, ch, basepath);
-		source = source.filter(ctx, (ctx, s) => 
-		{
-			return s != "";
-		});
-		base = base.filter(ctx, (ctx, s) => 
-		{
-			return s != "";
-		});
-		var i = 0;
-		while (source.count(ctx) > 0 && base.count(ctx) > 0 && source.item(ctx, 0) == base.item(ctx, 0))
-		{
-			source.shift(ctx);
-			base.shift(ctx);
-		}
-		base.each(ctx, (ctx, s) => 
-		{
-			source.unshift(ctx, "..");
-		});
-		var __v2 = use("Runtime.rs");
-		return __v2.implode(ctx, ch, source);
-	},
-	/**
-	 * Return normalize path
-	 * @param string filepath - File path
-	 * @return string
-	 */
-	normalize: function(ctx, filepath)
-	{
-		return filepath;
-	},
-	/**
 	 * New line to br
 	 */
 	nl2br: function(ctx, s)
@@ -422,37 +329,6 @@ Object.assign(Runtime.rs,
 		var __v2 = use("Runtime.re");
 		s = __v2.replace(ctx, "\n", "", s);
 		return s;
-	},
-	/* =================== Deprecated =================== */
-	/**
-	 * Разбивает строку на подстроки
-	 * @param string delimiter - разделитель
-	 * @param string s - строка, которую нужно разбить
-	 * @param integer limit - ограничение 
-	 * @return Vector<string>
-	 */
-	explode: function(ctx, delimiter, s, limit)
-	{
-		if (limit == undefined) limit = -1;
-		var _rtl = use("Runtime.rtl");
-		var _Collection = use("Runtime.Collection");
-		
-		var arr = null;
-		if (!_rtl.exists(limit))
-			arr = s.split(delimiter);
-		arr = s.split(delimiter, limit);
-		return _Collection.from(arr);
-	},
-	/**
-	 * Разбивает строку на подстроки
-	 * @param string ch - разделитель
-	 * @param string s - строка, которую нужно разбить
-	 * @param integer limit - ограничение 
-	 * @return Vector<string>
-	 */
-	implode: function(ctx, ch, arr)
-	{
-		return arr.join(ctx, ch);
 	},
 	/**
 	 * Ищет позицию первого вхождения подстроки search в строке s.
@@ -559,6 +435,140 @@ Object.assign(Runtime.rs,
 		}
 		return s;
 	},
+	/**
+	 * Strip tags
+	 */
+	strip_tags: function(ctx, content, allowed_tags)
+	{
+		if (allowed_tags == undefined) allowed_tags = null;
+		if (allowed_tags == null)
+		{
+			var __v0 = use("Runtime.re");
+			return __v0.replace(ctx, "<[^>]+>", "", content);
+		}
+		var __v0 = use("Runtime.re");
+		var matches = __v0.matchAll(ctx, "<[^>]+>", content, "i");
+		for (var i = 0;i < matches.count(ctx);i++)
+		{
+			var match = Runtime.rtl.get(ctx, matches, i);
+			var tag_str = Runtime.rtl.get(ctx, match, 0);
+			var __v1 = use("Runtime.re");
+			var tag_match = __v1.matchAll(ctx, "<(\\/|)([a-zA-Z]+)(|[^>]*)>", tag_str, "i");
+			if (tag_match)
+			{
+				var tag_name = this.strtolower(ctx, Runtime.rtl.get(ctx, Runtime.rtl.get(ctx, tag_match, 0), 2));
+				if (allowed_tags.indexOf(ctx, tag_name) == -1)
+				{
+					content = this.replace(ctx, tag_str, "", content);
+				}
+			}
+		}
+		return content;
+	},
+	/* =================== Deprecated =================== */
+	/**
+	 * Разбивает строку на подстроки
+	 * @param string delimiter - разделитель
+	 * @param string s - строка, которую нужно разбить
+	 * @param integer limit - ограничение 
+	 * @return Vector<string>
+	 */
+	explode: function(ctx, delimiter, s, limit)
+	{
+		if (limit == undefined) limit = -1;
+		var _rtl = use("Runtime.rtl");
+		var _Collection = use("Runtime.Collection");
+		
+		var arr = null;
+		if (!_rtl.exists(limit))
+			arr = s.split(delimiter);
+		arr = s.split(delimiter, limit);
+		return _Collection.from(arr);
+	},
+	/**
+	 * Разбивает строку на подстроки
+	 * @param string ch - разделитель
+	 * @param string s - строка, которую нужно разбить
+	 * @param integer limit - ограничение 
+	 * @return Vector<string>
+	 */
+	implode: function(ctx, ch, arr)
+	{
+		return arr.join(ctx, ch);
+	},
+	/**
+	 * Returns relative path of the filepath
+	 * @param string filepath
+	 * @param string basepath
+	 * @param string ch - Directory separator
+	 * @return string relative path
+	 */
+	relativePath: function(ctx, filepath, basepath, ch)
+	{
+		if (ch == undefined) ch = "/";
+		var __v0 = use("Runtime.rs");
+		var source = __v0.explode(ctx, ch, filepath);
+		var __v1 = use("Runtime.rs");
+		var base = __v1.explode(ctx, ch, basepath);
+		source = source.filter(ctx, (ctx, s) => 
+		{
+			return s != "";
+		});
+		base = base.filter(ctx, (ctx, s) => 
+		{
+			return s != "";
+		});
+		var i = 0;
+		while (source.count(ctx) > 0 && base.count(ctx) > 0 && source.item(ctx, 0) == base.item(ctx, 0))
+		{
+			source.shift(ctx);
+			base.shift(ctx);
+		}
+		base.each(ctx, (ctx, s) => 
+		{
+			source.unshift(ctx, "..");
+		});
+		var __v2 = use("Runtime.rs");
+		return __v2.implode(ctx, ch, source);
+	},
+	/**
+	 * Return normalize path
+	 * @param string filepath - File path
+	 * @return string
+	 */
+	normalize: function(ctx, filepath)
+	{
+		return filepath;
+	},
+	/**
+	 * json encode scalar values
+	 * @param {mixed} obj - объект
+	 * @param {int} flags - Флаги
+	 * @return {string} json строка
+	 */
+	json_encode_primitive: function(ctx, s, flags)
+	{
+		if (flags & 128 == 128) 
+			return JSON.stringify(obj, null, 2);
+		return JSON.stringify(obj);
+	},
+	/**
+	 * Search 'search' in s.
+	 */
+	search: function(ctx, s, search, offset)
+	{
+		if (offset == undefined) offset = 0;
+		var _rtl = use("Runtime.rtl");
+		var res = _rtl.toStr(s).indexOf(search);
+		return res;
+	},
+	/**
+	 * Is start
+	 */
+	start: function(ctx, s, search)
+	{
+		return this.search(ctx, s, search) == 0;
+	},
 	/* ======================= Class Init Functions ======================= */
 	getNamespace: function()
 	{
@@ -581,7 +591,7 @@ Object.assign(Runtime.rs,
 			]),
 		});
 	},
-	getFieldsList: function(ctx, f)
+	getFieldsList: function(ctx)
 	{
 		var a = [];
 		if (f==undefined) f=0;
@@ -593,14 +603,10 @@ Object.assign(Runtime.rs,
 		var Dict = use("Runtime.Dict");
 		return null;
 	},
-	getMethodsList: function(ctx,f)
+	getMethodsList: function(ctx)
 	{
-		if (f==undefined) f=0;
-		var a = [];
-		if ((f&4)==4) a=[
+		var a=[
 			"strlen",
-			"search",
-			"start",
 			"substr",
 			"charAt",
 			"chr",
@@ -613,9 +619,6 @@ Object.assign(Runtime.rs,
 			"splitArr",
 			"join",
 			"trim",
-			"json_encode_primitive",
-			"json_encode",
-			"json_decode",
 			"htmlEscape",
 			"escapeHtml",
 			"pathinfo",
@@ -623,12 +626,8 @@ Object.assign(Runtime.rs,
 			"basename",
 			"extname",
 			"dirname",
-			"relativePath",
-			"normalize",
 			"nl2br",
 			"spaceless",
-			"explode",
-			"implode",
 			"indexOf",
 			"strpos",
 			"url_encode",
@@ -637,6 +636,14 @@ Object.assign(Runtime.rs,
 			"base64_encode_url",
 			"base64_decode_url",
 			"url_get_add",
+			"strip_tags",
+			"explode",
+			"implode",
+			"relativePath",
+			"normalize",
+			"json_encode_primitive",
+			"search",
+			"start",
 		];
 		return use("Runtime.Collection").from(a);
 	},

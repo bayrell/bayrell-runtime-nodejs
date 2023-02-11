@@ -82,16 +82,13 @@ Object.assign(Runtime.Date,
 			]),
 		});
 	},
-	getFieldsList: function(ctx, f)
+	getFieldsList: function(ctx)
 	{
 		var a = [];
 		if (f==undefined) f=0;
-		if ((f&3)==3)
-		{
-			a.push("y");
-			a.push("m");
-			a.push("d");
-		}
+		a.push("y");
+		a.push("m");
+		a.push("d");
 		return use("Runtime.Collection").from(a);
 	},
 	getFieldInfoByName: function(ctx,field_name)
@@ -115,11 +112,9 @@ Object.assign(Runtime.Date,
 		});
 		return null;
 	},
-	getMethodsList: function(ctx,f)
+	getMethodsList: function(ctx)
 	{
-		if (f==undefined) f=0;
-		var a = [];
-		if ((f&4)==4) a=[
+		var a=[
 			"getDate",
 			"normalize",
 		];

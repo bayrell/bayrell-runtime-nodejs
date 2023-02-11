@@ -44,6 +44,10 @@ Object.assign(Runtime.Hooks.RuntimeHook.prototype,
 		{
 			return "launched";
 		}
+		if (hook_name == this.constructor.RUN)
+		{
+			return "run";
+		}
 		if (hook_name == this.constructor.ENV)
 		{
 			return "env";
@@ -58,9 +62,23 @@ Object.assign(Runtime.Hooks.RuntimeHook.prototype,
 		return Promise.resolve(d);
 	},
 	/**
-	 * Init context
+	 * Start context
 	 */
 	start: async function(ctx, d)
+	{
+		return Promise.resolve(d);
+	},
+	/**
+	 * Launched context
+	 */
+	launched: async function(ctx, d)
+	{
+		return Promise.resolve(d);
+	},
+	/**
+	 * Run entry point
+	 */
+	run: async function(ctx, d)
 	{
 		return Promise.resolve(d);
 	},
@@ -78,6 +96,7 @@ Object.assign(Runtime.Hooks.RuntimeHook,
 	INIT: "runtime::init",
 	START: "runtime::start",
 	LAUNCHED: "runtime::launched",
+	RUN: "runtime::run",
 	ENV: "runtime::env",
 	/* ======================= Class Init Functions ======================= */
 	getNamespace: function()
@@ -101,7 +120,7 @@ Object.assign(Runtime.Hooks.RuntimeHook,
 			]),
 		});
 	},
-	getFieldsList: function(ctx, f)
+	getFieldsList: function(ctx)
 	{
 		var a = [];
 		if (f==undefined) f=0;
@@ -111,36 +130,16 @@ Object.assign(Runtime.Hooks.RuntimeHook,
 	{
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
-		if (field_name == "INIT") return Dict.from({
-			"t": "string",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "START") return Dict.from({
-			"t": "string",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "LAUNCHED") return Dict.from({
-			"t": "string",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "ENV") return Dict.from({
-			"t": "string",
-			"annotations": Collection.from([
-			]),
-		});
 		return null;
 	},
-	getMethodsList: function(ctx,f)
+	getMethodsList: function(ctx)
 	{
-		if (f==undefined) f=0;
-		var a = [];
-		if ((f&4)==4) a=[
+		var a=[
 			"getMethodName",
 			"init",
 			"start",
+			"launched",
+			"run",
 			"env",
 		];
 		return use("Runtime.Collection").from(a);

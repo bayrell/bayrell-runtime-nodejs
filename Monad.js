@@ -227,15 +227,12 @@ Object.assign(Runtime.Monad,
 			]),
 		});
 	},
-	getFieldsList: function(ctx, f)
+	getFieldsList: function(ctx)
 	{
 		var a = [];
 		if (f==undefined) f=0;
-		if ((f&2)==2)
-		{
-			a.push("val");
-			a.push("err");
-		}
+		a.push("val");
+		a.push("err");
 		return use("Runtime.Collection").from(a);
 	},
 	getFieldInfoByName: function(ctx,field_name)
@@ -254,11 +251,9 @@ Object.assign(Runtime.Monad,
 		});
 		return null;
 	},
-	getMethodsList: function(ctx,f)
+	getMethodsList: function(ctx)
 	{
-		if (f==undefined) f=0;
-		var a = [];
-		if ((f&4)==4) a=[
+		var a=[
 			"constructor",
 			"attr",
 			"call",

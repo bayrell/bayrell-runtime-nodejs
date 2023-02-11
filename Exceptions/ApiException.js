@@ -63,14 +63,11 @@ Object.assign(Runtime.Exceptions.ApiException,
 			]),
 		});
 	},
-	getFieldsList: function(ctx, f)
+	getFieldsList: function(ctx)
 	{
 		var a = [];
 		if (f==undefined) f=0;
-		if ((f&2)==2)
-		{
-			a.push("response");
-		}
+		a.push("response");
 		return use("Runtime.Collection").from(a);
 	},
 	getFieldInfoByName: function(ctx,field_name)
@@ -84,11 +81,9 @@ Object.assign(Runtime.Exceptions.ApiException,
 		});
 		return null;
 	},
-	getMethodsList: function(ctx,f)
+	getMethodsList: function(ctx)
 	{
-		if (f==undefined) f=0;
-		var a = [];
-		if ((f&4)==4) a=[
+		var a=[
 			"constructor",
 		];
 		return use("Runtime.Collection").from(a);

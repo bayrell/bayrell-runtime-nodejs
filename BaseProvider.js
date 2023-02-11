@@ -70,14 +70,11 @@ Object.assign(Runtime.BaseProvider,
 			]),
 		});
 	},
-	getFieldsList: function(ctx, f)
+	getFieldsList: function(ctx)
 	{
 		var a = [];
 		if (f==undefined) f=0;
-		if ((f&2)==2)
-		{
-			a.push("started");
-		}
+		a.push("started");
 		return use("Runtime.Collection").from(a);
 	},
 	getFieldInfoByName: function(ctx,field_name)
@@ -91,11 +88,9 @@ Object.assign(Runtime.BaseProvider,
 		});
 		return null;
 	},
-	getMethodsList: function(ctx,f)
+	getMethodsList: function(ctx)
 	{
-		if (f==undefined) f=0;
-		var a = [];
-		if ((f&4)==4) a=[
+		var a=[
 			"init",
 			"start",
 		];

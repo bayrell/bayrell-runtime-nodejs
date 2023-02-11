@@ -265,21 +265,18 @@ Object.assign(Runtime.DateTime,
 			]),
 		});
 	},
-	getFieldsList: function(ctx, f)
+	getFieldsList: function(ctx)
 	{
 		var a = [];
 		if (f==undefined) f=0;
-		if ((f&3)==3)
-		{
-			a.push("y");
-			a.push("m");
-			a.push("d");
-			a.push("h");
-			a.push("i");
-			a.push("s");
-			a.push("ms");
-			a.push("tz");
-		}
+		a.push("y");
+		a.push("m");
+		a.push("d");
+		a.push("h");
+		a.push("i");
+		a.push("s");
+		a.push("ms");
+		a.push("tz");
 		return use("Runtime.Collection").from(a);
 	},
 	getFieldInfoByName: function(ctx,field_name)
@@ -328,11 +325,9 @@ Object.assign(Runtime.DateTime,
 		});
 		return null;
 	},
-	getMethodsList: function(ctx,f)
+	getMethodsList: function(ctx)
 	{
-		if (f==undefined) f=0;
-		var a = [];
-		if ((f&4)==4) a=[
+		var a=[
 			"create",
 			"now",
 			"shiftTime",

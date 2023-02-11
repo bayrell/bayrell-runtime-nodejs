@@ -156,15 +156,12 @@ Object.assign(Runtime.Providers.HookProvider,
 			]),
 		});
 	},
-	getFieldsList: function(ctx, f)
+	getFieldsList: function(ctx)
 	{
 		var a = [];
 		if (f==undefined) f=0;
-		if ((f&2)==2)
-		{
-			a.push("base_hooks");
-			a.push("hooks");
-		}
+		a.push("base_hooks");
+		a.push("hooks");
 		return use("Runtime.Collection").from(a);
 	},
 	getFieldInfoByName: function(ctx,field_name)
@@ -185,11 +182,9 @@ Object.assign(Runtime.Providers.HookProvider,
 		});
 		return null;
 	},
-	getMethodsList: function(ctx,f)
+	getMethodsList: function(ctx)
 	{
-		if (f==undefined) f=0;
-		var a = [];
-		if ((f&4)==4) a=[
+		var a=[
 			"init",
 			"start",
 			"register",

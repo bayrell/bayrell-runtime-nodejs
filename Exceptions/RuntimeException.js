@@ -64,7 +64,7 @@ Object.assign(Runtime.Exceptions.RuntimeException.prototype,
 	},
 	getErrorMessage: function(ctx)
 	{
-		return this.error_message;
+		return this.error_str;
 	},
 	getErrorString: function(ctx)
 	{
@@ -112,8 +112,8 @@ Object.assign(Runtime.Exceptions.RuntimeException.prototype,
 		this.error_str = "";
 		this.error_code = 0;
 		this.error_file = "";
-		this.error_line = -1;
-		this.error_pos = -1;
+		this.error_line = "";
+		this.error_pos = "";
 	},
 });
 Object.assign(Runtime.Exceptions.RuntimeException, use("Runtime.Exceptions.ClassException"));
@@ -141,31 +141,22 @@ Object.assign(Runtime.Exceptions.RuntimeException,
 			]),
 		});
 	},
-	getFieldsList: function(ctx, f)
+	getFieldsList: function(ctx)
 	{
 		var a = [];
 		if (f==undefined) f=0;
-		if ((f&2)==2)
-		{
-			a.push("prev");
-			a.push("error_message");
-			a.push("error_str");
-			a.push("error_code");
-			a.push("error_file");
-			a.push("error_line");
-			a.push("error_pos");
-		}
+		a.push("error_message");
+		a.push("error_str");
+		a.push("error_code");
+		a.push("error_file");
+		a.push("error_line");
+		a.push("error_pos");
 		return use("Runtime.Collection").from(a);
 	},
 	getFieldInfoByName: function(ctx,field_name)
 	{
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
-		if (field_name == "prev") return Dict.from({
-			"t": "Object",
-			"annotations": Collection.from([
-			]),
-		});
 		if (field_name == "error_message") return Dict.from({
 			"t": "string",
 			"annotations": Collection.from([
@@ -187,22 +178,20 @@ Object.assign(Runtime.Exceptions.RuntimeException,
 			]),
 		});
 		if (field_name == "error_line") return Dict.from({
-			"t": "int",
+			"t": "string",
 			"annotations": Collection.from([
 			]),
 		});
 		if (field_name == "error_pos") return Dict.from({
-			"t": "int",
+			"t": "string",
 			"annotations": Collection.from([
 			]),
 		});
 		return null;
 	},
-	getMethodsList: function(ctx,f)
+	getMethodsList: function(ctx)
 	{
-		if (f==undefined) f=0;
-		var a = [];
-		if ((f&4)==4) a=[
+		var a=[
 			"constructor",
 			"getPreviousException",
 			"getErrorMessage",

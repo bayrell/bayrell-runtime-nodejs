@@ -47,6 +47,14 @@ Object.assign(Runtime.BaseHook.prototype,
 		this.hook.register(ctx, hook_name, this, method_name, priority);
 	},
 	/**
+	 * Register hook
+	 */
+	registerMethod: function(ctx, hook_name, method_name, priority)
+	{
+		if (priority == undefined) priority = 0;
+		this.hook.register(ctx, hook_name, this, method_name, priority);
+	},
+	/**
 	 * Register hooks
 	 */
 	register_hooks: function(ctx)
@@ -83,14 +91,11 @@ Object.assign(Runtime.BaseHook,
 			]),
 		});
 	},
-	getFieldsList: function(ctx, f)
+	getFieldsList: function(ctx)
 	{
 		var a = [];
 		if (f==undefined) f=0;
-		if ((f&2)==2)
-		{
-			a.push("hook");
-		}
+		a.push("hook");
 		return use("Runtime.Collection").from(a);
 	},
 	getFieldInfoByName: function(ctx,field_name)
@@ -104,13 +109,12 @@ Object.assign(Runtime.BaseHook,
 		});
 		return null;
 	},
-	getMethodsList: function(ctx,f)
+	getMethodsList: function(ctx)
 	{
-		if (f==undefined) f=0;
-		var a = [];
-		if ((f&4)==4) a=[
+		var a=[
 			"getMethodName",
 			"register",
+			"registerMethod",
 			"register_hooks",
 		];
 		return use("Runtime.Collection").from(a);

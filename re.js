@@ -32,9 +32,11 @@ Object.assign(Runtime.re,
 	 * @param string s string
 	 * @return bool
 	 */
-	match: function(ctx, r, s)
+	match: function(ctx, r, s, pattern)
 	{
-		return s.match( new RegExp(r, "g") ) != null;
+		if (pattern == undefined) pattern = "";
+		pattern = "g" + pattern;
+		return s.match( new RegExp(r, pattern) ) != null;
 	},
 	/**
 	 * Search regular expression
@@ -42,9 +44,12 @@ Object.assign(Runtime.re,
 	 * @param string s string
 	 * @return Vector result
 	 */
-	matchAll: function(ctx, r, s)
+	matchAll: function(ctx, r, s, pattern)
 	{
-		var arr = [...s.matchAll( new RegExp(r, "g") )];
+		if (pattern == undefined) pattern = "";
+		pattern = "g" + pattern;
+		
+		var arr = [...s.matchAll( new RegExp(r, pattern) )];
 		if (arr.length == 0) return null;
 		return Runtime.Collection.from( arr.map( (v) => Runtime.Collection.from(v) ) );
 		return null;
@@ -56,9 +61,11 @@ Object.assign(Runtime.re,
 	 * @param string s - replaceable string
 	 * @return string
 	 */
-	replace: function(ctx, r, replace, s)
+	replace: function(ctx, r, replace, s, pattern)
 	{
-		return s.replace(new RegExp(r, "g"), replace);
+		if (pattern == undefined) pattern = "";
+		pattern = "g" + pattern;
+		return s.replace(new RegExp(r, pattern), replace);
 	},
 	/* ======================= Class Init Functions ======================= */
 	getNamespace: function()
@@ -82,7 +89,7 @@ Object.assign(Runtime.re,
 			]),
 		});
 	},
-	getFieldsList: function(ctx, f)
+	getFieldsList: function(ctx)
 	{
 		var a = [];
 		if (f==undefined) f=0;
@@ -94,11 +101,9 @@ Object.assign(Runtime.re,
 		var Dict = use("Runtime.Dict");
 		return null;
 	},
-	getMethodsList: function(ctx,f)
+	getMethodsList: function(ctx)
 	{
-		if (f==undefined) f=0;
-		var a = [];
-		if ((f&4)==4) a=[
+		var a=[
 			"match",
 			"matchAll",
 			"replace",

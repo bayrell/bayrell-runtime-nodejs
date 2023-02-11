@@ -195,6 +195,9 @@ Object.assign(Runtime.Context.prototype,
 		var __v0 = use("Runtime.rtl");
 		if (__v0.method_exists(ctx, this.app, "main"))
 		{
+			/* Hook launched app */
+			var __v1 = use("Runtime.Hooks.RuntimeHook");
+			await this.callAsyncHook(ctx, __v1.RUN, use("Runtime.Dict").from({}));
 			code = await this.app.main(ctx);
 		}
 		return Promise.resolve(code);
@@ -237,6 +240,15 @@ Object.assign(Runtime.Context.prototype,
 	translate: function(ctx, module, s, params)
 	{
 		if (params == undefined) params = null;
+		if (params == null)
+		{
+			return s;
+		}
+		params.each(ctx, (ctx, value, key) => 
+		{
+			var __v0 = use("Runtime.rs");
+			s = __v0.replace(ctx, "%" + use("Runtime.rtl").toStr(key) + use("Runtime.rtl").toStr("%"), value, s);
+		});
 		return s;
 	},
 	_init: function(ctx)
@@ -250,7 +262,6 @@ Object.assign(Runtime.Context.prototype,
 		this.modules = use("Runtime.Collection").from([]);
 		this.providers = use("Runtime.Dict").from({});
 		this.entities = use("Runtime.Collection").from([]);
-		this.settings = use("Runtime.Dict").from({});
 		this.start_time = 0;
 		this.tz = "UTC";
 		this.initialized = false;
@@ -266,7 +277,6 @@ Object.assign(Runtime.Context.prototype,
 		else if (k == "modules")return this.modules;
 		else if (k == "providers")return this.providers;
 		else if (k == "entities")return this.entities;
-		else if (k == "settings")return this.settings;
 		else if (k == "start_time")return this.start_time;
 		else if (k == "tz")return this.tz;
 		else if (k == "initialized")return this.initialized;
@@ -337,6 +347,26 @@ Object.assign(Runtime.Context,
 				d = Runtime.rtl.setAttr(ctx, d, Runtime.Collection.from(["modules"]), __v1.from(modules));
 			}
 		}
+		/* Setup default environments */
+		if (!d.has(ctx, "environments"))
+		{
+			var __v0 = use("Runtime.Dict");
+			d = Runtime.rtl.setAttr(ctx, d, Runtime.Collection.from(["environments"]), new __v0(ctx));
+		}
+		var env = Runtime.rtl.get(ctx, d, "environments");
+		if (!env.has(ctx, "DEBUG"))
+		{
+			env = Runtime.rtl.setAttr(ctx, env, Runtime.Collection.from(["DEBUG"]), false);
+		}
+		if (!env.has(ctx, "LOCALE"))
+		{
+			env = Runtime.rtl.setAttr(ctx, env, Runtime.Collection.from(["LOCALE"]), "en_US");
+		}
+		if (!env.has(ctx, "LOCALE_CODE"))
+		{
+			env = Runtime.rtl.setAttr(ctx, env, Runtime.Collection.from(["LOCALE_CODE"]), "en");
+		}
+		d = Runtime.rtl.setAttr(ctx, d, Runtime.Collection.from(["environments"]), env);
 		var __v0 = use("Runtime.rtl");
 		var instance = __v0.newInstance(ctx, this.getClassName(ctx), use("Runtime.Collection").from([d]));
 		return instance;
@@ -412,25 +442,21 @@ Object.assign(Runtime.Context,
 			]),
 		});
 	},
-	getFieldsList: function(ctx, f)
+	getFieldsList: function(ctx)
 	{
 		var a = [];
 		if (f==undefined) f=0;
-		if ((f&3)==3)
-		{
-			a.push("app");
-			a.push("base_path");
-			a.push("entry_point");
-			a.push("cli_args");
-			a.push("environments");
-			a.push("modules");
-			a.push("providers");
-			a.push("entities");
-			a.push("settings");
-			a.push("start_time");
-			a.push("tz");
-			a.push("initialized");
-		}
+		a.push("app");
+		a.push("base_path");
+		a.push("entry_point");
+		a.push("cli_args");
+		a.push("environments");
+		a.push("modules");
+		a.push("providers");
+		a.push("entities");
+		a.push("start_time");
+		a.push("tz");
+		a.push("initialized");
 		return use("Runtime.Collection").from(a);
 	},
 	getFieldInfoByName: function(ctx,field_name)
@@ -482,12 +508,6 @@ Object.assign(Runtime.Context,
 			"annotations": Collection.from([
 			]),
 		});
-		if (field_name == "settings") return Dict.from({
-			"t": "Runtime.Dict",
-			"s": ["var"],
-			"annotations": Collection.from([
-			]),
-		});
 		if (field_name == "start_time") return Dict.from({
 			"t": "int",
 			"annotations": Collection.from([
@@ -505,11 +525,9 @@ Object.assign(Runtime.Context,
 		});
 		return null;
 	},
-	getMethodsList: function(ctx,f)
+	getMethodsList: function(ctx)
 	{
-		if (f==undefined) f=0;
-		var a = [];
-		if ((f&4)==4) a=[
+		var a=[
 			"getEntitiesFromModules",
 			"addProvider",
 			"provider",

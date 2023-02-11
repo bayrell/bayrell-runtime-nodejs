@@ -74,6 +74,7 @@ Object.assign(Runtime.rtl,
 	ERROR_HTTP_PROCESSING: -102,
 	ERROR_HTTP_OK: -200,
 	ERROR_HTTP_BAD_GATEWAY: -502,
+	ERROR_USER: -10000,
 	_memorize_cache: null,
 	_memorize_not_found: null,
 	_memorize_hkey: null,
@@ -180,8 +181,8 @@ Object.assign(Runtime.rtl,
 	{
 		if (args == undefined) args = null;
 		var obj = this.find_class(class_name);
-		if (!this.exists(ctx, obj)) return null;
-		if (!(obj instanceof Function)) return null;
+		if (!this.exists(ctx, obj) || !(obj instanceof Function))
+			throw new Runtime.Exceptions.FileNotFound(class_name, "class name");
 		if (args == undefined || args == null){ args = []; } else { args = args.toArray(); }
 		args = args.slice(); 
 		if (typeof ctx != "undefined") args.unshift(ctx);
@@ -330,6 +331,7 @@ Object.assign(Runtime.rtl,
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
 		var BaseStruct = use("Runtime.BaseStruct");
+		var BaseObject = use("Runtime.BaseObject");
 		
 		if (def_val == undefined) def_val = null;
 		if (item === null) return def_val;
@@ -356,13 +358,19 @@ Object.assign(Runtime.rtl,
 			val = this.attr(ctx, new_item, path, def_val);
 			return val;
 		}
+		else if (item instanceof BaseObject)
+		{
+			item = item.takeValue(ctx, key, def_val);
+			val = this.attr(ctx, new_item, path, def_val);
+			return val;
+		}
 		else
 		{
 			var new_item = item[key] || def_val;
 			val = this.attr(ctx, new_item, path, def_val);
 			return val;
 		}
-		return val;
+		return def_val;
 	},
 	/**
 	 * Update current item
@@ -435,7 +443,7 @@ Object.assign(Runtime.rtl,
 	to: function(v, o)
 	{
 		var ctx = null;
-		var e = o.e;
+		var e = "";
 		if (e == "mixed" || e == "primitive" || e == "var" || e == "fn" || e == "callback")
 		{
 			return v;
@@ -1018,9 +1026,16 @@ Object.assign(Runtime.rtl,
 	 * Run application
 	 * @param Dict d
 	 */
-	runApp: async function(module_name, class_name)
+	runApp: async function(module_name, class_name, d)
 	{
-		var d = use("Runtime.Dict").from({"entry_point":class_name,"modules":use("Runtime.Collection").from([module_name])});
+		if (d == undefined) d = null;
+		if (d == null)
+		{
+			d = use("Runtime.Dict").from({});
+		}
+		let ctx = null;
+		d = Runtime.rtl.setAttr(ctx, d, Runtime.Collection.from(["entry_point"]), class_name);
+		d = Runtime.rtl.setAttr(ctx, d, Runtime.Collection.from(["modules"]), use("Runtime.Collection").from([module_name]));
 		let code = 0;
 		
 		try
@@ -1594,7 +1609,7 @@ Object.assign(Runtime.rtl,
 			]),
 		});
 	},
-	getFieldsList: function(ctx, f)
+	getFieldsList: function(ctx)
 	{
 		var a = [];
 		if (f==undefined) f=0;
@@ -1604,248 +1619,11 @@ Object.assign(Runtime.rtl,
 	{
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
-		if (field_name == "LOG_FATAL") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "LOG_CRITICAL") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "LOG_ERROR") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "LOG_WARNING") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "LOG_INFO") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "LOG_DEBUG") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "LOG_DEBUG2") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "STATUS_PLAN") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "STATUS_DONE") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "STATUS_PROCESS") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "STATUS_FAIL") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "ERROR_NULL") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "ERROR_OK") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "ERROR_PROCCESS") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "ERROR_FALSE") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "ERROR_UNKNOWN") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "ERROR_INDEX_OUT_OF_RANGE") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "ERROR_KEY_NOT_FOUND") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "ERROR_STOP_ITERATION") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "ERROR_FILE_NOT_FOUND") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "ERROR_ITEM_NOT_FOUND") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "ERROR_OBJECT_DOES_NOT_EXISTS") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "ERROR_OBJECT_ALLREADY_EXISTS") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "ERROR_ASSERT") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "ERROR_REQUEST") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "ERROR_RESPONSE") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "ERROR_CSRF_TOKEN") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "ERROR_RUNTIME") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "ERROR_VALIDATION") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "ERROR_PARSE_SERIALIZATION_ERROR") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "ERROR_ASSIGN_DATA_STRUCT_VALUE") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "ERROR_AUTH") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "ERROR_DUPLICATE") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "ERROR_API_NOT_FOUND") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "ERROR_API_WRONG_FORMAT") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "ERROR_API_WRONG_APP_NAME") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "ERROR_FATAL") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "ERROR_HTTP_CONTINUE") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "ERROR_HTTP_SWITCH") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "ERROR_HTTP_PROCESSING") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "ERROR_HTTP_OK") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "ERROR_HTTP_BAD_GATEWAY") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "_memorize_cache") return Dict.from({
-			"t": "var",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "_memorize_not_found") return Dict.from({
-			"t": "var",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "_memorize_hkey") return Dict.from({
-			"t": "var",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "_global_context") return Dict.from({
-			"t": "var",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "JSON_PRETTY") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
 		return null;
 	},
-	getMethodsList: function(ctx,f)
+	getMethodsList: function(ctx)
 	{
-		if (f==undefined) f=0;
-		var a = [];
-		if ((f&4)==4) a=[
+		var a=[
 			"defClass",
 			"find_class",
 			"is_instanceof",

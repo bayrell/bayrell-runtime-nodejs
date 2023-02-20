@@ -78,7 +78,6 @@ Object.assign(Runtime.Reference,
 	getFieldsList: function(ctx)
 	{
 		var a = [];
-		if (f==undefined) f=0;
 		a.push("uq");
 		a.push("ref");
 		return use("Runtime.Collection").from(a);

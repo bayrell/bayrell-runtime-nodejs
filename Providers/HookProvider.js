@@ -159,7 +159,6 @@ Object.assign(Runtime.Providers.HookProvider,
 	getFieldsList: function(ctx)
 	{
 		var a = [];
-		if (f==undefined) f=0;
 		a.push("base_hooks");
 		a.push("hooks");
 		return use("Runtime.Collection").from(a);

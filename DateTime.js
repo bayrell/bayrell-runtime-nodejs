@@ -268,7 +268,6 @@ Object.assign(Runtime.DateTime,
 	getFieldsList: function(ctx)
 	{
 		var a = [];
-		if (f==undefined) f=0;
 		a.push("y");
 		a.push("m");
 		a.push("d");

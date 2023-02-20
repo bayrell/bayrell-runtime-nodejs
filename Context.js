@@ -445,7 +445,6 @@ Object.assign(Runtime.Context,
 	getFieldsList: function(ctx)
 	{
 		var a = [];
-		if (f==undefined) f=0;
 		a.push("app");
 		a.push("base_path");
 		a.push("entry_point");

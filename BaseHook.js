@@ -94,7 +94,6 @@ Object.assign(Runtime.BaseHook,
 	getFieldsList: function(ctx)
 	{
 		var a = [];
-		if (f==undefined) f=0;
 		a.push("hook");
 		return use("Runtime.Collection").from(a);
 	},

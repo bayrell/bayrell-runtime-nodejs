@@ -68,7 +68,6 @@ Object.assign(Runtime.Entity,
 	getFieldsList: function(ctx)
 	{
 		var a = [];
-		if (f==undefined) f=0;
 		a.push("name");
 		a.push("params");
 		return use("Runtime.Collection").from(a);

@@ -73,7 +73,6 @@ Object.assign(Runtime.BaseProvider,
 	getFieldsList: function(ctx)
 	{
 		var a = [];
-		if (f==undefined) f=0;
 		a.push("started");
 		return use("Runtime.Collection").from(a);
 	},

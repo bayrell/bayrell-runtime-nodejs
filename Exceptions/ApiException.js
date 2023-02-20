@@ -66,7 +66,6 @@ Object.assign(Runtime.Exceptions.ApiException,
 	getFieldsList: function(ctx)
 	{
 		var a = [];
-		if (f==undefined) f=0;
 		a.push("response");
 		return use("Runtime.Collection").from(a);
 	},

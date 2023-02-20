@@ -40,7 +40,7 @@ Object.assign(Runtime.ModuleDescription,
 	 */
 	getModuleVersion: function(ctx)
 	{
-		return "0.11.4";
+		return "0.11.5-1";
 	},
 	/**
 	 * Returns required modules
@@ -86,7 +86,6 @@ Object.assign(Runtime.ModuleDescription,
 	getFieldsList: function(ctx)
 	{
 		var a = [];
-		if (f==undefined) f=0;
 		return use("Runtime.Collection").from(a);
 	},
 	getFieldInfoByName: function(ctx,field_name)

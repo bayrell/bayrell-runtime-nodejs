@@ -230,7 +230,6 @@ Object.assign(Runtime.Monad,
 	getFieldsList: function(ctx)
 	{
 		var a = [];
-		if (f==undefined) f=0;
 		a.push("val");
 		a.push("err");
 		return use("Runtime.Collection").from(a);

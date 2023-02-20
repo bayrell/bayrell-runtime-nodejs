@@ -52,7 +52,6 @@ Runtime.Exceptions.RuntimeException = function(ctx, message, code, prev)
 	this.error_str = message;
 	this.error_code = code;
 	this.prev = prev;
-	this.updateError(ctx);
 };
 Runtime.Exceptions.RuntimeException.prototype = Object.create(use("Runtime.Exceptions.ClassException").prototype);
 Runtime.Exceptions.RuntimeException.prototype.constructor = Runtime.Exceptions.RuntimeException;
@@ -64,11 +63,7 @@ Object.assign(Runtime.Exceptions.RuntimeException.prototype,
 	},
 	getErrorMessage: function(ctx)
 	{
-		return this.error_str;
-	},
-	getErrorString: function(ctx)
-	{
-		return this.error_str;
+		return this.buildMessage(ctx);
 	},
 	getErrorCode: function(ctx)
 	{
@@ -94,10 +89,6 @@ Object.assign(Runtime.Exceptions.RuntimeException.prototype,
 	{
 		return this.error_str;
 	},
-	updateError: function(ctx)
-	{
-		this.error_message = this.buildMessage(ctx);
-	},
 	/**
 	 * Returns trace
 	 */
@@ -108,7 +99,6 @@ Object.assign(Runtime.Exceptions.RuntimeException.prototype,
 	{
 		use("Runtime.Exceptions.ClassException").prototype._init.call(this,ctx);
 		this.prev = null;
-		this.error_message = "";
 		this.error_str = "";
 		this.error_code = 0;
 		this.error_file = "";
@@ -144,8 +134,6 @@ Object.assign(Runtime.Exceptions.RuntimeException,
 	getFieldsList: function(ctx)
 	{
 		var a = [];
-		if (f==undefined) f=0;
-		a.push("error_message");
 		a.push("error_str");
 		a.push("error_code");
 		a.push("error_file");
@@ -157,11 +145,6 @@ Object.assign(Runtime.Exceptions.RuntimeException,
 	{
 		var Collection = use("Runtime.Collection");
 		var Dict = use("Runtime.Dict");
-		if (field_name == "error_message") return Dict.from({
-			"t": "string",
-			"annotations": Collection.from([
-			]),
-		});
 		if (field_name == "error_str") return Dict.from({
 			"t": "string",
 			"annotations": Collection.from([
@@ -195,14 +178,12 @@ Object.assign(Runtime.Exceptions.RuntimeException,
 			"constructor",
 			"getPreviousException",
 			"getErrorMessage",
-			"getErrorString",
 			"getErrorCode",
 			"getFileName",
 			"getErrorLine",
 			"getErrorPos",
 			"toString",
 			"buildMessage",
-			"updateError",
 			"getTraceStr",
 		];
 		return use("Runtime.Collection").from(a);

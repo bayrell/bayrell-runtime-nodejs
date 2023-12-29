@@ -56,36 +56,29 @@ Object.assign(Runtime.Exceptions.ApiException,
 	},
 	getClassInfo: function(ctx)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		return Dict.from({
-			"annotations": Collection.from([
+		var Vector = use("Runtime.Vector");
+		var Map = use("Runtime.Map");
+		return Map.from({
+			"annotations": Vector.from([
 			]),
 		});
 	},
 	getFieldsList: function(ctx)
 	{
 		var a = [];
-		a.push("response");
-		return use("Runtime.Collection").from(a);
+		return use("Runtime.Vector").from(a);
 	},
 	getFieldInfoByName: function(ctx,field_name)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		if (field_name == "response") return Dict.from({
-			"t": "var",
-			"annotations": Collection.from([
-			]),
-		});
+		var Vector = use("Runtime.Vector");
+		var Map = use("Runtime.Map");
 		return null;
 	},
 	getMethodsList: function(ctx)
 	{
 		var a=[
-			"constructor",
 		];
-		return use("Runtime.Collection").from(a);
+		return use("Runtime.Vector").from(a);
 	},
 	getMethodInfoByName: function(ctx,field_name)
 	{

@@ -130,7 +130,7 @@ Object.assign(Runtime.Vector.prototype,
 	 */
 	removeValues: function(ctx, values)
 	{
-		for (var i = 0;i < values.count(ctx);i++)
+		for (var i = 0; i < values.count(ctx); i++)
 		{
 			this.removeValue(ctx, values.item(ctx, i));
 		}
@@ -216,46 +216,29 @@ Object.assign(Runtime.Vector,
 	},
 	getClassInfo: function(ctx)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		return Dict.from({
-			"annotations": Collection.from([
+		var Vector = use("Runtime.Vector");
+		var Map = use("Runtime.Map");
+		return Map.from({
+			"annotations": Vector.from([
 			]),
 		});
 	},
 	getFieldsList: function(ctx)
 	{
 		var a = [];
-		return use("Runtime.Collection").from(a);
+		return use("Runtime.Vector").from(a);
 	},
 	getFieldInfoByName: function(ctx,field_name)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
+		var Vector = use("Runtime.Vector");
+		var Map = use("Runtime.Map");
 		return null;
 	},
 	getMethodsList: function(ctx)
 	{
 		var a=[
-			"Instance",
-			"vectorSlice",
-			"appendValue",
-			"pushValue",
-			"prependValue",
-			"unshiftValue",
-			"popValue",
-			"shiftValue",
-			"insertValue",
-			"removePosition",
-			"removeValue",
-			"removeValues",
-			"removeRangeValues",
-			"setValue",
-			"clear",
-			"appendVector",
-			"prependVector",
 		];
-		return use("Runtime.Collection").from(a);
+		return use("Runtime.Vector").from(a);
 	},
 	getMethodInfoByName: function(ctx,field_name)
 	{

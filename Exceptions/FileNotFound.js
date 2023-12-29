@@ -24,7 +24,7 @@ Runtime.Exceptions.FileNotFound = function(ctx, name, object, code, prev)
 	if (object == undefined) object = "File";
 	if (code == undefined) code = -5;
 	if (prev == undefined) prev = null;
-	use("Runtime.Exceptions.RuntimeException").call(this, ctx, ctx.constructor.translate(ctx, "Runtime", "%object% '%name%' not found", use("Runtime.Dict").from({"name":name,"object":object})), code, prev);
+	use("Runtime.Exceptions.RuntimeException").call(this, ctx, ctx.constructor.translate(ctx, "Runtime", "%object% '%name%' not found", use("Runtime.Map").from({"name":name,"object":object})), code, prev);
 };
 Runtime.Exceptions.FileNotFound.prototype = Object.create(use("Runtime.Exceptions.RuntimeException").prototype);
 Runtime.Exceptions.FileNotFound.prototype.constructor = Runtime.Exceptions.FileNotFound;
@@ -49,30 +49,29 @@ Object.assign(Runtime.Exceptions.FileNotFound,
 	},
 	getClassInfo: function(ctx)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		return Dict.from({
-			"annotations": Collection.from([
+		var Vector = use("Runtime.Vector");
+		var Map = use("Runtime.Map");
+		return Map.from({
+			"annotations": Vector.from([
 			]),
 		});
 	},
 	getFieldsList: function(ctx)
 	{
 		var a = [];
-		return use("Runtime.Collection").from(a);
+		return use("Runtime.Vector").from(a);
 	},
 	getFieldInfoByName: function(ctx,field_name)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
+		var Vector = use("Runtime.Vector");
+		var Map = use("Runtime.Map");
 		return null;
 	},
 	getMethodsList: function(ctx)
 	{
 		var a=[
-			"constructor",
 		];
-		return use("Runtime.Collection").from(a);
+		return use("Runtime.Vector").from(a);
 	},
 	getMethodInfoByName: function(ctx,field_name)
 	{

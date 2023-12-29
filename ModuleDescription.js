@@ -40,7 +40,7 @@ Object.assign(Runtime.ModuleDescription,
 	 */
 	getModuleVersion: function(ctx)
 	{
-		return "0.11.5-1";
+		return "0.11.8";
 	},
 	/**
 	 * Returns required modules
@@ -59,7 +59,7 @@ Object.assign(Runtime.ModuleDescription,
 		var __v1 = use("Runtime.Entity.Provider");
 		var __v2 = use("Runtime.Entity.Provider");
 		var __v3 = use("Runtime.Entity.Provider");
-		return use("Runtime.Collection").from([new __v0(ctx, "input", null),new __v1(ctx, "output", "Runtime.Providers.OutputProvider"),new __v2(ctx, "log", null),new __v3(ctx, "hook", "Runtime.Providers.HookProvider")]);
+		return use("Runtime.Vector").from([new __v0(ctx, "input", null),new __v1(ctx, "output", "Runtime.Providers.OutputProvider"),new __v2(ctx, "log", null),new __v3(ctx, "hook", "Runtime.Providers.HookProvider")]);
 	},
 	/* ======================= Class Init Functions ======================= */
 	getNamespace: function()
@@ -76,33 +76,29 @@ Object.assign(Runtime.ModuleDescription,
 	},
 	getClassInfo: function(ctx)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		return Dict.from({
-			"annotations": Collection.from([
+		var Vector = use("Runtime.Vector");
+		var Map = use("Runtime.Map");
+		return Map.from({
+			"annotations": Vector.from([
 			]),
 		});
 	},
 	getFieldsList: function(ctx)
 	{
 		var a = [];
-		return use("Runtime.Collection").from(a);
+		return use("Runtime.Vector").from(a);
 	},
 	getFieldInfoByName: function(ctx,field_name)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
+		var Vector = use("Runtime.Vector");
+		var Map = use("Runtime.Map");
 		return null;
 	},
 	getMethodsList: function(ctx)
 	{
 		var a=[
-			"getModuleName",
-			"getModuleVersion",
-			"requiredModules",
-			"entities",
 		];
-		return use("Runtime.Collection").from(a);
+		return use("Runtime.Vector").from(a);
 	},
 	getMethodInfoByName: function(ctx,field_name)
 	{

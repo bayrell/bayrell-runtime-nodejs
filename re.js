@@ -27,6 +27,31 @@ Object.assign(Runtime.re.prototype,
 Object.assign(Runtime.re,
 {
 	/**
+	 * Разбивает строку на подстроки
+	 * @param string delimiter - regular expression
+	 * @param string s - строка, которую нужно разбить
+	 * @param integer limit - ограничение
+	 * @return Collection<string>
+	 */
+	split: function(ctx, delimiter, s, limit)
+	{
+		if (limit == undefined) limit = -1;
+		var _rtl = use("Runtime.rtl");
+		var _Collection = use("Runtime.Collection");
+		
+		var arr = null;
+		var delimiter = new RegExp(delimiter, "g");
+		if (!_rtl.exists(limit))
+		{
+			arr = s.split(delimiter);
+		}
+		else
+		{
+			arr = s.split(delimiter, limit);
+		}
+		return _Collection.from(arr);
+	},
+	/**
 	 * Search regular expression
 	 * @param string r regular expression
 	 * @param string s string
@@ -49,7 +74,18 @@ Object.assign(Runtime.re,
 		if (pattern == undefined) pattern = "";
 		pattern = "g" + pattern;
 		
-		var arr = [...s.matchAll( new RegExp(r, pattern) )];
+		var arr = [];
+		var r = new RegExp(r, pattern);
+		
+		if (s.matchAll == undefined)
+		{
+			while ((m = r.exec(s)) !== null)
+			{
+				arr.push(m);
+			}
+		}
+		else arr = [...s.matchAll(r)];
+		
 		if (arr.length == 0) return null;
 		return Runtime.Collection.from( arr.map( (v) => Runtime.Collection.from(v) ) );
 		return null;
@@ -82,32 +118,29 @@ Object.assign(Runtime.re,
 	},
 	getClassInfo: function(ctx)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		return Dict.from({
-			"annotations": Collection.from([
+		var Vector = use("Runtime.Vector");
+		var Map = use("Runtime.Map");
+		return Map.from({
+			"annotations": Vector.from([
 			]),
 		});
 	},
 	getFieldsList: function(ctx)
 	{
 		var a = [];
-		return use("Runtime.Collection").from(a);
+		return use("Runtime.Vector").from(a);
 	},
 	getFieldInfoByName: function(ctx,field_name)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
+		var Vector = use("Runtime.Vector");
+		var Map = use("Runtime.Map");
 		return null;
 	},
 	getMethodsList: function(ctx)
 	{
 		var a=[
-			"match",
-			"matchAll",
-			"replace",
 		];
-		return use("Runtime.Collection").from(a);
+		return use("Runtime.Vector").from(a);
 	},
 	getMethodInfoByName: function(ctx,field_name)
 	{

@@ -31,37 +31,34 @@ Object.assign(Runtime.BaseObject.prototype,
 	_init: function(ctx)
 	{
 	},
-});
-Object.assign(Runtime.BaseObject,
-{
-	/**
-	 * Returns new instance
-	 */
-	newInstance: function(ctx, items)
-	{
-		return null;
-	},
 	/**
 	 * Init struct data
 	 */
-	_init_data: function(ctx, old, changed)
+	_init_data: function(ctx, obj)
 	{
-		return changed;
+		return obj;
 	},
 	/**
-	 * Assign
+	 * Assign new values
 	 */
-	_assign: function(ctx, new_item, old_item, obj)
+	_assign_values: function(ctx, obj)
 	{
-		var __v0 = use("Runtime.rtl");
-		obj = __v0.convert(ctx, obj, "Runtime.Dict");
-		obj = new_item.constructor._init_data(ctx, old_item, obj);
+		if (obj == undefined) obj = null;
+		if (typeof obj == 'object' && !(obj instanceof Runtime.Dict))
+		{
+			obj = new Runtime.Dict(obj);
+		}
 		if (obj == null)
 		{
 			return ;
 		}
+		if (obj.keys(ctx).count(ctx) == 0)
+		{
+			return ;
+		}
 		var check_types = false;
-		var class_name = new_item.constructor.getClassName(ctx);
+		var class_name = this.constructor.getClassName(ctx);
+		obj = this._init_data(ctx, obj);
 		var _Dict = use("Runtime.Dict");
 		var rtl = use("Runtime.rtl");
 		if (obj instanceof _Dict)
@@ -78,7 +75,7 @@ Object.assign(Runtime.BaseObject,
 						value = rtl.convert(ctx, value, info.get(ctx, "t"), null);
 					}
 				}
-				new_item[real_key] = value;
+				this[real_key] = value;
 			}
 		}
 		else
@@ -88,15 +85,25 @@ Object.assign(Runtime.BaseObject,
 				var value = obj[key];
 				if (check_types)
 				{
-					info = rtl.getFieldInfoWithParents(ctx, new_item.getClassName(), key);
+					info = rtl.getFieldInfoWithParents(ctx, class_name, key);
 					if (info)
 					{
 						value = rtl.convert(ctx, value, info.get(ctx, "t"), null);
 					}
 				}
-				new_item[key] = value;
+				this[key] = value;
 			}
 		}
+	},
+});
+Object.assign(Runtime.BaseObject,
+{
+	/**
+	 * Returns new instance
+	 */
+	newInstance: function(ctx, items)
+	{
+		return null;
 	},
 	/* ======================= Class Init Functions ======================= */
 	getNamespace: function()
@@ -113,33 +120,29 @@ Object.assign(Runtime.BaseObject,
 	},
 	getClassInfo: function(ctx)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		return Dict.from({
-			"annotations": Collection.from([
+		var Vector = use("Runtime.Vector");
+		var Map = use("Runtime.Map");
+		return Map.from({
+			"annotations": Vector.from([
 			]),
 		});
 	},
 	getFieldsList: function(ctx)
 	{
 		var a = [];
-		return use("Runtime.Collection").from(a);
+		return use("Runtime.Vector").from(a);
 	},
 	getFieldInfoByName: function(ctx,field_name)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
+		var Vector = use("Runtime.Vector");
+		var Map = use("Runtime.Map");
 		return null;
 	},
 	getMethodsList: function(ctx)
 	{
 		var a=[
-			"constructor",
-			"newInstance",
-			"_init_data",
-			"_assign",
 		];
-		return use("Runtime.Collection").from(a);
+		return use("Runtime.Vector").from(a);
 	},
 	getMethodInfoByName: function(ctx,field_name)
 	{

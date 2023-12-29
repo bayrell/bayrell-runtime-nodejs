@@ -63,10 +63,10 @@ Object.assign(Runtime.Context.prototype,
 	 */
 	env: function(ctx, name)
 	{
-		var value = Runtime.rtl.get(ctx, this.environments, name);
+		var value = Runtime.rtl.attr(ctx, this.environments, name);
 		var __v0 = use("Runtime.Hooks.RuntimeHook");
-		var hook_res = this.callHook(ctx, __v0.ENV, use("Runtime.Dict").from({"name":name,"value":value}));
-		return Runtime.rtl.get(ctx, hook_res, "value");
+		var hook_res = this.callHook(ctx, __v0.ENV, use("Runtime.Map").from({"name":name,"value":value}));
+		return Runtime.rtl.attr(ctx, hook_res, "value");
 	},
 	/**
 	 * Init
@@ -79,6 +79,14 @@ Object.assign(Runtime.Context.prototype,
 		{
 			return Promise.resolve(c);
 		}
+		/* Create app */
+		if (c.entry_point != "")
+		{
+			var __v0 = use("Runtime.rtl");
+			c = Runtime.rtl.setAttr(ctx, c, Runtime.Collection.from(["app"]), __v0.newInstance(ctx, c.entry_point));
+		}
+		/* Add start modules */
+		c = Runtime.rtl.setAttr(ctx, c, Runtime.Collection.from(["start_modules"]), c.modules);
 		/* Get modules */
 		var modules = c.modules;
 		if (modules.indexOf(ctx, "Runtime"))
@@ -88,15 +96,21 @@ Object.assign(Runtime.Context.prototype,
 		/* Extends modules */
 		var modules = this.constructor.getRequiredModules(ctx, modules);
 		c = Runtime.rtl.setAttr(ctx, c, Runtime.Collection.from(["modules"]), modules);
+		/* Extends app modules */
+		var __v0 = use("Runtime.rtl");
+		if (c.app != null && __v0.method_exists(ctx, c.app, "modules"))
+		{
+			c = await c.app.modules(ctx, c);
+		}
 		/* Get modules entities */
-		var entities = this.constructor.getEntitiesFromModules(ctx, modules);
+		var entities = this.constructor.getEntitiesFromModules(ctx, c.modules);
 		c = Runtime.rtl.setAttr(ctx, c, Runtime.Collection.from(["entities"]), entities);
 		/* Create providers */
 		var __v0 = use("Runtime.lib");
 		var providers = c.entities.filter(ctx, __v0.isInstance(ctx, "Runtime.Entity.Provider"));
-		for (var i = 0;i < providers.count(ctx);i++)
+		for (var i = 0; i < providers.count(ctx); i++)
 		{
-			var info = Runtime.rtl.get(ctx, providers, i);
+			var info = Runtime.rtl.attr(ctx, providers, i);
 			if (info.value)
 			{
 				var provider = null;
@@ -122,24 +136,18 @@ Object.assign(Runtime.Context.prototype,
 				}
 			}
 		}
-		/* Create app */
-		if (c.entry_point != "")
-		{
-			var __v1 = use("Runtime.rtl");
-			c = Runtime.rtl.setAttr(ctx, c, Runtime.Collection.from(["app"]), __v1.newInstance(ctx, c.entry_point));
-		}
 		/* Init providers */
 		var providers_names = c.providers.keys(ctx);
-		for (var i = 0;i < providers_names.count(ctx);i++)
+		for (var i = 0; i < providers_names.count(ctx); i++)
 		{
-			var provider_name = Runtime.rtl.get(ctx, providers_names, i);
-			var provider = Runtime.rtl.get(ctx, c.providers, provider_name);
+			var provider_name = Runtime.rtl.attr(ctx, providers_names, i);
+			var provider = Runtime.rtl.attr(ctx, c.providers, provider_name);
 			c = await provider.init(ctx, c);
 		}
 		/* Hook init app */
 		var __v1 = use("Runtime.Hooks.RuntimeHook");
-		hook_res = await c.callAsyncHook(ctx, __v1.INIT, use("Runtime.Dict").from({"context":c}));
-		c = Runtime.rtl.get(ctx, hook_res, "context");
+		hook_res = await c.callAsyncHook(ctx, __v1.INIT, use("Runtime.Map").from({"context":c}));
+		c = Runtime.rtl.attr(ctx, hook_res, "context");
 		/* Init app */
 		var __v2 = use("Runtime.rtl");
 		if (c.app != null && __v2.method_exists(ctx, c.app, "init"))
@@ -157,10 +165,10 @@ Object.assign(Runtime.Context.prototype,
 	{
 		/* Start providers */
 		var providers_names = this.providers.keys(ctx);
-		for (var i = 0;i < providers_names.count(ctx);i++)
+		for (var i = 0; i < providers_names.count(ctx); i++)
 		{
-			var provider_name = Runtime.rtl.get(ctx, providers_names, i);
-			var provider = Runtime.rtl.get(ctx, this.providers, provider_name);
+			var provider_name = Runtime.rtl.attr(ctx, providers_names, i);
+			var provider = Runtime.rtl.attr(ctx, this.providers, provider_name);
 			if (!provider.started)
 			{
 				await provider.start(ctx);
@@ -169,7 +177,7 @@ Object.assign(Runtime.Context.prototype,
 		}
 		/* Hook start app */
 		var __v0 = use("Runtime.Hooks.RuntimeHook");
-		await this.callAsyncHook(ctx, __v0.START, use("Runtime.Dict").from({}));
+		await this.callAsyncHook(ctx, __v0.START, use("Runtime.Map").from({}));
 		/* Start app */
 		var __v1 = use("Runtime.rtl");
 		if (this.app && __v1.method_exists(ctx, this.app, "start"))
@@ -178,7 +186,7 @@ Object.assign(Runtime.Context.prototype,
 		}
 		/* Hook launched app */
 		var __v1 = use("Runtime.Hooks.RuntimeHook");
-		await this.callAsyncHook(ctx, __v1.LAUNCHED, use("Runtime.Dict").from({}));
+		await this.callAsyncHook(ctx, __v1.LAUNCHED, use("Runtime.Map").from({}));
 	},
 	/**
 	 * Run context
@@ -197,7 +205,7 @@ Object.assign(Runtime.Context.prototype,
 		{
 			/* Hook launched app */
 			var __v1 = use("Runtime.Hooks.RuntimeHook");
-			await this.callAsyncHook(ctx, __v1.RUN, use("Runtime.Dict").from({}));
+			await this.callAsyncHook(ctx, __v1.RUN, use("Runtime.Map").from({}));
 			code = await this.app.main(ctx);
 		}
 		return Promise.resolve(code);
@@ -209,11 +217,11 @@ Object.assign(Runtime.Context.prototype,
 	{
 		var hook = this.provider(ctx, "hook");
 		var methods_list = hook.getMethods(ctx, hook_name);
-		for (var i = 0;i < methods_list.count(ctx);i++)
+		for (var i = 0; i < methods_list.count(ctx); i++)
 		{
-			var info = Runtime.rtl.get(ctx, methods_list, i);
+			var info = Runtime.rtl.attr(ctx, methods_list, i);
 			var __v0 = use("Runtime.rtl");
-			var f = __v0.method(ctx, Runtime.rtl.get(ctx, info, "obj"), Runtime.rtl.get(ctx, info, "method_name"));
+			var f = __v0.method(ctx, Runtime.rtl.attr(ctx, info, "obj"), Runtime.rtl.attr(ctx, info, "method_name"));
 			d = f(ctx, d);
 		}
 		return d;
@@ -225,11 +233,11 @@ Object.assign(Runtime.Context.prototype,
 	{
 		var hook = this.provider(ctx, "hook");
 		var methods_list = hook.getMethods(ctx, hook_name);
-		for (var i = 0;i < methods_list.count(ctx);i++)
+		for (var i = 0; i < methods_list.count(ctx); i++)
 		{
-			var info = Runtime.rtl.get(ctx, methods_list, i);
+			var info = Runtime.rtl.attr(ctx, methods_list, i);
 			var __v0 = use("Runtime.rtl");
-			var f = __v0.method(ctx, Runtime.rtl.get(ctx, info, "obj"), Runtime.rtl.get(ctx, info, "method_name"));
+			var f = __v0.method(ctx, Runtime.rtl.attr(ctx, info, "obj"), Runtime.rtl.attr(ctx, info, "method_name"));
 			d = await f(ctx, d);
 		}
 		return Promise.resolve(d);
@@ -238,6 +246,18 @@ Object.assign(Runtime.Context.prototype,
 	 * Translate message
 	 */
 	translate: function(ctx, module, s, params)
+	{
+		if (params == undefined) params = null;
+		if (params == null)
+		{
+			return s;
+		}
+		return this.format(ctx, s, params);
+	},
+	/**
+	 * Format string
+	 */
+	format: function(ctx, s, params)
 	{
 		if (params == undefined) params = null;
 		if (params == null)
@@ -257,11 +277,12 @@ Object.assign(Runtime.Context.prototype,
 		this.app = null;
 		this.base_path = "";
 		this.entry_point = "";
-		this.cli_args = use("Runtime.Collection").from([]);
-		this.environments = use("Runtime.Dict").from({});
-		this.modules = use("Runtime.Collection").from([]);
-		this.providers = use("Runtime.Dict").from({});
-		this.entities = use("Runtime.Collection").from([]);
+		this.start_modules = use("Runtime.Vector").from([]);
+		this.cli_args = use("Runtime.Vector").from([]);
+		this.environments = use("Runtime.Map").from({});
+		this.modules = use("Runtime.Vector").from([]);
+		this.providers = use("Runtime.Map").from({});
+		this.entities = use("Runtime.Vector").from([]);
 		this.start_time = 0;
 		this.tz = "UTC";
 		this.initialized = false;
@@ -272,6 +293,7 @@ Object.assign(Runtime.Context.prototype,
 		if (k == "app")return this.app;
 		else if (k == "base_path")return this.base_path;
 		else if (k == "entry_point")return this.entry_point;
+		else if (k == "start_modules")return this.start_modules;
 		else if (k == "cli_args")return this.cli_args;
 		else if (k == "environments")return this.environments;
 		else if (k == "modules")return this.modules;
@@ -293,7 +315,7 @@ Object.assign(Runtime.Context,
 	{
 		var __v0 = use("Runtime.Vector");
 		var entities = new __v0(ctx);
-		for (var i = 0;i < modules.count(ctx);i++)
+		for (var i = 0; i < modules.count(ctx); i++)
 		{
 			var module_class_name = modules.item(ctx, i) + use("Runtime.rtl").toStr(".ModuleDescription");
 			var __v1 = use("Runtime.rtl");
@@ -353,7 +375,7 @@ Object.assign(Runtime.Context,
 			var __v0 = use("Runtime.Dict");
 			d = Runtime.rtl.setAttr(ctx, d, Runtime.Collection.from(["environments"]), new __v0(ctx));
 		}
-		var env = Runtime.rtl.get(ctx, d, "environments");
+		var env = Runtime.rtl.attr(ctx, d, "environments");
 		if (!env.has(ctx, "DEBUG"))
 		{
 			env = Runtime.rtl.setAttr(ctx, env, Runtime.Collection.from(["DEBUG"]), false);
@@ -368,7 +390,7 @@ Object.assign(Runtime.Context,
 		}
 		d = Runtime.rtl.setAttr(ctx, d, Runtime.Collection.from(["environments"]), env);
 		var __v0 = use("Runtime.rtl");
-		var instance = __v0.newInstance(ctx, this.getClassName(ctx), use("Runtime.Collection").from([d]));
+		var instance = __v0.newInstance(ctx, this.getClassName(ctx), use("Runtime.Vector").from([d]));
 		return instance;
 	},
 	/**
@@ -387,7 +409,7 @@ Object.assign(Runtime.Context,
 		{
 			modules = modules.filter(ctx, filter);
 		}
-		for (var i = 0;i < modules.count(ctx);i++)
+		for (var i = 0; i < modules.count(ctx); i++)
 		{
 			var module_name = modules.item(ctx, i);
 			if (cache.get(ctx, module_name, false) == false)
@@ -435,10 +457,10 @@ Object.assign(Runtime.Context,
 	},
 	getClassInfo: function(ctx)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		return Dict.from({
-			"annotations": Collection.from([
+		var Vector = use("Runtime.Vector");
+		var Map = use("Runtime.Map");
+		return Map.from({
+			"annotations": Vector.from([
 			]),
 		});
 	},
@@ -448,6 +470,7 @@ Object.assign(Runtime.Context,
 		a.push("app");
 		a.push("base_path");
 		a.push("entry_point");
+		a.push("start_modules");
 		a.push("cli_args");
 		a.push("environments");
 		a.push("modules");
@@ -456,92 +479,19 @@ Object.assign(Runtime.Context,
 		a.push("start_time");
 		a.push("tz");
 		a.push("initialized");
-		return use("Runtime.Collection").from(a);
+		return use("Runtime.Vector").from(a);
 	},
 	getFieldInfoByName: function(ctx,field_name)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		if (field_name == "app") return Dict.from({
-			"t": "var",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "base_path") return Dict.from({
-			"t": "string",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "entry_point") return Dict.from({
-			"t": "string",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "cli_args") return Dict.from({
-			"t": "Runtime.Collection",
-			"s": ["string"],
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "environments") return Dict.from({
-			"t": "Runtime.Dict",
-			"s": ["string"],
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "modules") return Dict.from({
-			"t": "Runtime.Collection",
-			"s": ["string"],
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "providers") return Dict.from({
-			"t": "Runtime.Dict",
-			"s": ["Runtime.BaseObject"],
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "entities") return Dict.from({
-			"t": "Runtime.Collection",
-			"s": ["Runtime.BaseStruct"],
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "start_time") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "tz") return Dict.from({
-			"t": "string",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "initialized") return Dict.from({
-			"t": "bool",
-			"annotations": Collection.from([
-			]),
-		});
+		var Vector = use("Runtime.Vector");
+		var Map = use("Runtime.Map");
 		return null;
 	},
 	getMethodsList: function(ctx)
 	{
 		var a=[
-			"getEntitiesFromModules",
-			"addProvider",
-			"provider",
-			"env",
-			"create",
-			"init",
-			"start",
-			"run",
-			"callHook",
-			"callAsyncHook",
-			"_getRequiredModules",
-			"getRequiredModules",
-			"translate",
 		];
-		return use("Runtime.Collection").from(a);
+		return use("Runtime.Vector").from(a);
 	},
 	getMethodInfoByName: function(ctx,field_name)
 	{

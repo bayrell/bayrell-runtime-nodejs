@@ -18,33 +18,58 @@ var use = require('bay-lang').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-if (typeof Runtime.Exceptions == 'undefined') Runtime.Exceptions = {};
-Runtime.Exceptions.KeyNotFound = function(ctx, key, prev)
+if (typeof Runtime.Test == 'undefined') Runtime.Test = {};
+Runtime.Test.ModuleDescription = function(ctx)
 {
-	if (prev == undefined) prev = null;
-	var __v0 = use("Runtime.rtl");
-	use("Runtime.Exceptions.RuntimeException").call(this, ctx, ctx.constructor.translate(ctx, "Runtime", "Key '%key%' not found", use("Runtime.Map").from({"key":key})), __v0.ERROR_KEY_NOT_FOUND, prev);
 };
-Runtime.Exceptions.KeyNotFound.prototype = Object.create(use("Runtime.Exceptions.RuntimeException").prototype);
-Runtime.Exceptions.KeyNotFound.prototype.constructor = Runtime.Exceptions.KeyNotFound;
-Object.assign(Runtime.Exceptions.KeyNotFound.prototype,
+Object.assign(Runtime.Test.ModuleDescription.prototype,
 {
 });
-Object.assign(Runtime.Exceptions.KeyNotFound, use("Runtime.Exceptions.RuntimeException"));
-Object.assign(Runtime.Exceptions.KeyNotFound,
+Object.assign(Runtime.Test.ModuleDescription,
 {
+	/**
+	 * Returns module name
+	 * @return string
+	 */
+	getModuleName: function(ctx)
+	{
+		return "Runtime.Test";
+	},
+	/**
+	 * Returns module name
+	 * @return string
+	 */
+	getModuleVersion: function(ctx)
+	{
+		return "0.11.0";
+	},
+	/**
+	 * Returns required modules
+	 * @return Dict<string>
+	 */
+	requiredModules: function(ctx)
+	{
+		return use("Runtime.Map").from({"Runtime":">=0.11","Runtime.Unit":">=0.11"});
+	},
+	/**
+	 * Returns enities
+	 */
+	entities: function(ctx)
+	{
+		return use("Runtime.Vector").from([]);
+	},
 	/* ======================= Class Init Functions ======================= */
 	getNamespace: function()
 	{
-		return "Runtime.Exceptions";
+		return "Runtime.Test";
 	},
 	getClassName: function()
 	{
-		return "Runtime.Exceptions.KeyNotFound";
+		return "Runtime.Test.ModuleDescription";
 	},
 	getParentClassName: function()
 	{
-		return "Runtime.Exceptions.RuntimeException";
+		return "";
 	},
 	getClassInfo: function(ctx)
 	{
@@ -76,5 +101,5 @@ Object.assign(Runtime.Exceptions.KeyNotFound,
 	{
 		return null;
 	},
-});use.add(Runtime.Exceptions.KeyNotFound);
-module.exports = Runtime.Exceptions.KeyNotFound;
+});use.add(Runtime.Test.ModuleDescription);
+module.exports = Runtime.Test.ModuleDescription;

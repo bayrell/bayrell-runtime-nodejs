@@ -68,6 +68,7 @@ Object.assign(Runtime.rtl,
 	ERROR_API_NOT_FOUND: -18,
 	ERROR_API_WRONG_FORMAT: -19,
 	ERROR_API_WRONG_APP_NAME: -20,
+	ERROR_API_ERROR: -21,
 	ERROR_FATAL: -99,
 	ERROR_HTTP_CONTINUE: -100,
 	ERROR_HTTP_SWITCH: -101,
@@ -98,6 +99,14 @@ Object.assign(Runtime.rtl,
 		return use(class_name);
 	},
 	/**
+	 * Is context
+	 */
+	is_context: function(ctx)
+	{
+		return true;
+		return false;
+	},
+	/**
 	 * Returns true if class instanceof class_name
 	 * @return bool
 	 */
@@ -126,6 +135,18 @@ Object.assign(Runtime.rtl,
 		var obj = this.find_class(class_name);
 		if (!this.exists(ctx, obj)) return false;
 		return true;
+	},
+	/**
+	 * Returns true if class exists
+	 * @return bool
+	 */
+	get_class_name: function(ctx, obj)
+	{
+		if (this.isString(ctx, obj))
+		{
+			return obj;
+		}
+		return obj.constructor.getClassName(ctx);
 	},
 	/**
 	 * Returns true if class exists
@@ -182,7 +203,7 @@ Object.assign(Runtime.rtl,
 		if (args == undefined) args = null;
 		var obj = this.find_class(class_name);
 		if (!this.exists(ctx, obj) || !(obj instanceof Function))
-			throw new Runtime.Exceptions.FileNotFound(class_name, "class name");
+			throw new Runtime.Exceptions.FileNotFound(ctx, class_name, "class name");
 		if (args == undefined || args == null){ args = []; } else { args = args.toArray(); }
 		args = args.slice(); 
 		if (typeof ctx != "undefined") args.unshift(ctx);
@@ -210,10 +231,16 @@ Object.assign(Runtime.rtl,
 		if (obj[method_name] == null || obj[method_name] == "undefined")
 		{
 			var class_name = "";
-			if (obj.getClassName != undefined) class_name = obj.getClassName();
-			else if (obj.getCurrentClassName != undefined) class_name = obj.getCurrentClassName();
+			if (obj.getClassName != undefined)
+			{
+				class_name = obj.getClassName();
+			}
+			else if (obj.constructor.getClassName != undefined)
+			{
+				class_name = obj.constructor.getClassName();
+			}
 			else class_name = save;
-			throw new Error("Method " + method_name + " not found in " + class_name);
+			throw new Error("Method '" + method_name + "' not found in '" + class_name + "'");
 		}
 		
 		return obj[method_name].bind(obj);
@@ -229,6 +256,7 @@ Object.assign(Runtime.rtl,
 	{
 		var is_ctx = false;
 		is_ctx = true;
+		var c = null;
 		var res;
 		if (args == null) args = [];
 		else args = Array.prototype.slice.call(args);
@@ -240,11 +268,29 @@ Object.assign(Runtime.rtl,
 			var c = a[0]; var m = a[1];
 			c = this.find_class(c);
 			f = c[m];
-			res = f.apply(c, args);
+		}
+		
+		if (f instanceof Runtime.Callback)
+		{
+			return f.call(args);
+		}
+		else if (f.constructor.name == 'AsyncFunction')
+		{
+			res = null;
+			(async () => {
+				try
+				{
+					await f.apply(c, args);
+				}
+				catch (e)
+				{
+					Runtime.io.print_error(e);
+				}
+			})()
 		}
 		else
 		{
-			res = f.apply(null, args);
+			res = f.apply(c, args);
 		}
 		
 		return res;
@@ -258,6 +304,11 @@ Object.assign(Runtime.rtl,
 		var res;
 		if (args == null) args = [];
 		else args = Array.prototype.slice.call(args);
+		
+		if (f instanceof Runtime.Callback)
+		{
+			return await f.callAsync(args);
+		}
 		
 		if (typeof ctx != "undefined") args.unshift(ctx);
 		if (this.isString(ctx, f))
@@ -292,6 +343,11 @@ Object.assign(Runtime.rtl,
 		if (args == undefined) args = null;
 		return this.methodApply(ctx, class_name, method_name, args);
 	},
+	callMethod: function(ctx, class_name, method_name, args)
+	{
+		if (args == undefined) args = null;
+		return this.methodApply(ctx, class_name, method_name, args);
+	},
 	/**
 	 * Apply method async
 	 * @return var
@@ -304,7 +360,22 @@ Object.assign(Runtime.rtl,
 		var __v1 = use("Runtime.rtl");
 		return Promise.resolve(await __v1.applyAsync(ctx, f, args));
 	},
+	applyAsyncMethod: async function(ctx, class_name, method_name, args)
+	{
+		if (args == undefined) args = null;
+		return await this.methodApplyAsync(ctx, class_name, method_name, args);
+	},
 	applyMethodAsync: async function(ctx, class_name, method_name, args)
+	{
+		if (args == undefined) args = null;
+		return await this.methodApplyAsync(ctx, class_name, method_name, args);
+	},
+	callAsyncMethod: async function(ctx, class_name, method_name, args)
+	{
+		if (args == undefined) args = null;
+		return await this.methodApplyAsync(ctx, class_name, method_name, args);
+	},
+	callMethodAsync: async function(ctx, class_name, method_name, args)
 	{
 		if (args == undefined) args = null;
 		return await this.methodApplyAsync(ctx, class_name, method_name, args);
@@ -343,6 +414,7 @@ Object.assign(Runtime.rtl,
 		{
 			return item;
 		}
+		if (typeof item == "string") return item.charAt(path[0]);
 		var key = path.first(ctx);
 		var path = path.removeFirstIm(ctx);
 		var val = def_val;
@@ -360,7 +432,7 @@ Object.assign(Runtime.rtl,
 		}
 		else if (item instanceof BaseObject)
 		{
-			item = item.takeValue(ctx, key, def_val);
+			var new_item = item.takeValue(ctx, key, def_val);
 			val = this.attr(ctx, new_item, path, def_val);
 			return val;
 		}
@@ -393,7 +465,7 @@ Object.assign(Runtime.rtl,
 			}
 			if (data == null)
 			{
-				data = use("Runtime.Dict").from({});
+				data = use("Runtime.Map").from({});
 			}
 			var new_data = null;
 			var attr_name = attrs.first(ctx);
@@ -587,6 +659,53 @@ Object.assign(Runtime.rtl,
 	},
 	/**
 	 * Returns true if value is scalar value
+	 * @return bool
+	 */
+	getType: function(ctx, value)
+	{
+		if (value == null)
+		{
+			return "null";
+		}
+		var __v0 = use("Runtime.rtl");
+		if (__v0.isString(ctx, value))
+		{
+			return "string";
+		}
+		var __v0 = use("Runtime.rtl");
+		if (__v0.isNumber(ctx, value))
+		{
+			return "number";
+		}
+		var __v0 = use("Runtime.rtl");
+		if (__v0.isBoolean(ctx, value))
+		{
+			return "boolean";
+		}
+		var __v0 = use("Runtime.rtl");
+		if (__v0.isFn(ctx, value))
+		{
+			return "fn";
+		}
+		var __v0 = use("Runtime.Collection");
+		if (value instanceof __v0)
+		{
+			return "collection";
+		}
+		var __v0 = use("Runtime.Dict");
+		if (value instanceof __v0)
+		{
+			return "dict";
+		}
+		var __v0 = use("Runtime.BaseObject");
+		if (value instanceof __v0)
+		{
+			return "object";
+		}
+		return "unknown";
+	},
+	/**
+	 * Returns true if value is scalar value
 	 * @return bool 
 	 */
 	isScalarValue: function(ctx, value)
@@ -707,7 +826,7 @@ Object.assign(Runtime.rtl,
 	 */
 	toString: function(ctx, value)
 	{
-		var _StringInterface = use("Runtime.Interfaces.StringInterface");
+		var _StringInterface = use("Runtime.StringInterface");
 		
 		if (value === null) return "";
 		if (typeof value == 'string') return value;
@@ -844,6 +963,15 @@ Object.assign(Runtime.rtl,
 	{
 		return Math.round(value);
 	},
+	/* ====================== Assert ====================== */
+	assert: function(ctx, expr, message)
+	{
+		if (!expr)
+		{
+			var __v0 = use("Runtime.Exceptions.AssertException");
+			throw new __v0(ctx, message)
+		}
+	},
 	_memorizeValidHKey: function(hkey, key)
 	{
 	},
@@ -960,6 +1088,23 @@ Object.assign(Runtime.rtl,
 	{
 	},
 	/**
+	 * Returns random value x, where 0 <= x < 1
+	 * @return double
+	 */
+	urandom: function(ctx)
+	{
+		if (
+			window != undefined && window.crypto != undefined &&
+			window.crypto.getRandomValues != undefined)
+		{
+			var s = new Uint32Array(1);
+			window.crypto.getRandomValues(s);
+			return s[0] / 4294967296;
+		}
+		
+		return Math.random();
+	},
+	/**
 	 * Returns random value x, where a <= x <= b
 	 * @param int a
 	 * @param int b
@@ -967,13 +1112,61 @@ Object.assign(Runtime.rtl,
 	 */
 	random: function(ctx, a, b)
 	{
-		if (window != undefined && window.crypto != undefined && window.crypto.getRandomValues != undefined)
+		if (
+			window != undefined && window.crypto != undefined &&
+			window.crypto.getRandomValues != undefined)
 		{
 			var s = new Uint32Array(1);
 			window.crypto.getRandomValues(s);
 			return Math.floor(s[0] / 4294967296 * (b - a + 1) + a);
 		}
+		
 		return Math.floor(Math.random() * (b - a + 1) + a);
+	},
+	/**
+	 * Generate random string
+	 * @var len - string length
+	 * @var spec
+	 *   - a - alpha
+	 *   - n - numberic
+	 * @return string
+	 */
+	random_string: function(ctx, len, spec)
+	{
+		if (len == undefined) len = 8;
+		if (spec == undefined) spec = "aun";
+		var s = "";
+		var res = "";
+		var __v0 = use("Runtime.rs");
+		var sz = __v0.strlen(ctx, spec);
+		for (var i = 0; i < sz; i++)
+		{
+			var ch = Runtime.rtl.attr(ctx, spec, i);
+			if (ch == "a")
+			{
+				s += use("Runtime.rtl").toStr("qwertyuiopasdfghjklzxcvbnm");
+			}
+			if (ch == "u")
+			{
+				s += use("Runtime.rtl").toStr("QWERTYUIOPASDFGHJKLZXCVBNM");
+			}
+			else if (ch == "n")
+			{
+				s += use("Runtime.rtl").toStr("0123456789");
+			}
+			else if (ch == "s")
+			{
+				s += use("Runtime.rtl").toStr("!@#$%^&*()-_+='\":;'.,<>?/|~");
+			}
+		}
+		var __v1 = use("Runtime.rs");
+		var sz_s = __v1.strlen(ctx, s);
+		for (var i = 0; i < len; i++)
+		{
+			var code = this.random(ctx, 0, sz_s - 1);
+			res += use("Runtime.rtl").toStr(Runtime.rtl.attr(ctx, s, code));
+		}
+		return res;
 	},
 	/**
 	 * Returns current unix time in seconds
@@ -996,6 +1189,7 @@ Object.assign(Runtime.rtl,
 	 */
 	getContext: function()
 	{
+		if (!rtl._global_context) return new use("Runtime.Context")();
 		return rtl._global_context;
 	},
 	/**
@@ -1017,7 +1211,7 @@ Object.assign(Runtime.rtl,
 		var __v0 = use("Runtime.Context");
 		var context = __v0.create(ctx, d);
 		/* Init context */
-		context = await context.init();
+		context = await context.init(ctx);
 		/* Setup global context */
 		this.setContext(context);
 		return Promise.resolve(context);
@@ -1026,16 +1220,16 @@ Object.assign(Runtime.rtl,
 	 * Run application
 	 * @param Dict d
 	 */
-	runApp: async function(module_name, class_name, d)
+	runApp: async function(class_name, modules, d)
 	{
 		if (d == undefined) d = null;
 		if (d == null)
 		{
-			d = use("Runtime.Dict").from({});
+			d = use("Runtime.Map").from({});
 		}
 		let ctx = null;
 		d = Runtime.rtl.setAttr(ctx, d, Runtime.Collection.from(["entry_point"]), class_name);
-		d = Runtime.rtl.setAttr(ctx, d, Runtime.Collection.from(["modules"]), use("Runtime.Collection").from([module_name]));
+		d = Runtime.rtl.setAttr(ctx, d, Runtime.Collection.from(["modules"]), modules);
 		let code = 0;
 		
 		try
@@ -1051,7 +1245,8 @@ Object.assign(Runtime.rtl,
 			process.stderr.write("\x1B[0m\n");
 		}
 		
-		process.exit(code);
+		return code;
+		return Promise.resolve(0);
 	},
 	/* ============================= Runtime Utils Functions ============================= */
 	/**
@@ -1083,13 +1278,13 @@ Object.assign(Runtime.rtl,
 		if (res == undefined) res = null;
 		if (res == null)
 		{
-			res = use("Runtime.Collection").from([]);
+			res = use("Runtime.Vector").from([]);
 		}
 		var info = this.methodApply(ctx, class_name, "getClassInfo");
 		var __v0 = use("Runtime.Monad");
-		var __v1 = new __v0(ctx, Runtime.rtl.get(ctx, info, "annotations"));
+		var __v1 = new __v0(ctx, Runtime.rtl.attr(ctx, info, "annotations"));
 		var __v2 = use("Runtime.rtl");
-		__v1 = __v1.monad(ctx, __v2.m_to(ctx, "Runtime.Collection", use("Runtime.Collection").from([])));
+		__v1 = __v1.monad(ctx, __v2.m_to(ctx, "Runtime.Collection", use("Runtime.Vector").from([])));
 		var arr = __v1.value(ctx);
 		var __memorize_value = res.concat(ctx, arr);
 		use("Runtime.rtl")._memorizeSave("Runtime.rtl.getClassAnnotations", arguments, __memorize_value);
@@ -1102,11 +1297,11 @@ Object.assign(Runtime.rtl,
 	{
 		var __memorize_value = use("Runtime.rtl")._memorizeValue("Runtime.rtl.getClassAnnotationsWithParents", arguments);
 		if (__memorize_value != use("Runtime.rtl")._memorize_not_found) return __memorize_value;
-		var res = use("Runtime.Dict").from({});
+		var res = use("Runtime.Map").from({});
 		var parents = this.getParents(ctx, class_name);
-		for (var i = 0;i < parents.count(ctx);i++)
+		for (var i = 0; i < parents.count(ctx); i++)
 		{
-			var parent_class_name = Runtime.rtl.get(ctx, parents, i);
+			var parent_class_name = Runtime.rtl.attr(ctx, parents, i);
 			res = this.getClassAnnotations(ctx, parent_class_name, res);
 		}
 		var __memorize_value = res;
@@ -1120,7 +1315,7 @@ Object.assign(Runtime.rtl,
 	{
 		var __memorize_value = use("Runtime.rtl")._memorizeValue("Runtime.rtl.getFieldInfo", arguments);
 		if (__memorize_value != use("Runtime.rtl")._memorize_not_found) return __memorize_value;
-		var res = this.methodApply(ctx, class_name, "getFieldInfoByName", use("Runtime.Collection").from([field_name]));
+		var res = this.methodApply(ctx, class_name, "getFieldInfoByName", use("Runtime.Vector").from([field_name]));
 		var __memorize_value = res;
 		use("Runtime.rtl")._memorizeSave("Runtime.rtl.getFieldInfo", arguments, __memorize_value);
 		return __memorize_value;
@@ -1133,10 +1328,10 @@ Object.assign(Runtime.rtl,
 		var __memorize_value = use("Runtime.rtl")._memorizeValue("Runtime.rtl.getFieldInfoWithParents", arguments);
 		if (__memorize_value != use("Runtime.rtl")._memorize_not_found) return __memorize_value;
 		var parents = this.getParents(ctx, class_name);
-		for (var i = 0;i < parents.count(ctx);i++)
+		for (var i = 0; i < parents.count(ctx); i++)
 		{
-			var parent_class_name = Runtime.rtl.get(ctx, parents, i);
-			var res = this.methodApply(ctx, parent_class_name, "getFieldInfoByName", use("Runtime.Collection").from([field_name]));
+			var parent_class_name = Runtime.rtl.attr(ctx, parents, i);
+			var res = this.methodApply(ctx, parent_class_name, "getFieldInfoByName", use("Runtime.Vector").from([field_name]));
 			if (res != null)
 			{
 				var __memorize_value = res;
@@ -1159,10 +1354,10 @@ Object.assign(Runtime.rtl,
 		var __v0 = use("Runtime.Vector");
 		var names = new __v0(ctx);
 		var parents = this.getParents(ctx, class_name);
-		for (var i = 0;i < parents.count(ctx);i++)
+		for (var i = 0; i < parents.count(ctx); i++)
 		{
-			var parent_class_name = Runtime.rtl.get(ctx, parents, i);
-			var item_fields = this.methodApply(ctx, parent_class_name, "getFieldsList", use("Runtime.Collection").from([flag]));
+			var parent_class_name = Runtime.rtl.attr(ctx, parents, i);
+			var item_fields = this.methodApply(ctx, parent_class_name, "getFieldsList", use("Runtime.Vector").from([flag]));
 			if (item_fields != null)
 			{
 				names.appendVector(ctx, item_fields);
@@ -1182,18 +1377,18 @@ Object.assign(Runtime.rtl,
 		if (res == undefined) res = null;
 		if (res == null)
 		{
-			res = use("Runtime.Dict").from({});
+			res = use("Runtime.Map").from({});
 		}
-		var methods = this.methodApply(ctx, class_name, "getFieldsList", use("Runtime.Collection").from([255]));
-		for (var i = 0;i < methods.count(ctx);i++)
+		var methods = this.methodApply(ctx, class_name, "getFieldsList", use("Runtime.Vector").from([255]));
+		for (var i = 0; i < methods.count(ctx); i++)
 		{
-			var method_name = Runtime.rtl.get(ctx, methods, i);
-			var info = this.methodApply(ctx, class_name, "getFieldInfoByName", use("Runtime.Collection").from([method_name]));
-			var annotations = Runtime.rtl.get(ctx, info, "annotations");
+			var method_name = Runtime.rtl.attr(ctx, methods, i);
+			var info = this.methodApply(ctx, class_name, "getFieldInfoByName", use("Runtime.Vector").from([method_name]));
+			var annotations = Runtime.rtl.attr(ctx, info, "annotations");
 			var __v0 = use("Runtime.Monad");
-			var __v1 = new __v0(ctx, Runtime.rtl.get(ctx, res, method_name));
+			var __v1 = new __v0(ctx, Runtime.rtl.attr(ctx, res, method_name));
 			var __v2 = use("Runtime.rtl");
-			__v1 = __v1.monad(ctx, __v2.m_to(ctx, "Runtime.Collection", use("Runtime.Collection").from([])));
+			__v1 = __v1.monad(ctx, __v2.m_to(ctx, "Runtime.Collection", use("Runtime.Vector").from([])));
 			var arr = __v1.value(ctx);
 			res = Runtime.rtl.setAttr(ctx, res, Runtime.Collection.from([method_name]), arr.concat(ctx, annotations));
 		}
@@ -1208,11 +1403,11 @@ Object.assign(Runtime.rtl,
 	{
 		var __memorize_value = use("Runtime.rtl")._memorizeValue("Runtime.rtl.getFieldsAnnotationsWithParents", arguments);
 		if (__memorize_value != use("Runtime.rtl")._memorize_not_found) return __memorize_value;
-		var res = use("Runtime.Dict").from({});
+		var res = use("Runtime.Map").from({});
 		var parents = this.getParents(ctx, class_name);
-		for (var i = 0;i < parents.count(ctx);i++)
+		for (var i = 0; i < parents.count(ctx); i++)
 		{
-			var parent_class_name = Runtime.rtl.get(ctx, parents, i);
+			var parent_class_name = Runtime.rtl.attr(ctx, parents, i);
 			res = this.getFieldsAnnotations(ctx, parent_class_name, res);
 		}
 		var __memorize_value = res;
@@ -1222,25 +1417,21 @@ Object.assign(Runtime.rtl,
 	/**
 	 * Returns methods annotations
 	 */
-	getMethodsAnnotations: function(ctx, class_name, res)
+	getMethodsAnnotations: function(ctx, class_name)
 	{
 		var __memorize_value = use("Runtime.rtl")._memorizeValue("Runtime.rtl.getMethodsAnnotations", arguments);
 		if (__memorize_value != use("Runtime.rtl")._memorize_not_found) return __memorize_value;
-		if (res == undefined) res = null;
-		if (res == null)
+		var res = use("Runtime.Map").from({});
+		var methods = this.methodApply(ctx, class_name, "getMethodsList", use("Runtime.Vector").from([255]));
+		for (var i = 0; i < methods.count(ctx); i++)
 		{
-			res = use("Runtime.Dict").from({});
-		}
-		var methods = this.methodApply(ctx, class_name, "getMethodsList", use("Runtime.Collection").from([255]));
-		for (var i = 0;i < methods.count(ctx);i++)
-		{
-			var method_name = Runtime.rtl.get(ctx, methods, i);
-			var info = this.methodApply(ctx, class_name, "getMethodInfoByName", use("Runtime.Collection").from([method_name]));
-			var annotations = Runtime.rtl.get(ctx, info, "annotations");
+			var method_name = Runtime.rtl.attr(ctx, methods, i);
+			var info = this.methodApply(ctx, class_name, "getMethodInfoByName", use("Runtime.Vector").from([method_name]));
+			var annotations = Runtime.rtl.attr(ctx, info, "annotations");
 			var __v0 = use("Runtime.Monad");
-			var __v1 = new __v0(ctx, Runtime.rtl.get(ctx, res, method_name));
+			var __v1 = new __v0(ctx, Runtime.rtl.attr(ctx, res, method_name));
 			var __v2 = use("Runtime.rtl");
-			__v1 = __v1.monad(ctx, __v2.m_to(ctx, "Runtime.Collection", use("Runtime.Collection").from([])));
+			__v1 = __v1.monad(ctx, __v2.m_to(ctx, "Runtime.Collection", use("Runtime.Vector").from([])));
 			var arr = __v1.value(ctx);
 			res = Runtime.rtl.setAttr(ctx, res, Runtime.Collection.from([method_name]), arr.concat(ctx, annotations));
 		}
@@ -1255,12 +1446,12 @@ Object.assign(Runtime.rtl,
 	{
 		var __memorize_value = use("Runtime.rtl")._memorizeValue("Runtime.rtl.getMethodsAnnotationsWithParents", arguments);
 		if (__memorize_value != use("Runtime.rtl")._memorize_not_found) return __memorize_value;
-		var res = use("Runtime.Dict").from({});
+		var res = use("Runtime.Map").from({});
 		var parents = this.getParents(ctx, class_name);
-		for (var i = 0;i < parents.count(ctx);i++)
+		for (var i = 0; i < parents.count(ctx); i++)
 		{
-			var parent_class_name = Runtime.rtl.get(ctx, parents, i);
-			res = this.getMethodsAnnotations(ctx, parent_class_name, res);
+			var parent_class_name = Runtime.rtl.attr(ctx, parents, i);
+			res = res.concatIm(ctx, this.getMethodsAnnotations(ctx, parent_class_name));
 		}
 		var __memorize_value = res;
 		use("Runtime.rtl")._memorizeSave("Runtime.rtl.getMethodsAnnotationsWithParents", arguments, __memorize_value);
@@ -1274,10 +1465,11 @@ Object.assign(Runtime.rtl,
 		var value2 = this.PrimitiveToNative(ctx, value1);
 		return value2;
 	},
-	NativeToObject: function(ctx, value)
+	NativeToObject: function(ctx, value, allow_class_name)
 	{
+		if (allow_class_name == undefined) allow_class_name = true;
 		var value1 = this.NativeToPrimitive(ctx, value);
-		var value2 = this.PrimitiveToObject(ctx, value1);
+		var value2 = this.PrimitiveToObject(ctx, value1, allow_class_name);
 		return value2;
 	},
 	/**
@@ -1330,8 +1522,8 @@ Object.assign(Runtime.rtl,
 			var __v1 = use("Runtime.Map");
 			var values = new __v1(ctx);
 			var __v2 = use("Runtime.rtl");
-			var names = __v2.getFields(ctx, obj.getClassName(ctx));
-			for (var i = 0;i < names.count(ctx);i++)
+			var names = __v2.getFields(ctx, obj.constructor.getClassName(ctx));
+			for (var i = 0; i < names.count(ctx); i++)
 			{
 				var variable_name = names.item(ctx, i);
 				var value = obj.get(ctx, variable_name, null);
@@ -1340,7 +1532,7 @@ Object.assign(Runtime.rtl,
 			}
 			if (force_class_name)
 			{
-				values.setValue(ctx, "__class_name__", obj.getClassName(ctx));
+				values.setValue(ctx, "__class_name__", obj.constructor.getClassName(ctx));
 			}
 			return values.toDict(ctx);
 		}
@@ -1351,8 +1543,9 @@ Object.assign(Runtime.rtl,
 	 * @param SerializeContainer container
 	 * @return var
 	 */
-	PrimitiveToObject: function(ctx, obj)
+	PrimitiveToObject: function(ctx, obj, allow_class_name)
 	{
+		if (allow_class_name == undefined) allow_class_name = true;
 		if (obj === null)
 		{
 			return null;
@@ -1367,10 +1560,10 @@ Object.assign(Runtime.rtl,
 		{
 			var __v1 = use("Runtime.Vector");
 			var res = new __v1(ctx);
-			for (var i = 0;i < obj.count(ctx);i++)
+			for (var i = 0; i < obj.count(ctx); i++)
 			{
 				var value = obj.item(ctx, i);
-				value = this.PrimitiveToObject(ctx, value);
+				value = this.PrimitiveToObject(ctx, value, allow_class_name);
 				res.pushValue(ctx, value);
 			}
 			return res.toCollection(ctx);
@@ -1381,11 +1574,11 @@ Object.assign(Runtime.rtl,
 			var __v1 = use("Runtime.Map");
 			var res = new __v1(ctx);
 			var keys = obj.keys(ctx);
-			for (var i = 0;i < keys.count(ctx);i++)
+			for (var i = 0; i < keys.count(ctx); i++)
 			{
 				var key = keys.item(ctx, i);
 				var value = obj.item(ctx, key);
-				value = this.PrimitiveToObject(ctx, value);
+				value = this.PrimitiveToObject(ctx, value, allow_class_name);
 				res.setValue(ctx, key, value);
 			}
 			if (!res.has(ctx, "__class_name__"))
@@ -1395,6 +1588,10 @@ Object.assign(Runtime.rtl,
 			if (res.item(ctx, "__class_name__") == "Runtime.Map" || res.item(ctx, "__class_name__") == "Runtime.Dict")
 			{
 				res.remove(ctx, "__class_name__");
+				return res.toDict(ctx);
+			}
+			if (!allow_class_name)
+			{
 				return res.toDict(ctx);
 			}
 			var class_name = res.item(ctx, "__class_name__");
@@ -1413,7 +1610,7 @@ Object.assign(Runtime.rtl,
 			var obj = new __v2(ctx);
 			var __v3 = use("Runtime.rtl");
 			var names = __v3.getFields(ctx, class_name);
-			for (var i = 0;i < names.count(ctx);i++)
+			for (var i = 0; i < names.count(ctx); i++)
 			{
 				var variable_name = names.item(ctx, i);
 				if (variable_name != "__class_name__")
@@ -1424,7 +1621,7 @@ Object.assign(Runtime.rtl,
 			}
 			/* New instance */
 			var __v4 = use("Runtime.rtl");
-			var instance = __v4.newInstance(ctx, class_name, use("Runtime.Collection").from([obj]));
+			var instance = __v4.newInstance(ctx, class_name, use("Runtime.Vector").from([obj]));
 			return instance;
 		}
 		var __v0 = use("Runtime.Date");
@@ -1455,7 +1652,7 @@ Object.assign(Runtime.rtl,
 		{
 			var new_value = _Collection.from(value);
 			new_value = new_value.map(ctx, (ctx, val)=>{
-				return _Utils.NativeToPrimitive(ctx, val);
+				return Runtime.rtl.NativeToPrimitive(ctx, val);
 			});
 			return new_value;
 		}
@@ -1463,17 +1660,17 @@ Object.assign(Runtime.rtl,
 		{
 			if (value["__class_name__"] == "Runtime.Date")
 			{
-				var new_value = _Date.from(value);
+				var new_value = new _Date(value);
 				return new_value;
 			}
 			if (value["__class_name__"] == "Runtime.DateTime")
 			{
-				var new_value = _DateTime.from(value);
+				var new_value = new _DateTime(value);
 				return new_value;
 			}
 			var new_value = _Dict.from(value);
 			new_value = new_value.map(ctx, (ctx, val, key)=>{
-				return _Utils.NativeToPrimitive(ctx, val);
+				return Runtime.rtl.NativeToPrimitive(ctx, val);
 			});
 			return new_value;
 		}
@@ -1505,7 +1702,7 @@ Object.assign(Runtime.rtl,
 		{
 			var arr = [];
 			value.each(ctx, (ctx, v)=>{
-				arr.push( _Utils.PrimitiveToNative(ctx, v) );
+				arr.push( Runtime.rtl.PrimitiveToNative(ctx, v) );
 			});
 			return arr;
 		}
@@ -1513,7 +1710,7 @@ Object.assign(Runtime.rtl,
 		{
 			var obj = {};
 			value.each(ctx, (ctx, v, k)=>{
-				obj[k] = _Utils.PrimitiveToNative(ctx, v);
+				obj[k] = Runtime.rtl.PrimitiveToNative(ctx, v);
 			});
 			return obj;
 		}
@@ -1539,7 +1736,7 @@ Object.assign(Runtime.rtl,
 		var _Date = use("Runtime.Date");
 		var _DateTime = use("Runtime.DateTime");
 		
-		if (convert) value = _Utils.ObjectToPrimitive(ctx, value);
+		if (convert) value = _rtl.ObjectToPrimitive(ctx, value);
 		return JSON.stringify(value, (key, value) => {
 			if (value instanceof _Date) value = value.toDict().setIm("__class_name__", "Runtime.Date");
 			if (value instanceof _DateTime) value = value.toDict().setIm("__class_name__", "Runtime.DateTime");
@@ -1554,8 +1751,9 @@ Object.assign(Runtime.rtl,
 	 * @param string s Encoded string
 	 * @return var 
 	 */
-	json_decode: function(ctx, obj)
+	json_decode: function(ctx, obj, allow_class_name)
 	{
+		if (allow_class_name == undefined) allow_class_name = true;
 		try{
 			
 			var _rtl = use("Runtime.rtl");
@@ -1580,7 +1778,7 @@ Object.assign(Runtime.rtl,
 			{
 				res = null;
 			}
-			return this.PrimitiveToObject(ctx, res);
+			return this.PrimitiveToObject(ctx, res, allow_class_name);
 		}
 		catch(e){
 			throw e;
@@ -1602,108 +1800,29 @@ Object.assign(Runtime.rtl,
 	},
 	getClassInfo: function(ctx)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		return Dict.from({
-			"annotations": Collection.from([
+		var Vector = use("Runtime.Vector");
+		var Map = use("Runtime.Map");
+		return Map.from({
+			"annotations": Vector.from([
 			]),
 		});
 	},
 	getFieldsList: function(ctx)
 	{
 		var a = [];
-		return use("Runtime.Collection").from(a);
+		return use("Runtime.Vector").from(a);
 	},
 	getFieldInfoByName: function(ctx,field_name)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
+		var Vector = use("Runtime.Vector");
+		var Map = use("Runtime.Map");
 		return null;
 	},
 	getMethodsList: function(ctx)
 	{
 		var a=[
-			"defClass",
-			"find_class",
-			"is_instanceof",
-			"is_implements",
-			"class_exists",
-			"class_implements",
-			"getInterfaces",
-			"method_exists",
-			"newInstance",
-			"method",
-			"apply",
-			"applyAsync",
-			"methodApply",
-			"applyMethod",
-			"methodApplyAsync",
-			"applyMethodAsync",
-			"get",
-			"attr",
-			"setAttr",
-			"to",
-			"m_to",
-			"m_def",
-			"convert",
-			"checkValue",
-			"isEmpty",
-			"exists",
-			"isScalarValue",
-			"isArray",
-			"isBoolean",
-			"isBool",
-			"isInt",
-			"isDouble",
-			"isNumber",
-			"isString",
-			"isFn",
-			"toString",
-			"toStr",
-			"toInt",
-			"toBool",
-			"toFloat",
-			"toObject",
-			"ceil",
-			"floor",
-			"round",
-			"_memorizeValidHKey",
-			"_memorizeClear",
-			"_memorizeValue",
-			"_memorizeSave",
-			"sleep",
-			"usleep",
-			"unique",
-			"uid",
-			"time_uid",
-			"random",
-			"time",
-			"utime",
-			"trace",
-			"getContext",
-			"setContext",
-			"createContext",
-			"runApp",
-			"getParents",
-			"getClassAnnotations",
-			"getClassAnnotationsWithParents",
-			"getFieldInfo",
-			"getFieldInfoWithParents",
-			"getFields",
-			"getFieldsAnnotations",
-			"getFieldsAnnotationsWithParents",
-			"getMethodsAnnotations",
-			"getMethodsAnnotationsWithParents",
-			"ObjectToNative",
-			"NativeToObject",
-			"ObjectToPrimitive",
-			"PrimitiveToObject",
-			"NativeToPrimitive",
-			"PrimitiveToNative",
-			"json_encode",
-			"json_decode",
 		];
-		return use("Runtime.Collection").from(a);
+		return use("Runtime.Vector").from(a);
 	},
 	getMethodInfoByName: function(ctx,field_name)
 	{

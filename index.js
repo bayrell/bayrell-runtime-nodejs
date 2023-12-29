@@ -18,7 +18,7 @@
 
 
 var exports = {
-	VERSION: '0.11.5-1',
+	VERSION: '0.11.8',
 	MODULE_NAME: 'Runtime',
 }
 
@@ -50,6 +50,7 @@ add("Runtime.BaseObject");
 add("Runtime.BaseHook");
 add("Runtime.BaseProvider");
 add("Runtime.BaseStruct");
+add("Runtime.Callback");
 add("Runtime.Context");
 add("Runtime.Date");
 add("Runtime.DateTime");
@@ -60,6 +61,7 @@ add("Runtime.Entity.Provider");
 add("Runtime.Exceptions.RuntimeException");
 add("Runtime.Exceptions.ApiException");
 add("Runtime.Exceptions.AssignStructValueError");
+add("Runtime.Exceptions.FileNotFound");
 add("Runtime.Exceptions.IndexOutOfRange");
 add("Runtime.Exceptions.KeyNotFound");
 add("Runtime.Exceptions.UnknownError");

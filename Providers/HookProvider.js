@@ -36,9 +36,9 @@ Object.assign(Runtime.Providers.HookProvider.prototype,
 		var hooks = c.entities.filter(ctx, __v0.isInstance(ctx, "Runtime.Entity.Hook"));
 		var __v1 = use("Runtime.Vector");
 		var base_hooks = new __v1(ctx);
-		for (var i = 0;i < hooks.count(ctx);i++)
+		for (var i = 0; i < hooks.count(ctx); i++)
 		{
-			var hook = Runtime.rtl.get(ctx, hooks, i);
+			var hook = Runtime.rtl.attr(ctx, hooks, i);
 			var __v2 = use("Runtime.rtl");
 			var base_hook = __v2.newInstance(ctx, hook.name);
 			base_hooks.pushValue(ctx, base_hook);
@@ -66,14 +66,14 @@ Object.assign(Runtime.Providers.HookProvider.prototype,
 			var __v0 = use("Runtime.Map");
 			this.hooks.setValue(ctx, hook_name, new __v0(ctx));
 		}
-		var priorities = Runtime.rtl.get(ctx, this.hooks, hook_name);
+		var priorities = Runtime.rtl.attr(ctx, this.hooks, hook_name);
 		if (!priorities.has(ctx, priority))
 		{
 			var __v0 = use("Runtime.Vector");
 			priorities.setValue(ctx, priority, new __v0(ctx));
 		}
 		var methods_list = priorities.get(ctx, priority);
-		methods_list.pushValue(ctx, use("Runtime.Dict").from({"obj":obj,"method_name":method_name}));
+		methods_list.pushValue(ctx, use("Runtime.Map").from({"obj":obj,"method_name":method_name}));
 	},
 	/**
 	 * Remove hook
@@ -86,7 +86,7 @@ Object.assign(Runtime.Providers.HookProvider.prototype,
 			var __v0 = use("Runtime.Map");
 			this.hooks.setValue(ctx, hook_name, new __v0(ctx));
 		}
-		var priorities = Runtime.rtl.get(ctx, this.hooks, hook_name);
+		var priorities = Runtime.rtl.attr(ctx, this.hooks, hook_name);
 		if (!priorities.has(ctx, priority))
 		{
 			var __v0 = use("Runtime.Vector");
@@ -95,7 +95,7 @@ Object.assign(Runtime.Providers.HookProvider.prototype,
 		var methods_list = priorities.get(ctx, priority);
 		var index = methods_list.find(ctx, (ctx, info) => 
 		{
-			return Runtime.rtl.get(ctx, info, "obj") == obj && Runtime.rtl.get(ctx, info, "method_name") == method_name;
+			return Runtime.rtl.attr(ctx, info, "obj") == obj && Runtime.rtl.attr(ctx, info, "method_name") == method_name;
 		});
 		if (index > -1)
 		{
@@ -109,15 +109,15 @@ Object.assign(Runtime.Providers.HookProvider.prototype,
 	{
 		if (!this.hooks.has(ctx, hook_name))
 		{
-			return use("Runtime.Collection").from([]);
+			return use("Runtime.Vector").from([]);
 		}
 		var __v0 = use("Runtime.Vector");
 		var res = new __v0(ctx);
-		var priorities = Runtime.rtl.get(ctx, this.hooks, hook_name);
+		var priorities = Runtime.rtl.attr(ctx, this.hooks, hook_name);
 		var priorities_keys = priorities.keys(ctx).sort(ctx);
-		for (var i = 0;i < priorities_keys.count(ctx);i++)
+		for (var i = 0; i < priorities_keys.count(ctx); i++)
 		{
-			var priority = Runtime.rtl.get(ctx, priorities_keys, i);
+			var priority = Runtime.rtl.attr(ctx, priorities_keys, i);
 			var methods_list = priorities.get(ctx, priority);
 			res.appendVector(ctx, methods_list);
 		}
@@ -127,7 +127,7 @@ Object.assign(Runtime.Providers.HookProvider.prototype,
 	{
 		use("Runtime.BaseProvider").prototype._init.call(this,ctx);
 		var __v0 = use("Runtime.Map");
-		this.base_hooks = use("Runtime.Collection").from([]);
+		this.base_hooks = use("Runtime.Vector").from([]);
 		this.hooks = new __v0(ctx);
 	},
 });
@@ -149,48 +149,29 @@ Object.assign(Runtime.Providers.HookProvider,
 	},
 	getClassInfo: function(ctx)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		return Dict.from({
-			"annotations": Collection.from([
+		var Vector = use("Runtime.Vector");
+		var Map = use("Runtime.Map");
+		return Map.from({
+			"annotations": Vector.from([
 			]),
 		});
 	},
 	getFieldsList: function(ctx)
 	{
 		var a = [];
-		a.push("base_hooks");
-		a.push("hooks");
-		return use("Runtime.Collection").from(a);
+		return use("Runtime.Vector").from(a);
 	},
 	getFieldInfoByName: function(ctx,field_name)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		if (field_name == "base_hooks") return Dict.from({
-			"t": "Runtime.Collection",
-			"s": ["Runtime.BaseHook"],
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "hooks") return Dict.from({
-			"t": "Runtime.Map",
-			"s": ["Runtime.Map"],
-			"annotations": Collection.from([
-			]),
-		});
+		var Vector = use("Runtime.Vector");
+		var Map = use("Runtime.Map");
 		return null;
 	},
 	getMethodsList: function(ctx)
 	{
 		var a=[
-			"init",
-			"start",
-			"register",
-			"remove",
-			"getMethods",
 		];
-		return use("Runtime.Collection").from(a);
+		return use("Runtime.Vector").from(a);
 	},
 	getMethodInfoByName: function(ctx,field_name)
 	{

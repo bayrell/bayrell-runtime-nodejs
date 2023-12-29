@@ -18,55 +18,83 @@ var use = require('bay-lang').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-Runtime.Date = function(ctx)
+Runtime.Callback = function(ctx, obj)
 {
-	use("Runtime.BaseStruct").apply(this, arguments);
+	if (obj == undefined) obj = null;
+	var __v0 = use("Runtime.Dict");
+	if (!(obj instanceof __v0))
+	{
+		var args = null;
+		obj = use("Runtime.Map").from({"obj":args.get(ctx, 0),"name":args.get(ctx, 1)});
+	}
+	use("Runtime.BaseStruct").call(this, ctx, obj);
+	this.checkExists(ctx);
 };
-Runtime.Date.prototype = Object.create(use("Runtime.BaseStruct").prototype);
-Runtime.Date.prototype.constructor = Runtime.Date;
-Object.assign(Runtime.Date.prototype,
+Runtime.Callback.prototype = Object.create(use("Runtime.BaseStruct").prototype);
+Runtime.Callback.prototype.constructor = Runtime.Callback;
+Object.assign(Runtime.Callback.prototype,
 {
 	/**
-	 * Return date
-	 * @return string
+	 * Check if method exists
 	 */
-	getDate: function(ctx)
+	checkExists: function(ctx)
 	{
-		return this.y + use("Runtime.rtl").toStr("-") + use("Runtime.rtl").toStr(this.m) + use("Runtime.rtl").toStr("-") + use("Runtime.rtl").toStr(this.d);
+		var __v0 = use("Runtime.rtl");
+		if (!__v0.method_exists(ctx, this.obj, this.name))
+		{
+			var __v1 = use("Runtime.Exceptions.RuntimeException");
+			var __v2 = use("Runtime.rtl");
+			throw new __v1(ctx, "Method '" + use("Runtime.rtl").toStr(this.name) + use("Runtime.rtl").toStr("' not found in ") + use("Runtime.rtl").toStr(__v2.get_class_name(ctx, this.obj)))
+		}
 	},
 	/**
-	 * Normalize date time
+	 * Call function
 	 */
-	normalize: function(ctx)
+	call: function(ctx, args)
 	{
-		return this;
+		if (args == undefined) args = null;
+		obj = this.obj;
+		
+		if (typeof(obj) == "string")
+		{
+			obj = Runtime.rtl.find_class(obj);
+		}
+		
+		return Runtime.rtl.apply(obj[this.name].bind(obj), args);
 	},
 	/**
-	 * Return db datetime
-	 * @return string
+	 * Call function
 	 */
-	toString: function(ctx)
+	callAsync: async function(ctx, args)
 	{
-		return this.y + use("Runtime.rtl").toStr("-") + use("Runtime.rtl").toStr(this.m) + use("Runtime.rtl").toStr("-") + use("Runtime.rtl").toStr(this.d);
+		if (args == undefined) args = null;
+		obj = this.obj;
+		
+		if (typeof(obj) == "string")
+		{
+			obj = Runtime.rtl.find_class(obj);
+		}
+		
+		return await Runtime.rtl.applyAsync(obj[this.name].bind(obj), args);
 	},
 	_init: function(ctx)
 	{
 		use("Runtime.BaseStruct").prototype._init.call(this,ctx);
-		this.y = 0;
-		this.m = 0;
-		this.d = 0;
+		this.obj = null;
+		this.name = null;
+		this.tag = null;
 	},
 	takeValue: function(ctx,k,d)
 	{
 		if (d == undefined) d = null;
-		if (k == "y")return this.y;
-		else if (k == "m")return this.m;
-		else if (k == "d")return this.d;
+		if (k == "obj")return this.obj;
+		else if (k == "name")return this.name;
+		else if (k == "tag")return this.tag;
 		return use("Runtime.BaseStruct").prototype.takeValue.call(this,ctx,k,d);
 	},
 });
-Object.assign(Runtime.Date, use("Runtime.BaseStruct"));
-Object.assign(Runtime.Date,
+Object.assign(Runtime.Callback, use("Runtime.BaseStruct"));
+Object.assign(Runtime.Callback,
 {
 	/* ======================= Class Init Functions ======================= */
 	getNamespace: function()
@@ -75,7 +103,7 @@ Object.assign(Runtime.Date,
 	},
 	getClassName: function()
 	{
-		return "Runtime.Date";
+		return "Runtime.Callback";
 	},
 	getParentClassName: function()
 	{
@@ -93,9 +121,9 @@ Object.assign(Runtime.Date,
 	getFieldsList: function(ctx)
 	{
 		var a = [];
-		a.push("y");
-		a.push("m");
-		a.push("d");
+		a.push("obj");
+		a.push("name");
+		a.push("tag");
 		return use("Runtime.Vector").from(a);
 	},
 	getFieldInfoByName: function(ctx,field_name)
@@ -114,23 +142,5 @@ Object.assign(Runtime.Date,
 	{
 		return null;
 	},
-	__implements__:
-	[
-		use("Runtime.StringInterface"),
-	],
-});use.add(Runtime.Date);
-module.exports = Runtime.Date;
-Runtime.Date.prototype.toObject = function(ctx)
-{
-	var dt = new Date(this.y, this.m - 1, this.d);
-	return dt;
-}
-Runtime.Date.fromObject = function(ctx, dt)
-{
-	var Dict = use("Runtime.Dict");
-	var y = Number(dt.getFullYear());
-	var m = Number(dt.getMonth()) + 1;
-	var d = Number(dt.getDate());
-	var dt = new Runtime.Date( ctx, Dict.from({"y":y,"m":m,"d":d}) );
-	return dt;
-}
+});use.add(Runtime.Callback);
+module.exports = Runtime.Callback;

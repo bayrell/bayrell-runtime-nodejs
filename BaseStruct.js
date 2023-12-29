@@ -22,7 +22,7 @@ Runtime.BaseStruct = function(ctx, obj)
 {
 	if (obj == undefined) obj = null;
 	use("Runtime.BaseObject").call(this, ctx);
-	this.constructor._assign(ctx, this, null, obj);
+	this._assign_values(ctx, obj);
 	if (this.__uq__ == undefined || this.__uq__ == null) this.__uq__ = Symbol();
 		Object.freeze(this);
 };
@@ -46,7 +46,7 @@ Object.assign(Runtime.BaseStruct.prototype,
 		var item = Object.create(proto); /* item._init(); */
 		item = Object.assign(item, this);
 		
-		this.constructor._assign(ctx, item, this, obj);
+		item._assign_values(ctx, obj);
 		
 		Object.freeze(item);
 		
@@ -73,18 +73,18 @@ Object.assign(Runtime.BaseStruct.prototype,
 		if (fields == undefined) fields = null;
 		if (fields == null)
 		{
-			return use("Runtime.Dict").from({});
+			return use("Runtime.Map").from({});
 		}
 		var __v0 = use("Runtime.Map");
 		var obj = new __v0(ctx);
-		for (var i = 0;i < fields.count(ctx);i++)
+		for (var i = 0; i < fields.count(ctx); i++)
 		{
-			var field_name = Runtime.rtl.get(ctx, fields, i);
+			var field_name = Runtime.rtl.attr(ctx, fields, i);
 			obj.setValue(ctx, field_name, this.get(ctx, field_name));
 		}
 		/* Return object */
 		var __v1 = use("Runtime.rtl");
-		var res = __v1.newInstance(ctx, this.getClassName(ctx), use("Runtime.Collection").from([obj.toDict(ctx)]));
+		var res = __v1.newInstance(ctx, this.getClassName(ctx), use("Runtime.Vector").from([obj.toDict(ctx)]));
 		return res;
 	},
 	/**
@@ -96,8 +96,8 @@ Object.assign(Runtime.BaseStruct.prototype,
 		var __v0 = use("Runtime.Map");
 		var values = new __v0(ctx);
 		var __v1 = use("Runtime.rtl");
-		var names = __v1.getFields(ctx, this.getClassName(ctx));
-		for (var i = 0;i < names.count(ctx);i++)
+		var names = __v1.getFields(ctx, this.constructor.getClassName(ctx));
+		for (var i = 0; i < names.count(ctx); i++)
 		{
 			var variable_name = names.item(ctx, i);
 			var value = this.get(ctx, variable_name, null);
@@ -147,36 +147,29 @@ Object.assign(Runtime.BaseStruct,
 	},
 	getClassInfo: function(ctx)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		return Dict.from({
-			"annotations": Collection.from([
+		var Vector = use("Runtime.Vector");
+		var Map = use("Runtime.Map");
+		return Map.from({
+			"annotations": Vector.from([
 			]),
 		});
 	},
 	getFieldsList: function(ctx)
 	{
 		var a = [];
-		return use("Runtime.Collection").from(a);
+		return use("Runtime.Vector").from(a);
 	},
 	getFieldInfoByName: function(ctx,field_name)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
+		var Vector = use("Runtime.Vector");
+		var Map = use("Runtime.Map");
 		return null;
 	},
 	getMethodsList: function(ctx)
 	{
 		var a=[
-			"constructor",
-			"copy",
-			"clone",
-			"intersect",
-			"newInstance",
-			"set",
-			"toDict",
 		];
-		return use("Runtime.Collection").from(a);
+		return use("Runtime.Vector").from(a);
 	},
 	getMethodInfoByName: function(ctx,field_name)
 	{

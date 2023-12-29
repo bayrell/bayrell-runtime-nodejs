@@ -134,11 +134,11 @@ Object.assign(Runtime.fs,
 		var __v0 = use("Runtime.Vector");
 		var res = new __v0(ctx);
 		var items = await this.listDir(ctx, dirpath);
-		for (var i = 0;i < items.count(ctx);i++)
+		for (var i = 0; i < items.count(ctx); i++)
 		{
 			var item_name = items.item(ctx, i);
-			var item_path = this.join(ctx, use("Runtime.Collection").from([dirpath,item_name]));
-			var item_name2 = this.join(ctx, use("Runtime.Collection").from([parent_name,item_name]));
+			var item_path = this.join(ctx, use("Runtime.Vector").from([dirpath,item_name]));
+			var item_name2 = this.join(ctx, use("Runtime.Vector").from([parent_name,item_name]));
 			if (item_name == "." || item_name == "..")
 			{
 				continue;
@@ -183,39 +183,29 @@ Object.assign(Runtime.fs,
 	},
 	getClassInfo: function(ctx)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		return Dict.from({
-			"annotations": Collection.from([
+		var Vector = use("Runtime.Vector");
+		var Map = use("Runtime.Map");
+		return Map.from({
+			"annotations": Vector.from([
 			]),
 		});
 	},
 	getFieldsList: function(ctx)
 	{
 		var a = [];
-		return use("Runtime.Collection").from(a);
+		return use("Runtime.Vector").from(a);
 	},
 	getFieldInfoByName: function(ctx,field_name)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
+		var Vector = use("Runtime.Vector");
+		var Map = use("Runtime.Map");
 		return null;
 	},
 	getMethodsList: function(ctx)
 	{
 		var a=[
-			"removeFirstSlash",
-			"removeLastSlash",
-			"join",
-			"isDir",
-			"isFile",
-			"readFile",
-			"saveFile",
-			"listDir",
-			"listDirRecursive",
-			"mkdir",
 		];
-		return use("Runtime.Collection").from(a);
+		return use("Runtime.Vector").from(a);
 	},
 	getMethodInfoByName: function(ctx,field_name)
 	{

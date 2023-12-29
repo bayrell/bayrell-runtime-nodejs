@@ -86,9 +86,13 @@ Object.assign(Runtime.DateTime.prototype,
 	 * Return db datetime
 	 * @return string
 	 */
-	getDateTime: function(ctx, tz)
+	toString: function(ctx, tz)
 	{
 		if (tz == undefined) tz = "";
+		if (tz == "")
+		{
+			tz = ctx.tz;
+		}
 		var offset = 0;
 		var dt = this.toObject(ctx);
 		if (tz == "") tz = this.tz;
@@ -113,15 +117,11 @@ Object.assign(Runtime.DateTime.prototype,
 		return "";
 	},
 	/**
-	 * Return date
-	 * @return string
+	 * Returns database time by UTC
 	 */
-	getDate: function(ctx, tz)
+	getDatabaseTime: function(ctx)
 	{
-		if (tz == undefined) tz = "";
-		var value = this.getDateTime(ctx, tz);
-		var __v0 = use("Runtime.rs");
-		return __v0.substr(ctx, value, 0, 10);
+		return this.toString(ctx, "UTC");
 	},
 	/**
 	 * Return datetime in RFC822
@@ -234,6 +234,32 @@ Object.assign(Runtime.DateTime,
 		return null;
 	},
 	/**
+	 * Create date time from string
+	 */
+	from: function(ctx, s, tz)
+	{
+		if (tz == undefined) tz = "UTC";
+		var __v0 = use("Runtime.rs");
+		if (__v0.strlen(ctx, s) < 19)
+		{
+			return null;
+		}
+		var __v0 = use("Runtime.rs");
+		if (__v0.strlen(ctx, s) > 19)
+		{
+			var __v1 = use("Runtime.rs");
+			tz = __v1.substr(ctx, s, 19);
+		}
+		var __v0 = use("Runtime.DateTime");
+		var __v1 = use("Runtime.rs");
+		var __v2 = use("Runtime.rs");
+		var __v3 = use("Runtime.rs");
+		var __v4 = use("Runtime.rs");
+		var __v5 = use("Runtime.rs");
+		var __v6 = use("Runtime.rs");
+		return new __v0(ctx, use("Runtime.Map").from({"y":use("Runtime.rtl").to(__v1.substr(ctx, s, 0, 4), {"e":"int"}),"m":use("Runtime.rtl").to(__v2.substr(ctx, s, 5, 2), {"e":"int"}),"d":use("Runtime.rtl").to(__v3.substr(ctx, s, 8, 2), {"e":"int"}),"h":use("Runtime.rtl").to(__v4.substr(ctx, s, 11, 2), {"e":"int"}),"i":use("Runtime.rtl").to(__v5.substr(ctx, s, 14, 2), {"e":"int"}),"s":use("Runtime.rtl").to(__v6.substr(ctx, s, 17, 2), {"e":"int"}),"tz":tz}));
+	},
+	/**
 	 * Returns datetime
 	 * @param string tz
 	 * @return DateTime
@@ -258,10 +284,10 @@ Object.assign(Runtime.DateTime,
 	},
 	getClassInfo: function(ctx)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		return Dict.from({
-			"annotations": Collection.from([
+		var Vector = use("Runtime.Vector");
+		var Map = use("Runtime.Map");
+		return Map.from({
+			"annotations": Vector.from([
 			]),
 		});
 	},
@@ -276,77 +302,28 @@ Object.assign(Runtime.DateTime,
 		a.push("s");
 		a.push("ms");
 		a.push("tz");
-		return use("Runtime.Collection").from(a);
+		return use("Runtime.Vector").from(a);
 	},
 	getFieldInfoByName: function(ctx,field_name)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		if (field_name == "y") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "m") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "d") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "h") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "i") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "s") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "ms") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "tz") return Dict.from({
-			"t": "string",
-			"annotations": Collection.from([
-			]),
-		});
+		var Vector = use("Runtime.Vector");
+		var Map = use("Runtime.Map");
 		return null;
 	},
 	getMethodsList: function(ctx)
 	{
 		var a=[
-			"create",
-			"now",
-			"shiftTime",
-			"shift",
-			"setWeekNumber",
-			"getTimestamp",
-			"timestamp",
-			"getDayOfWeek",
-			"getDateTime",
-			"getDate",
-			"getRFC822",
-			"getISO8601",
-			"normalize",
 		];
-		return use("Runtime.Collection").from(a);
+		return use("Runtime.Vector").from(a);
 	},
 	getMethodInfoByName: function(ctx,field_name)
 	{
 		return null;
 	},
+	__implements__:
+	[
+		use("Runtime.StringInterface"),
+	],
 });use.add(Runtime.DateTime);
 module.exports = Runtime.DateTime;
 Runtime.DateTime.getTimezoneOffset = function(ctx, tz)

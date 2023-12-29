@@ -21,7 +21,7 @@ if (typeof Runtime == 'undefined') Runtime = {};
 if (typeof Runtime.Entity == 'undefined') Runtime.Entity = {};
 Runtime.Entity.Hook = function(ctx, name)
 {
-	use("Runtime.Entity").call(this, ctx, use("Runtime.Dict").from({"name":name}));
+	use("Runtime.Entity").call(this, ctx, use("Runtime.Map").from({"name":name}));
 };
 Runtime.Entity.Hook.prototype = Object.create(use("Runtime.Entity").prototype);
 Runtime.Entity.Hook.prototype.constructor = Runtime.Entity.Hook;
@@ -51,30 +51,29 @@ Object.assign(Runtime.Entity.Hook,
 	},
 	getClassInfo: function(ctx)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		return Dict.from({
-			"annotations": Collection.from([
+		var Vector = use("Runtime.Vector");
+		var Map = use("Runtime.Map");
+		return Map.from({
+			"annotations": Vector.from([
 			]),
 		});
 	},
 	getFieldsList: function(ctx)
 	{
 		var a = [];
-		return use("Runtime.Collection").from(a);
+		return use("Runtime.Vector").from(a);
 	},
 	getFieldInfoByName: function(ctx,field_name)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
+		var Vector = use("Runtime.Vector");
+		var Map = use("Runtime.Map");
 		return null;
 	},
 	getMethodsList: function(ctx)
 	{
 		var a=[
-			"constructor",
 		];
-		return use("Runtime.Collection").from(a);
+		return use("Runtime.Vector").from(a);
 	},
 	getMethodInfoByName: function(ctx,field_name)
 	{

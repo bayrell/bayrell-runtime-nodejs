@@ -52,6 +52,7 @@ Runtime.Exceptions.RuntimeException = function(ctx, message, code, prev)
 	this.error_str = message;
 	this.error_code = code;
 	this.prev = prev;
+	this.updateError(ctx);
 };
 Runtime.Exceptions.RuntimeException.prototype = Object.create(use("Runtime.Exceptions.ClassException").prototype);
 Runtime.Exceptions.RuntimeException.prototype.constructor = Runtime.Exceptions.RuntimeException;
@@ -63,7 +64,11 @@ Object.assign(Runtime.Exceptions.RuntimeException.prototype,
 	},
 	getErrorMessage: function(ctx)
 	{
-		return this.buildMessage(ctx);
+		return this.error_str;
+	},
+	getErrorString: function(ctx)
+	{
+		return this.error_str;
 	},
 	getErrorCode: function(ctx)
 	{
@@ -89,16 +94,27 @@ Object.assign(Runtime.Exceptions.RuntimeException.prototype,
 	{
 		return this.error_str;
 	},
+	updateError: function(ctx)
+	{
+		this.error_message = this.buildMessage(ctx);
+	},
 	/**
 	 * Returns trace
 	 */
 	getTraceStr: function(ctx)
 	{
 	},
+	/**
+	 * Returns trace
+	 */
+	getTraceCollection: function(ctx)
+	{
+	},
 	_init: function(ctx)
 	{
 		use("Runtime.Exceptions.ClassException").prototype._init.call(this,ctx);
 		this.prev = null;
+		this.error_message = "";
 		this.error_str = "";
 		this.error_code = 0;
 		this.error_file = "";
@@ -124,69 +140,29 @@ Object.assign(Runtime.Exceptions.RuntimeException,
 	},
 	getClassInfo: function(ctx)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		return Dict.from({
-			"annotations": Collection.from([
+		var Vector = use("Runtime.Vector");
+		var Map = use("Runtime.Map");
+		return Map.from({
+			"annotations": Vector.from([
 			]),
 		});
 	},
 	getFieldsList: function(ctx)
 	{
 		var a = [];
-		a.push("error_str");
-		a.push("error_code");
-		a.push("error_file");
-		a.push("error_line");
-		a.push("error_pos");
-		return use("Runtime.Collection").from(a);
+		return use("Runtime.Vector").from(a);
 	},
 	getFieldInfoByName: function(ctx,field_name)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		if (field_name == "error_str") return Dict.from({
-			"t": "string",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "error_code") return Dict.from({
-			"t": "int",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "error_file") return Dict.from({
-			"t": "string",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "error_line") return Dict.from({
-			"t": "string",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "error_pos") return Dict.from({
-			"t": "string",
-			"annotations": Collection.from([
-			]),
-		});
+		var Vector = use("Runtime.Vector");
+		var Map = use("Runtime.Map");
 		return null;
 	},
 	getMethodsList: function(ctx)
 	{
 		var a=[
-			"constructor",
-			"getPreviousException",
-			"getErrorMessage",
-			"getErrorCode",
-			"getFileName",
-			"getErrorLine",
-			"getErrorPos",
-			"toString",
-			"buildMessage",
-			"getTraceStr",
 		];
-		return use("Runtime.Collection").from(a);
+		return use("Runtime.Vector").from(a);
 	},
 	getMethodInfoByName: function(ctx,field_name)
 	{

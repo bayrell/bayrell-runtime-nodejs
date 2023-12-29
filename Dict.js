@@ -406,7 +406,7 @@ Object.assign(Runtime.Dict.prototype,
 		if (skip_empty == undefined) skip_empty = true;
 		if (fields == null)
 		{
-			return use("Runtime.Dict").from({});
+			return use("Runtime.Map").from({});
 		}
 		var __v0 = use("Runtime.Map");
 		var obj = new __v0(ctx);
@@ -431,9 +431,9 @@ Object.assign(Runtime.Dict.prototype,
 		}
 		var __v0 = use("Runtime.Collection");
 		var keys = (new __v0(ctx)).concat(ctx, this.keys(ctx)).concat(ctx, item.keys(ctx)).removeDuplicatesIm(ctx);
-		for (var i = 0;i < keys.count(ctx);i++)
+		for (var i = 0; i < keys.count(ctx); i++)
 		{
-			var key = Runtime.rtl.get(ctx, keys, i);
+			var key = Runtime.rtl.attr(ctx, keys, i);
 			if (!this.has(ctx, key))
 			{
 				return false;
@@ -486,55 +486,29 @@ Object.assign(Runtime.Dict,
 	},
 	getClassInfo: function(ctx)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		return Dict.from({
-			"annotations": Collection.from([
+		var Vector = use("Runtime.Vector");
+		var Map = use("Runtime.Map");
+		return Map.from({
+			"annotations": Vector.from([
 			]),
 		});
 	},
 	getFieldsList: function(ctx)
 	{
 		var a = [];
-		return use("Runtime.Collection").from(a);
+		return use("Runtime.Vector").from(a);
 	},
 	getFieldInfoByName: function(ctx,field_name)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
+		var Vector = use("Runtime.Vector");
+		var Map = use("Runtime.Map");
 		return null;
 	},
 	getMethodsList: function(ctx)
 	{
 		var a=[
-			"Instance",
-			"create",
-			"clone",
-			"copy",
-			"toDict",
-			"toMap",
-			"contains",
-			"has",
-			"get",
-			"attr",
-			"item",
-			"setIm",
-			"set1",
-			"removeIm",
-			"remove1",
-			"removeKeys",
-			"keys",
-			"values",
-			"map",
-			"filter",
-			"each",
-			"transition",
-			"reduce",
-			"concat",
-			"intersect",
-			"equal",
 		];
-		return use("Runtime.Collection").from(a);
+		return use("Runtime.Vector").from(a);
 	},
 	getMethodInfoByName: function(ctx,field_name)
 	{

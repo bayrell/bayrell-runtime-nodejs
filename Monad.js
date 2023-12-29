@@ -37,7 +37,7 @@ Object.assign(Runtime.Monad.prototype,
 		}
 		var __v0 = use("Runtime.Monad");
 		var __v1 = use("Runtime.rtl");
-		return new __v0(ctx, __v1.attr(ctx, this.val, use("Runtime.Collection").from([attr_name]), null));
+		return new __v0(ctx, __v1.attr(ctx, this.val, use("Runtime.Vector").from([attr_name]), null));
 	},
 	/**
 	 * Call function on value
@@ -108,7 +108,7 @@ Object.assign(Runtime.Monad.prototype,
 	/**
 	 * Call method on value
 	 */
-	callMethod: function(ctx, f, args)
+	callMethod: function(ctx, method_name, args)
 	{
 		if (args == undefined) args = null;
 		if (this.val === null || this.err != null)
@@ -117,15 +117,17 @@ Object.assign(Runtime.Monad.prototype,
 		}
 		var res = null;
 		var err = null;
-		var __v1 = use("Runtime.Exceptions.RuntimeException");
+		var __v2 = use("Runtime.Exceptions.RuntimeException");
 		try
 		{
 			var __v0 = use("Runtime.rtl");
-			res = __v0.apply(ctx, f, args);
+			var f = __v0.method(ctx, this.val, method_name);
+			var __v1 = use("Runtime.rtl");
+			res = __v1.apply(ctx, f, args);
 		}
 		catch (_ex)
 		{
-			if (_ex instanceof __v1)
+			if (_ex instanceof __v2)
 			{
 				var e = _ex;
 				
@@ -143,7 +145,7 @@ Object.assign(Runtime.Monad.prototype,
 	/**
 	 * Call async method on value
 	 */
-	callMethodAsync: async function(ctx, f, args)
+	callMethodAsync: async function(ctx, method_name, args)
 	{
 		if (args == undefined) args = null;
 		if (this.val === null || this.err != null)
@@ -152,15 +154,17 @@ Object.assign(Runtime.Monad.prototype,
 		}
 		var res = null;
 		var err = null;
-		var __v1 = use("Runtime.Exceptions.RuntimeException");
+		var __v2 = use("Runtime.Exceptions.RuntimeException");
 		try
 		{
 			var __v0 = use("Runtime.rtl");
-			res = await __v0.applyAsync(ctx, f, args);
+			var f = __v0.method(ctx, this.val, method_name);
+			var __v1 = use("Runtime.rtl");
+			res = await __v1.applyAsync(ctx, f, args);
 		}
 		catch (_ex)
 		{
-			if (_ex instanceof __v1)
+			if (_ex instanceof __v2)
 			{
 				var e = _ex;
 				
@@ -220,49 +224,29 @@ Object.assign(Runtime.Monad,
 	},
 	getClassInfo: function(ctx)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		return Dict.from({
-			"annotations": Collection.from([
+		var Vector = use("Runtime.Vector");
+		var Map = use("Runtime.Map");
+		return Map.from({
+			"annotations": Vector.from([
 			]),
 		});
 	},
 	getFieldsList: function(ctx)
 	{
 		var a = [];
-		a.push("val");
-		a.push("err");
-		return use("Runtime.Collection").from(a);
+		return use("Runtime.Vector").from(a);
 	},
 	getFieldInfoByName: function(ctx,field_name)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		if (field_name == "val") return Dict.from({
-			"t": "var",
-			"annotations": Collection.from([
-			]),
-		});
-		if (field_name == "err") return Dict.from({
-			"t": "var",
-			"annotations": Collection.from([
-			]),
-		});
+		var Vector = use("Runtime.Vector");
+		var Map = use("Runtime.Map");
 		return null;
 	},
 	getMethodsList: function(ctx)
 	{
 		var a=[
-			"constructor",
-			"attr",
-			"call",
-			"callAsync",
-			"callMethod",
-			"callMethodAsync",
-			"monad",
-			"value",
 		];
-		return use("Runtime.Collection").from(a);
+		return use("Runtime.Vector").from(a);
 	},
 	getMethodInfoByName: function(ctx,field_name)
 	{

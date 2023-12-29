@@ -22,7 +22,15 @@ if (typeof Runtime == 'undefined') Runtime = {};
 Runtime._Collection = function()
 {
 	Array.call(this);
-	for (var i=1; i<arguments.length; i++) Array.prototype.push.call(this, arguments[i]);
+	if (arguments.length > 0)
+	{
+		var start=1;
+		if (!Runtime.rtl.is_context()) start=0;
+		for (var i=start; i<arguments.length; i++)
+		{
+			Array.prototype.push.call(this, arguments[i]);
+		}
+	}
 	this.__uq__ = Symbol();
 }
 Runtime._Collection.prototype = Object.create(Array.prototype);
@@ -373,7 +381,7 @@ Object.assign(Runtime.Collection.prototype,
 		var __v0 = use("Runtime.rtl");
 		if (!__v0.isArray(ctx, arr))
 		{
-			arr = use("Runtime.Collection").from([arr]);
+			arr = use("Runtime.Vector").from([arr]);
 		}
 		if (arr.length == 0) return this;
 		var res = this.cp(ctx);
@@ -418,7 +426,7 @@ Object.assign(Runtime.Collection.prototype,
 		var index = this.indexOf(ctx, value);
 		if (index != -1)
 		{
-			return this.remove(ctx, index);
+			return this.removeIm(ctx, index);
 		}
 		return this;
 	},
@@ -432,7 +440,7 @@ Object.assign(Runtime.Collection.prototype,
 	removeItemsIm: function(ctx, values)
 	{
 		var res = this;
-		for (var i = 0;i < values.count(ctx);i++)
+		for (var i = 0; i < values.count(ctx); i++)
 		{
 			res = res.removeItem(ctx, values.item(ctx, i));
 		}
@@ -443,6 +451,18 @@ Object.assign(Runtime.Collection.prototype,
 		return this.removeItemsIm(ctx, values);
 	},
 	/**
+	 * Find value and remove
+	 */
+	findAndRemove: function(ctx, f)
+	{
+		var index = this.find(ctx, f);
+		if (index != -1)
+		{
+			return this.removeIm(ctx, index);
+		}
+		return this;
+	},
+	/**
 	 * Map
 	 * @param fn f
 	 * @return Collection
@@ -450,9 +470,14 @@ Object.assign(Runtime.Collection.prototype,
 	map: function(ctx, f)
 	{
 		var arr = this.cp(ctx);
+		var Callback = use("Runtime.Callback");
 		for (var i=0; i<arr.length; i++)
 		{
-			arr[i] = f(ctx, arr[i], i);
+			if (f instanceof Callback)
+			{
+				arr[i] = f.call(ctx, [arr[i], i]);
+			}
+			else arr[i] = f(ctx, arr[i], i);
 		}
 		return arr;
 	},
@@ -464,10 +489,14 @@ Object.assign(Runtime.Collection.prototype,
 	filter: function(ctx, f)
 	{
 		var res = this.constructor.Instance(ctx);
+		var Callback = use("Runtime.Callback");
 		for (var i=0; i<this.length; i++)
 		{
 			var item = this[i];
-			var flag = f(ctx, item, i);
+			var flag = (f instanceof Callback)
+				? f.call(ctx, [item, i])
+				: f(ctx, item, i)
+			;
 			if (flag)
 			{
 				Array.prototype.push.call(res, item);
@@ -525,11 +554,12 @@ Object.assign(Runtime.Collection.prototype,
 	flatten: function(ctx)
 	{
 		let res = [];
+		var Callback = use("Runtime.Callback");
 		
 		for (var i=0; i<this.length; i++)
 		{
 			let item = this[i];
-			if (item instanceof Runtime.Collection)
+			if (item instanceof Collection)
 			{
 				item = item.flatten();
 				res = res.concat( item );
@@ -567,12 +597,12 @@ Object.assign(Runtime.Collection.prototype,
 		if (offset == undefined) offset = 0;
 		if (length == undefined)
 		{
-			if (offset == 0) return this;
+			if (offset <= 0) return this;
 			var arr = Array.prototype.slice.call(this, offset);
 			Object.setPrototypeOf(arr, this.constructor.prototype);
 			return arr;
 		}
-		if (offset == 0 && length == this.length) return this;
+		if (offset <= 0 && length == this.length) return this;
 		if (length >= 0)
 		{
 			length = offset + length;
@@ -706,92 +736,29 @@ Object.assign(Runtime.Collection,
 	},
 	getClassInfo: function(ctx)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		return Dict.from({
-			"annotations": Collection.from([
+		var Vector = use("Runtime.Vector");
+		var Map = use("Runtime.Map");
+		return Map.from({
+			"annotations": Vector.from([
 			]),
 		});
 	},
 	getFieldsList: function(ctx)
 	{
 		var a = [];
-		return use("Runtime.Collection").from(a);
+		return use("Runtime.Vector").from(a);
 	},
 	getFieldInfoByName: function(ctx,field_name)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
+		var Vector = use("Runtime.Vector");
+		var Map = use("Runtime.Map");
 		return null;
 	},
 	getMethodsList: function(ctx)
 	{
 		var a=[
-			"Instance",
-			"create",
-			"cp",
-			"toCollection",
-			"toVector",
-			"get",
-			"item",
-			"count",
-			"indexOf",
-			"indexOfRange",
-			"first",
-			"last",
-			"getLastItem",
-			"pushIm",
-			"push",
-			"push1",
-			"append1",
-			"appendIm",
-			"unshiftIm",
-			"unshift",
-			"unshift1",
-			"prepend1",
-			"prependIm",
-			"prepend",
-			"removeLastIm",
-			"removeLast",
-			"removeFirstIm",
-			"removeFirst",
-			"insertIm",
-			"insert",
-			"removeIm",
-			"remove1",
-			"removeRangeIm",
-			"removeRange",
-			"setIm",
-			"set",
-			"set1",
-			"concatIm",
-			"appendCollection1",
-			"concat",
-			"prependCollectionIm",
-			"prependCollection1",
-			"removeItemIm",
-			"removeItem",
-			"removeItemsIm",
-			"removeItems",
-			"map",
-			"filter",
-			"transition",
-			"reduce",
-			"each",
-			"flatten",
-			"intersect",
-			"slice",
-			"reverseIm",
-			"reverse",
-			"sortIm",
-			"sort",
-			"removeDuplicatesIm",
-			"removeDuplicates",
-			"find",
-			"findItem",
-			"join",
 		];
-		return use("Runtime.Collection").from(a);
+		return use("Runtime.Vector").from(a);
 	},
 	getMethodInfoByName: function(ctx,field_name)
 	{

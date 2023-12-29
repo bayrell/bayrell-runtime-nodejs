@@ -18,33 +18,76 @@ var use = require('bay-lang').use;
  *  limitations under the License.
  */
 if (typeof Runtime == 'undefined') Runtime = {};
-if (typeof Runtime.Exceptions == 'undefined') Runtime.Exceptions = {};
-Runtime.Exceptions.KeyNotFound = function(ctx, key, prev)
+/* Math Functions */
+Runtime.math = function(ctx)
 {
-	if (prev == undefined) prev = null;
-	var __v0 = use("Runtime.rtl");
-	use("Runtime.Exceptions.RuntimeException").call(this, ctx, ctx.constructor.translate(ctx, "Runtime", "Key '%key%' not found", use("Runtime.Map").from({"key":key})), __v0.ERROR_KEY_NOT_FOUND, prev);
 };
-Runtime.Exceptions.KeyNotFound.prototype = Object.create(use("Runtime.Exceptions.RuntimeException").prototype);
-Runtime.Exceptions.KeyNotFound.prototype.constructor = Runtime.Exceptions.KeyNotFound;
-Object.assign(Runtime.Exceptions.KeyNotFound.prototype,
+Object.assign(Runtime.math.prototype,
 {
 });
-Object.assign(Runtime.Exceptions.KeyNotFound, use("Runtime.Exceptions.RuntimeException"));
-Object.assign(Runtime.Exceptions.KeyNotFound,
+Object.assign(Runtime.math,
 {
+	/**
+	 * Round double
+	 */
+	round: function(ctx, a)
+	{
+		return Math.round(a);
+	},
+	/**
+	 * Floor double
+	 */
+	floor: function(ctx, a)
+	{
+		return Math.floor(a);
+	},
+	/**
+	 * Floor ceil
+	 */
+	ceil: function(ctx, a)
+	{
+		return Math.ceil(a);
+	},
+	/**
+	 * Returns max
+	 */
+	max: function(ctx, a, b)
+	{
+		if (a > b)
+		{
+			return a;
+		}
+		else
+		{
+			return b;
+		}
+	},
+	/**
+	 * Returns min
+	 */
+	min: function(ctx, a, b)
+	{
+		if (a < b)
+		{
+			return a;
+		}
+		else
+		{
+			return b;
+		}
+	},
 	/* ======================= Class Init Functions ======================= */
 	getNamespace: function()
 	{
-		return "Runtime.Exceptions";
+		return "Runtime";
 	},
 	getClassName: function()
 	{
-		return "Runtime.Exceptions.KeyNotFound";
+		return "Runtime.math";
 	},
 	getParentClassName: function()
 	{
-		return "Runtime.Exceptions.RuntimeException";
+		return "";
 	},
 	getClassInfo: function(ctx)
 	{
@@ -76,5 +119,5 @@ Object.assign(Runtime.Exceptions.KeyNotFound,
 	{
 		return null;
 	},
-});use.add(Runtime.Exceptions.KeyNotFound);
-module.exports = Runtime.Exceptions.KeyNotFound;
+});use.add(Runtime.math);
+module.exports = Runtime.math;

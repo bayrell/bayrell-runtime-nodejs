@@ -68,7 +68,7 @@ Object.assign(Runtime.lib,
 		return (ctx, data) => 
 		{
 			var __v0 = use("Runtime.rtl");
-			return __v0.newInstance(ctx, class_name, use("Runtime.Collection").from([data]));
+			return __v0.newInstance(ctx, class_name, use("Runtime.Vector").from([data]));
 		};
 	},
 	/**
@@ -125,10 +125,10 @@ Object.assign(Runtime.lib,
 		return (ctx, item) => 
 		{
 			var fields = search.keys(ctx);
-			for (var i = 0;i < fields.count(ctx);i++)
+			for (var i = 0; i < fields.count(ctx); i++)
 			{
-				var field_name = Runtime.rtl.get(ctx, fields, i);
-				if (Runtime.rtl.get(ctx, search, field_name) != Runtime.rtl.get(ctx, item, field_name))
+				var field_name = Runtime.rtl.attr(ctx, fields, i);
+				if (Runtime.rtl.attr(ctx, search, field_name) != Runtime.rtl.attr(ctx, item, field_name))
 				{
 					return false;
 				}
@@ -160,7 +160,7 @@ Object.assign(Runtime.lib,
 		return (ctx, obj) => 
 		{
 			var __v0 = use("Runtime.rtl");
-			return __v0.attr(ctx, obj, use("Runtime.Collection").from([key]), def_value);
+			return __v0.attr(ctx, obj, use("Runtime.Vector").from([key]), def_value);
 		};
 	},
 	/**
@@ -171,7 +171,7 @@ Object.assign(Runtime.lib,
 		return (ctx, obj) => 
 		{
 			var __v0 = use("Runtime.rtl");
-			return __v0.setAttr(ctx, obj, use("Runtime.Collection").from([key]), value);
+			return __v0.setAttr(ctx, obj, use("Runtime.Vector").from([key]), value);
 		};
 	},
 	/**
@@ -309,8 +309,8 @@ Object.assign(Runtime.lib,
 	{
 		return (ctx, a, b) => 
 		{
-			var a = Runtime.rtl.get(ctx, a, field_name);
-			var b = Runtime.rtl.get(ctx, b, field_name);
+			var a = Runtime.rtl.attr(ctx, a, field_name);
+			var b = Runtime.rtl.attr(ctx, b, field_name);
 			if (f == "asc")
 			{
 				return (a > b) ? (1) : ((a < b) ? (-1) : (0));
@@ -470,9 +470,9 @@ Object.assign(Runtime.lib,
 	{
 		return (ctx, item) => 
 		{
-			for (var i = 0;i < arr.count(ctx);i++)
+			for (var i = 0; i < arr.count(ctx); i++)
 			{
-				var f = Runtime.rtl.get(ctx, arr, i);
+				var f = Runtime.rtl.attr(ctx, arr, i);
 				var res = f(ctx, item);
 				if (res)
 				{
@@ -489,9 +489,9 @@ Object.assign(Runtime.lib,
 	{
 		return (ctx, item) => 
 		{
-			for (var i = 0;i < arr.count(ctx);i++)
+			for (var i = 0; i < arr.count(ctx); i++)
 			{
-				var f = Runtime.rtl.get(ctx, arr, i);
+				var f = Runtime.rtl.attr(ctx, arr, i);
 				var res = f(ctx, item);
 				if (!res)
 				{
@@ -527,70 +527,29 @@ Object.assign(Runtime.lib,
 	},
 	getClassInfo: function(ctx)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		return Dict.from({
-			"annotations": Collection.from([
+		var Vector = use("Runtime.Vector");
+		var Map = use("Runtime.Map");
+		return Map.from({
+			"annotations": Vector.from([
 			]),
 		});
 	},
 	getFieldsList: function(ctx)
 	{
 		var a = [];
-		return use("Runtime.Collection").from(a);
+		return use("Runtime.Vector").from(a);
 	},
 	getFieldInfoByName: function(ctx,field_name)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
+		var Vector = use("Runtime.Vector");
+		var Map = use("Runtime.Map");
 		return null;
 	},
 	getMethodsList: function(ctx)
 	{
 		var a=[
-			"isInstance",
-			"isImplements",
-			"classImplements",
-			"createStruct",
-			"equal",
-			"equalNot",
-			"equalAttr",
-			"equalNotAttr",
-			"equalAttrNot",
-			"equalAttrs",
-			"equalMethod",
-			"get",
-			"set",
-			"attr",
-			"setAttr",
-			"getMaxIdFromItems",
-			"copy",
-			"takeDict",
-			"map",
-			"filter",
-			"intersect",
-			"sort",
-			"transition",
-			"concat",
-			"sortAsc",
-			"sortDesc",
-			"sortAttr",
-			"to",
-			"default",
-			"newValue",
-			"clearError",
-			"monad",
-			"method",
-			"applyMethod",
-			"applyMethodAsync",
-			"apply",
-			"applyAsync",
-			"log",
-			"or",
-			"and",
-			"join",
 		];
-		return use("Runtime.Collection").from(a);
+		return use("Runtime.Vector").from(a);
 	},
 	getMethodInfoByName: function(ctx,field_name)
 	{

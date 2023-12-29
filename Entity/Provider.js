@@ -21,7 +21,7 @@ if (typeof Runtime == 'undefined') Runtime = {};
 if (typeof Runtime.Entity == 'undefined') Runtime.Entity = {};
 Runtime.Entity.Provider = function(ctx, name, value)
 {
-	use("Runtime.Entity").call(this, ctx, use("Runtime.Dict").from({"name":name,"value":value}));
+	use("Runtime.Entity").call(this, ctx, use("Runtime.Map").from({"name":name,"value":value}));
 };
 Runtime.Entity.Provider.prototype = Object.create(use("Runtime.Entity").prototype);
 Runtime.Entity.Provider.prototype.constructor = Runtime.Entity.Provider;
@@ -57,10 +57,10 @@ Object.assign(Runtime.Entity.Provider,
 	},
 	getClassInfo: function(ctx)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		return Dict.from({
-			"annotations": Collection.from([
+		var Vector = use("Runtime.Vector");
+		var Map = use("Runtime.Map");
+		return Map.from({
+			"annotations": Vector.from([
 			]),
 		});
 	},
@@ -68,25 +68,19 @@ Object.assign(Runtime.Entity.Provider,
 	{
 		var a = [];
 		a.push("value");
-		return use("Runtime.Collection").from(a);
+		return use("Runtime.Vector").from(a);
 	},
 	getFieldInfoByName: function(ctx,field_name)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		if (field_name == "value") return Dict.from({
-			"t": "string",
-			"annotations": Collection.from([
-			]),
-		});
+		var Vector = use("Runtime.Vector");
+		var Map = use("Runtime.Map");
 		return null;
 	},
 	getMethodsList: function(ctx)
 	{
 		var a=[
-			"constructor",
 		];
-		return use("Runtime.Collection").from(a);
+		return use("Runtime.Vector").from(a);
 	},
 	getMethodInfoByName: function(ctx,field_name)
 	{

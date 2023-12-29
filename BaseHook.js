@@ -38,7 +38,7 @@ Object.assign(Runtime.BaseHook.prototype,
 	 */
 	register: function(ctx, hook_name, priority)
 	{
-		if (priority == undefined) priority = 0;
+		if (priority == undefined) priority = 100;
 		var method_name = this.getMethodName(ctx, hook_name);
 		if (method_name == "")
 		{
@@ -51,7 +51,7 @@ Object.assign(Runtime.BaseHook.prototype,
 	 */
 	registerMethod: function(ctx, hook_name, method_name, priority)
 	{
-		if (priority == undefined) priority = 0;
+		if (priority == undefined) priority = 100;
 		this.hook.register(ctx, hook_name, this, method_name, priority);
 	},
 	/**
@@ -84,39 +84,29 @@ Object.assign(Runtime.BaseHook,
 	},
 	getClassInfo: function(ctx)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		return Dict.from({
-			"annotations": Collection.from([
+		var Vector = use("Runtime.Vector");
+		var Map = use("Runtime.Map");
+		return Map.from({
+			"annotations": Vector.from([
 			]),
 		});
 	},
 	getFieldsList: function(ctx)
 	{
 		var a = [];
-		a.push("hook");
-		return use("Runtime.Collection").from(a);
+		return use("Runtime.Vector").from(a);
 	},
 	getFieldInfoByName: function(ctx,field_name)
 	{
-		var Collection = use("Runtime.Collection");
-		var Dict = use("Runtime.Dict");
-		if (field_name == "hook") return Dict.from({
-			"t": "Runtime.Providers.HookProvider",
-			"annotations": Collection.from([
-			]),
-		});
+		var Vector = use("Runtime.Vector");
+		var Map = use("Runtime.Map");
 		return null;
 	},
 	getMethodsList: function(ctx)
 	{
 		var a=[
-			"getMethodName",
-			"register",
-			"registerMethod",
-			"register_hooks",
 		];
-		return use("Runtime.Collection").from(a);
+		return use("Runtime.Vector").from(a);
 	},
 	getMethodInfoByName: function(ctx,field_name)
 	{

@@ -19,19 +19,17 @@ var use = require('bay-lang').use;
  */
 if (typeof Runtime == 'undefined') Runtime = {};
 if (typeof Runtime.Exceptions == 'undefined') Runtime.Exceptions = {};
-Runtime.Exceptions.KeyNotFound = function(ctx, key, prev)
+Runtime.Exceptions.AssertException = function(ctx, message)
 {
-	if (prev == undefined) prev = null;
-	var __v0 = use("Runtime.rtl");
-	use("Runtime.Exceptions.RuntimeException").call(this, ctx, ctx.constructor.translate(ctx, "Runtime", "Key '%key%' not found", use("Runtime.Map").from({"key":key})), __v0.ERROR_KEY_NOT_FOUND, prev);
+	use("Runtime.Exceptions.RuntimeException").call(this, ctx, message);
 };
-Runtime.Exceptions.KeyNotFound.prototype = Object.create(use("Runtime.Exceptions.RuntimeException").prototype);
-Runtime.Exceptions.KeyNotFound.prototype.constructor = Runtime.Exceptions.KeyNotFound;
-Object.assign(Runtime.Exceptions.KeyNotFound.prototype,
+Runtime.Exceptions.AssertException.prototype = Object.create(use("Runtime.Exceptions.RuntimeException").prototype);
+Runtime.Exceptions.AssertException.prototype.constructor = Runtime.Exceptions.AssertException;
+Object.assign(Runtime.Exceptions.AssertException.prototype,
 {
 });
-Object.assign(Runtime.Exceptions.KeyNotFound, use("Runtime.Exceptions.RuntimeException"));
-Object.assign(Runtime.Exceptions.KeyNotFound,
+Object.assign(Runtime.Exceptions.AssertException, use("Runtime.Exceptions.RuntimeException"));
+Object.assign(Runtime.Exceptions.AssertException,
 {
 	/* ======================= Class Init Functions ======================= */
 	getNamespace: function()
@@ -40,7 +38,7 @@ Object.assign(Runtime.Exceptions.KeyNotFound,
 	},
 	getClassName: function()
 	{
-		return "Runtime.Exceptions.KeyNotFound";
+		return "Runtime.Exceptions.AssertException";
 	},
 	getParentClassName: function()
 	{
@@ -76,5 +74,5 @@ Object.assign(Runtime.Exceptions.KeyNotFound,
 	{
 		return null;
 	},
-});use.add(Runtime.Exceptions.KeyNotFound);
-module.exports = Runtime.Exceptions.KeyNotFound;
+});use.add(Runtime.Exceptions.AssertException);
+module.exports = Runtime.Exceptions.AssertException;
